@@ -1,5 +1,5 @@
 <UserSettings>
-	<ApplicationIdentity version="12.0"/>
+	<ApplicationIdentity version="14.0"/>
 	<ToolsOptions>
 		<ToolsOptionsCategory name="Environment" RegisteredName="Environment">
 			<ToolsOptionsSubCategory name="ProjectsAndSolution" RegisteredName="ProjectsAndSolution" PackageName="Visual Studio Environment Package">
@@ -48,6 +48,8 @@
 			<PropertyValue name="ObjectBrowserMembersSortAlphabetically">false</PropertyValue>
 			<PropertyValue name="ObjectBrowserMembersSortByType">true</PropertyValue>
 			<PropertyValue name="ObjectBrowserMembersSortByAccess">false</PropertyValue>
+			<PropertyValue name="ObjectBrowserScope">{B1BA9461-FC54-45B3-A484-CB6DD0B95C94}</PropertyValue>
+			<PropertyValue name="ObjectBrowserScopeSubScope">0</PropertyValue>
 		</Category>
 	</Category>
 	<Category name="WebProjects" Category="{C78AFEEB-A722-4cf3-AD3F-8694126C2145}" Package="{39c9c826-8ef8-4079-8c95-428f5b1c323f}" RegisteredName="WebProjects" PackageName="Visual Web Developer Project System Package">
