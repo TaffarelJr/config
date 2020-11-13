@@ -1,5 +1,5 @@
 <UserSettings>
-	<ApplicationIdentity version="15.0"/>
+	<ApplicationIdentity version="16.0"/>
 	<ToolsOptions>
 		<ToolsOptionsCategory name="Environment" RegisteredName="Environment">
 			<ToolsOptionsSubCategory name="ProjectsAndSolution" RegisteredName="ProjectsAndSolution" PackageName="Visual Studio Environment Package">
@@ -9,9 +9,9 @@
 		<ToolsOptionsCategory name="Projects" RegisteredName="Projects">
 			<ToolsOptionsSubCategory name="VBDefaults" RegisteredName="VBDefaults" PackageName="Visual Basic Project System">
 				<PropertyValue name="OptionCompare">0</PropertyValue>
+				<PropertyValue name="OptionExplicit">1</PropertyValue>
 				<PropertyValue name="OptionInfer">1</PropertyValue>
 				<PropertyValue name="OptionStrict">1</PropertyValue>
-				<PropertyValue name="OptionExplicit">1</PropertyValue>
 			</ToolsOptionsSubCategory>
 		</ToolsOptionsCategory>
 		<ToolsOptionsCategory name="TextEditor" RegisteredName="TextEditor">
@@ -54,8 +54,5 @@
 	</Category>
 	<Category name="WebProjects" Category="{C78AFEEB-A722-4cf3-AD3F-8694126C2145}" Package="{39c9c826-8ef8-4079-8c95-428f5b1c323f}" RegisteredName="WebProjects" PackageName="Visual Web Developer Project System Package">
 		<PropertyValue name="Use64BitIISExpress">true</PropertyValue>
-	</Category>
-	<Category name="CodeLens" Category="{04DA95C1-B198-491D-BB93-DAD8610F3019}" Package="{E269B994-EF71-4CE0-8BCD-581C217372E8}" RegisteredName="CodeLens" PackageName="Microsoft.VisualStudio.Editor.Implementation.EditorPackage">
-		<PropertyValue name="IsCodeLensEnabled">false</PropertyValue>
 	</Category>
 </UserSettings>
