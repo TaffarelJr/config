@@ -1,5 +1,5 @@
 <UserSettings>
-	<ApplicationIdentity version="14.0"/>
+	<ApplicationIdentity version="15.0"/>
 	<ToolsOptions>
 		<ToolsOptionsCategory name="Environment" RegisteredName="Environment">
 			<ToolsOptionsSubCategory name="ProjectsAndSolution" RegisteredName="ProjectsAndSolution" PackageName="Visual Studio Environment Package">
