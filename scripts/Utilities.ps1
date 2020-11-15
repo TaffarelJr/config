@@ -13,7 +13,7 @@ function Pop-Indent {
 }
 
 function Add-Indent {
-	Param (
+	param (
 		[string]$text
 	)
 
@@ -21,7 +21,7 @@ function Add-Indent {
 }
 
 function Write-Header {
-	Param (
+	param (
 		[string]$text
 	)
 
@@ -36,10 +36,7 @@ function Write-Header {
 }
 
 function Test-IsRunningAsAdmin {
-	if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
-			[Security.Principal.WindowsBuiltInRole] "Administrator")) {
-		Write-Warning "This script must be executed as an Administrator."
-		Write-Warning "Please re-open the terminal as an Administrator and try again."
-		Break
+	if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+		throw "This script must be executed as an Administrator."
 	}
 }
