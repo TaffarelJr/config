@@ -1,7 +1,7 @@
 # Load supporting script files
 . ".\Utilities.ps1"
 
-Write-Header "Set Computer Name"
+Write-Header "Set computer name"
 
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
