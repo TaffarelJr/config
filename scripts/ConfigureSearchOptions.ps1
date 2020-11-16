@@ -29,13 +29,13 @@ Test-IsRunningAsAdmin
 
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Search\"
 
-Push-Location -Path ".\Preferences\"
 Write-Host "Include compressed files (ZIP, CAB...) ..."
+Push-Location -Path ".\Preferences\"
 Set-ItemProperty -Path "." -Name "ArchivedFiles" -Type "DWord" -Value "1"
 Pop-Location
 
-Push-Location -Path ".\PrimaryProperties\UnindexedLocations\"
 Write-Host "Always search file names and contents ..."
+Push-Location -Path ".\PrimaryProperties\UnindexedLocations\"
 Set-ItemProperty -Path "." -Name "SearchOnly" -Type "DWord" -Value "0"
 Pop-Location
 
@@ -43,21 +43,19 @@ Pop-Location
 
 Write-Host "Search contents of files with extensions:"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
-Push-Indent
 Push-Location -Path "HKCR:\"
+Push-Indent
 
 foreach ($extension in $indexExtensions) {
-	Push-Location -Path ".\$extension\PersistentHandler\"
-
 	Write-Host (Add-Indent "$extension ...")
+	Push-Location -Path ".\$extension\PersistentHandler\"
 	Set-ItemProperty -Path "." -Name "(Default)" -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
 	Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
-
 	Pop-Location
 }
 
-Pop-Location
 Pop-Indent
+Pop-Location
 
 Write-Host "Adding Windows Search locations ..."
 $searchManager = New-Object Microsoft.Search.Interop.CSearchManagerClass

@@ -15,14 +15,14 @@ Test-IsRunningAsAdmin
 
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"
 
-Push-Location -Path ".\Themes\Personalize\"
 Write-Host (Add-Indent "Applying Windows dark theme ...")
+Push-Location -Path ".\Themes\Personalize\"
 Set-ItemProperty -Path "." -Name "AppsUseLightTheme" -Type "DWord" -Value "0"
 Set-ItemProperty -Path "." -Name "SystemUsesLightTheme" -Type "DWord" -Value "0"
 Pop-Location
 
-Push-Location -Path ".\Explorer\Accent\"
 Write-Host (Add-Indent "Setting Windows accent color ...")
+Push-Location -Path ".\Explorer\Accent\"
 Set-ItemProperty -Path "." -Name "AccentColorMenu" -Type "DWord" -Value "0xffd6696b"
 Set-ItemProperty -Path "." -Name "AccentPalette" -Type "Binary" -Value $accentPalette
 Set-ItemProperty -Path "." -Name "StartColorMenu" -Type "DWord" -Value "0xff9e4d4f"
