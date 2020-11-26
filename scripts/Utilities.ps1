@@ -39,4 +39,9 @@ function Test-IsRunningAsAdmin {
 	if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
 		throw "This script must be executed as an Administrator."
 	}
+
+	# Set execution policy, if necessary
+	if ((Get-ExecutionPolicy) -ne "Unrestricted") {
+		Set-ExecutionPolicy Bypass -Scope Process
+	}
 }
