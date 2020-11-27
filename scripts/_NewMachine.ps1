@@ -6,7 +6,11 @@ Write-Host "Running all scripts for new machine setup ..."
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
 
-& ".\SetComputerName.ps1"
+Push-Location -Path ".\Configure\"
+	# Set computer name
+	& ".\ComputerName.ps1"
+Pop-Location
+
 & ".\EnableDeveloperMode.ps1"
 & ".\UnlockOneDrive.ps1"
 & ".\UnlockWindowsStore.ps1"
