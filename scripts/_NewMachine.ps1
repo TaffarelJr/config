@@ -1,6 +1,7 @@
 # Load supporting script files
 . ".\UserPrompts.ps1"
 . ".\Utilities.ps1"
+. ".\install\Chocolatey.ps1"
 
 Write-Host "Running all scripts for new machine setup ..."
 
@@ -12,7 +13,7 @@ $isDevMachine = Show-BooleanChoice -Caption "Developer Mode" ` -Message "Will th
 	-YesHelpText "The computer will be configured with more advanced options used for software development." `
 	-NoHelpText "The computer will be configured with standard options for regular use."
 
-Push-Location -Path ".\Configure\"
+Push-Location -Path ".\configure\"
 	# Set computer name
 	& ".\ComputerName.ps1"
 
@@ -30,4 +31,8 @@ Push-Location -Path ".\Configure\"
 	if ($isDevMachine) {
 		& ".\DeveloperMode.ps1"
 	}
+Pop-Location
+
+Push-Location -Path ".\install\"
+	& ".\Chocolatey.ps1"
 Pop-Location
