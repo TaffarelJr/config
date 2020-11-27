@@ -55,7 +55,7 @@ Push-Location -Path "HKCR:\"
 Pop-Location
 
 Write-Host
-Write-Host "Adding Windows Search locations:"
+Write-Host "Add Windows Search locations:"
 $searchManager = New-Object Microsoft.Search.Interop.CSearchManagerClass
 $searchCatalog = $searchManager.GetCatalog("SystemIndex")
 $crawlManager = $searchCatalog.GetCrawlScopeManager()

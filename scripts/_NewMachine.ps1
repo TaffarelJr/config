@@ -20,6 +20,7 @@ Push-Location -Path ".\Configure\"
 	& ".\WindowsExplorer.ps1"
 	& ".\WindowsTheme.ps1"
 	& ".\SearchOptions.ps1"
+	& ".\OpenCommandWindowHere.ps1"
 
 	# Make sure Windows features are unlocked
 	& ".\OneDrive.ps1"
@@ -30,5 +31,3 @@ Push-Location -Path ".\Configure\"
 		& ".\DeveloperMode.ps1"
 	}
 Pop-Location
-
-& ".\OpenCommandWindowHere.ps1"
