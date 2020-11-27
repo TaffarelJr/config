@@ -16,6 +16,9 @@ Push-Location -Path ".\Configure\"
 	# Set computer name
 	& ".\ComputerName.ps1"
 
+	# Configure Windows
+	& ".\WindowsExplorer.ps1"
+
 	# Make sure Windows features are unlocked
 	& ".\OneDrive.ps1"
 	& ".\WindowsStore.ps1"
@@ -26,7 +29,6 @@ Push-Location -Path ".\Configure\"
 	}
 Pop-Location
 
-& ".\ConfigureWindowsExplorer.ps1"
 & ".\ConfigureSearchOptions.ps1"
 & ".\ConfigureWindowsTheme.ps1"
 & ".\OpenCommandWindowHere.ps1"
