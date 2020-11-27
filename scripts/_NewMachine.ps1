@@ -14,9 +14,13 @@ $isDevMachine = Show-BooleanChoice -Caption "Developer Mode" ` -Message "Will th
 Push-Location -Path ".\Configure\"
 	# Set computer name
 	& ".\ComputerName.ps1"
+
+	# Configure Windows Registry settings
+	if ($isDevMachine) {
+		& ".\DeveloperMode.ps1"
+	}
 Pop-Location
 
-& ".\EnableDeveloperMode.ps1"
 & ".\UnlockOneDrive.ps1"
 & ".\UnlockWindowsStore.ps1"
 & ".\ConfigureWindowsExplorer.ps1"

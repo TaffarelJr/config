@@ -1,12 +1,12 @@
 # Load supporting script files
-. ".\Utilities.ps1"
+. "..\Utilities.ps1"
 
 Write-Header "Enable Windows developer mode"
 
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
 
-Write-Host "Enabling Windows developer mode ..."
+Write-Host "Enabling Windows developer mode"
 Push-Location -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\"
 
 Set-ItemProperty -Path "." -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value "1"
