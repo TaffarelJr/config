@@ -44,4 +44,7 @@ function Test-IsRunningAsAdmin {
 	if ((Get-ExecutionPolicy) -ne "Unrestricted") {
 		Set-ExecutionPolicy Bypass -Scope Process
 	}
+
+	# Use TLS 1.2
+	[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
 }
