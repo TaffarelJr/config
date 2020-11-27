@@ -1,10 +1,15 @@
 # Load supporting script files
+. ".\UserPrompts.ps1"
 . ".\Utilities.ps1"
 
 Write-Host "Running all scripts for new machine setup ..."
 
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
+
+$isDevMachine = Show-BooleanChoice -Caption "Developer Mode" ` -Message "Will this computer be used for software development?" `
+	-YesHelpText "The computer will be configured with more advanced options used for software development." `
+	-NoHelpText "The computer will be configured with standard options for regular use."
 
 Push-Location -Path ".\Configure\"
 	# Set computer name
