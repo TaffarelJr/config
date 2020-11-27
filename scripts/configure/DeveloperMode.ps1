@@ -8,8 +8,6 @@ Test-IsRunningAsAdmin
 
 Write-Host "Enabling Windows developer mode"
 Push-Location -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\"
-
-Set-ItemProperty -Path "." -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value "1"
-
+	Set-ItemProperty -Path "." -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value "1"
 Pop-Location
 Write-Host "Done"
