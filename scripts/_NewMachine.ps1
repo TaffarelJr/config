@@ -18,6 +18,7 @@ Push-Location -Path ".\Configure\"
 
 	# Make sure Windows features are unlocked
 	& ".\OneDrive.ps1"
+	& ".\WindowsStore.ps1"
 
 	# Configure developer settings if necessary
 	if ($isDevMachine) {
@@ -25,7 +26,6 @@ Push-Location -Path ".\Configure\"
 	}
 Pop-Location
 
-& ".\UnlockWindowsStore.ps1"
 & ".\ConfigureWindowsExplorer.ps1"
 & ".\ConfigureSearchOptions.ps1"
 & ".\ConfigureWindowsTheme.ps1"

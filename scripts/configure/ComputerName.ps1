@@ -11,7 +11,6 @@ Write-Host "Would you like to rename it?"
 $computerName = Read-Host -Prompt (Add-Indent "<press ENTER to skip>")
 
 if ($computerName.Length -gt 0) {
-	Write-Host "Renaming computer ..."
 	Rename-Computer -NewName $computerName
 	Write-Host "Done"
 }
