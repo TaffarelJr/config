@@ -39,6 +39,7 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Se
 	Pop-Location
 Pop-Location
 
+Write-Host
 Write-Host "Search contents of files with extensions:"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 Push-Location -Path "HKCR:\"
@@ -53,6 +54,7 @@ Push-Location -Path "HKCR:\"
 	Pop-Indent
 Pop-Location
 
+Write-Host
 Write-Host "Adding Windows Search locations:"
 $searchManager = New-Object Microsoft.Search.Interop.CSearchManagerClass
 $searchCatalog = $searchManager.GetCatalog("SystemIndex")
