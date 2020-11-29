@@ -1,6 +1,9 @@
 # Load supporting script files
 . "..\Utilities.ps1"
 
+# Ensure Admin permissions
+Test-IsRunningAsAdmin
+
 $indexExtensions = `
 	".accessor", ".application", ".appref-ms", ".asmx", `
 	".cake", ".cd", ".cfg", ".cmproj", ".cmpuo", ".config", ".csdproj", ".csx", `
@@ -20,9 +23,6 @@ $indexExtensions = `
 	".xaml", ".xbap", ".xproj"
 
 Write-Header "Configure file extensions for Windows Search"
-
-# Ensure Admin permissions
-Test-IsRunningAsAdmin
 
 Write-Host "Search contents of files with extensions:"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null

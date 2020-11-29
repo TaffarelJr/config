@@ -1,8 +1,6 @@
 # Load supporting script files
 . "..\Utilities.ps1"
 
-Write-Header "Install Piriform Defraggler"
-
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
 
@@ -10,5 +8,7 @@ Test-IsRunningAsAdmin
 if (-NOT (Get-Command 'Verify-Chocolatey' -errorAction SilentlyContinue)) {
 	. ".\Chocolatey.ps1"
 }
+
+Write-Header "Install Piriform Defraggler"
 
 choco install defraggler -y

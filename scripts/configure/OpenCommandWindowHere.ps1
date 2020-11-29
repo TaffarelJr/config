@@ -1,10 +1,10 @@
 # Load supporting script files
 . "..\Utilities.ps1"
 
-Write-Header "'Open Command Window Here'"
-
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
+
+Write-Header "'Open Command Window Here'"
 
 function Set-RegistryEntries {
 	Push-Indent

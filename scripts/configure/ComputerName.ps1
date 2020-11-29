@@ -1,10 +1,10 @@
 # Load supporting script files
 . "..\Utilities.ps1"
 
-Write-Header "Set computer name"
-
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
+
+Write-Header "Set computer name"
 
 Write-Host "Computer name is: $env:computername"
 Write-Host "Would you like to rename it?"

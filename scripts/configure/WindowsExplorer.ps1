@@ -1,10 +1,10 @@
 # Load supporting script files
 . "..\Utilities.ps1"
 
-Write-Header "Configure Windows Explorer"
-
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
+
+Write-Header "Configure Windows Explorer"
 
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\"
 	Write-Host "Show hidden files, folders, and drives"

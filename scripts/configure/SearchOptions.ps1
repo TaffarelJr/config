@@ -2,12 +2,12 @@
 Add-Type -Path ".\Microsoft.Search.Interop.dll"
 . "..\Utilities.ps1"
 
+# Ensure Admin permissions
+Test-IsRunningAsAdmin
+
 $searchLocations = "C:\Code"
 
 Write-Header "Configure Windows Search options"
-
-# Ensure Admin permissions
-Test-IsRunningAsAdmin
 
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Search\"
 	Push-Location -Path ".\Preferences\"

@@ -2,10 +2,10 @@
 . ".\UserPrompts.ps1"
 . ".\Utilities.ps1"
 
-Write-Host "Running all scripts for new machine setup ..."
-
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
+
+Write-Host "Running all scripts for new machine setup ..."
 
 # Prompt for user input
 $isRJsProfile = Show-BooleanChoice -Caption "RJ's Profile" -Message "Is this RJ's user profile?" `

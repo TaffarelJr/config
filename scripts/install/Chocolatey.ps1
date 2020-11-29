@@ -4,8 +4,6 @@ try {
 }
 catch { }
 
-Write-Header "Install Chocolatey"
-
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
 
@@ -17,5 +15,7 @@ function Verify-Chocolatey {
 		Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	}
 }
+
+Write-Header "Install Chocolatey"
 
 Verify-Chocolatey

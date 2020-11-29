@@ -1,10 +1,10 @@
 # Load supporting script files
 . "..\Utilities.ps1"
 
-Write-Header "Unlock Windows Store"
-
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
+
+Write-Header "Unlock Windows Store"
 
 Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"
 	Write-Host "Enable Store apps"

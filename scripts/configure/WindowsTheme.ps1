@@ -1,6 +1,9 @@
 # Load supporting script files
 . "..\Utilities.ps1"
 
+# Ensure Admin permissions
+Test-IsRunningAsAdmin
+
 $startColorMenu_PurpleShadowDark = "0xff9e4d4f"
 $accentColorMenu_PurpleShadowDark = "0xffd6696b"
 $accentPalette_PurpleShadowDark = [byte[]]@(`
@@ -11,9 +14,6 @@ $accentPalette_PurpleShadowDark = [byte[]]@(`
 )
 
 Write-Header "Configure Windows theme"
-
-# Ensure Admin permissions
-Test-IsRunningAsAdmin
 
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"
 	Push-Location -Path ".\Themes\Personalize\"
