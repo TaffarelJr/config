@@ -78,15 +78,16 @@ Push-Location -Path ".\install\"
 		& ".\Zoom.ps1"
 	Pop-Location
 
-	# Install graphics tools
-	& ".\Paint.NET.ps1"
-	if ($installAdvGraphicsTools) {
-		& ".\Gimp.ps1"
-		& ".\Hugin.ps1"
-		& ".\Inkscape.ps1"
-		& ".\MicrosoftICE.ps1"
-		& ".\Shotcut.ps1"
-	}
+	Push-Location -Path ".\graphics\"
+		& ".\Paint.NET.ps1"
+		if ($installAdvGraphicsTools) {
+			& ".\Gimp.ps1"
+			& ".\Hugin.ps1"
+			& ".\Inkscape.ps1"
+			& ".\MicrosoftICE.ps1"
+			& ".\Shotcut.ps1"
+		}
+	Pop-Location
 
 	# Install games
 	if ($installGames) {
