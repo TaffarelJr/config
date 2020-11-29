@@ -49,6 +49,7 @@ Push-Location -Path ".\install\"
 	& ".\SpaceSniffer.ps1"
 	if ($isRJsProfile) {
 		& ".\AdvancedRenamer.ps1"
+		& ".\Divvy.ps1"
 	}
 
 	# Install Browsers
