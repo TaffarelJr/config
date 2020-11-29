@@ -50,4 +50,5 @@ Push-Location -Path ".\install\"
 	& ".\7Zip.ps1"
 	& ".\PiriformCCleaner.ps1"
 	& ".\PiriformDefraggler.ps1"
+	& ".\SpaceSniffer.ps1"
 Pop-Location
