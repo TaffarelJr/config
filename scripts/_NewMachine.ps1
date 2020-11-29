@@ -48,10 +48,10 @@ Push-Location -Path ".\install\"
 	# Install Chocolatey
 	. ".\Chocolatey.ps1"
 
-	# Install Browsers
-	& ".\GoogleChrome.ps1"
+	Push-Location -Path ".\browsers\"
+		& ".\GoogleChrome.ps1"
+	Pop-Location
 
-	# Install utilities
 	Push-Location -Path ".\utilities\"
 		& ".\7Zip.ps1"
 		& ".\AttributeChanger.ps1"
