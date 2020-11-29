@@ -61,4 +61,5 @@ Push-Location -Path ".\install\"
 
 	# Install communications tools
 	& ".\Slack.ps1"
+	& ".\Zoom.ps1"
 Pop-Location
