@@ -77,5 +77,6 @@ Push-Location -Path ".\install\"
 		& ".\Hugin.ps1"
 		& ".\Inkscape.ps1"
 		& ".\MicrosoftICE.ps1"
+		& ".\Shotcut.ps1"
 	}
 Pop-Location
