@@ -88,5 +88,6 @@ Push-Location -Path ".\install\"
 	if ($installGames) {
 		& ".\EAOrigin.ps1"
 		& ".\Minecraft.ps1"
+		& ".\Steam.ps1"
 	}
 Pop-Location
