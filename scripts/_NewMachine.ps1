@@ -73,9 +73,10 @@ Push-Location -Path ".\install\"
 		& ".\GoogleBackupAndSync.ps1"
 	Pop-Location
 
-	# Install communications tools
-	& ".\Slack.ps1"
-	& ".\Zoom.ps1"
+	Push-Location -Path ".\communications\"
+		& ".\Slack.ps1"
+		& ".\Zoom.ps1"
+	Pop-Location
 
 	# Install graphics tools
 	& ".\Paint.NET.ps1"
