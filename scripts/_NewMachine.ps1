@@ -22,24 +22,22 @@ Push-Location -Path ".\configure\"
 	& ".\ComputerName.ps1"
 
 	# Configure Windows
-	& ".\WindowsExplorer.ps1"
+	& ".\OneDrive.ps1"
 	& ".\OpenCommandWindowHere.ps1"
+	& ".\SearchExtensions.ps1"
+	& ".\WindowsExplorer.ps1"
+	& ".\WindowsStore.ps1"
+
+	# Configure RJ's profile, if necessary
 	if ($isRJsProfile) {
+		& ".\SearchOptions.ps1"
 		& ".\WindowsTheme.ps1"
+
+		# Configure developer settings, if necessary
 		if ($isDevMachine) {
 			& ".\DeveloperMode.ps1"
 		}
 	}
-
-	# Configure Windows Search
-	& ".\SearchExtensions.ps1"
-	if ($isRJsProfile) {
-		& ".\SearchOptions.ps1"
-	}
-
-	# Make sure Windows features are unlocked
-	& ".\OneDrive.ps1"
-	& ".\WindowsStore.ps1"
 Pop-Location
 
 Push-Location -Path ".\install\"
