@@ -75,5 +75,6 @@ Push-Location -Path ".\install\"
 	if ($installAdvGraphicsTools) {
 		& ".\Gimp.ps1"
 		& ".\Hugin.ps1"
+		& ".\MicrosoftICE.ps1"
 	}
 Pop-Location
