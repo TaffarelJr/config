@@ -43,9 +43,10 @@ Push-Location -Path ".\install\"
 	# Install Browsers
 	& ".\GoogleChrome.ps1"
 
-	# Install common utilities
+	# Install utilities
 	& ".\7Zip.ps1"
 	& ".\AttributeChanger.ps1"
+	& ".\LinkShellExtension.ps1"
 	& ".\NotepadPlusPlus.ps1"
 	& ".\PiriformCCleaner.ps1"
 	& ".\PiriformDefraggler.ps1"
