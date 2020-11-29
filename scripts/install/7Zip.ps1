@@ -6,7 +6,7 @@ Write-Header "Install 7-Zip"
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
 
-# Import the Chocolatey file if necessary
+# Install Chocolatey if necessary
 if (-NOT (Get-Command 'Verify-Chocolatey' -errorAction SilentlyContinue)) {
 	. ".\Chocolatey.ps1"
 }

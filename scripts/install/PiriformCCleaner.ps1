@@ -1,7 +1,7 @@
 # Load supporting script files
 . "..\Utilities.ps1"
 
-Write-Header "Install Adobe Acrobat Reader"
+Write-Header "Install Piriform CCleaner"
 
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
@@ -11,4 +11,4 @@ if (-NOT (Get-Command 'Verify-Chocolatey' -errorAction SilentlyContinue)) {
 	. ".\Chocolatey.ps1"
 }
 
-choco install adobereader -y
+choco install ccleaner -y
