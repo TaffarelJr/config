@@ -50,6 +50,7 @@ Push-Location -Path ".\install\"
 	if ($isRJsProfile) {
 		& ".\AdvancedRenamer.ps1"
 		& ".\Divvy.ps1"
+		& ".\DuplicateCleaner.ps1"
 	}
 
 	# Install Browsers
