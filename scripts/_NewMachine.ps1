@@ -48,6 +48,7 @@ Push-Location -Path ".\install\"
 
 	# Install common utilities
 	& ".\7Zip.ps1"
+	& ".\NotepadPlusPlus.ps1"
 	& ".\PiriformCCleaner.ps1"
 	& ".\PiriformDefraggler.ps1"
 	& ".\SpaceSniffer.ps1"
