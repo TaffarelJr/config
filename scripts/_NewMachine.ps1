@@ -74,5 +74,6 @@ Push-Location -Path ".\install\"
 	& ".\Paint.NET.ps1"
 	if ($installAdvGraphicsTools) {
 		& ".\Gimp.ps1"
+		& ".\Hugin.ps1"
 	}
 Pop-Location
