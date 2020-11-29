@@ -45,11 +45,13 @@ Push-Location -Path ".\configure\"
 Pop-Location
 
 Push-Location -Path ".\install\"
-	# Install Chocolatey
 	. ".\Chocolatey.ps1"
 
 	Push-Location -Path ".\browsers\"
 		& ".\GoogleChrome.ps1"
+		if ($isDevMachine) {
+			& ".\Firefox.ps1"
+		}
 	Pop-Location
 
 	Push-Location -Path ".\utilities\"
