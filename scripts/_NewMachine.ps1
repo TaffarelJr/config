@@ -58,4 +58,7 @@ Push-Location -Path ".\install\"
 	# Install cloud storage
 	& ".\Dropbox.ps1"
 	& ".\GoogleBackupAndSync.ps1"
+
+	# Install communications tools
+	& ".\Slack.ps1"
 Pop-Location
