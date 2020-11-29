@@ -57,4 +57,5 @@ Push-Location -Path ".\install\"
 
 	# Install cloud storage
 	& ".\Dropbox.ps1"
+	& ".\GoogleBackupAndSync.ps1"
 Pop-Location
