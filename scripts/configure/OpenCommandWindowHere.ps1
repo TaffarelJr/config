@@ -23,26 +23,26 @@ function Set-RegistryEntries {
 	Pop-Indent
 }
 
-Write-Host "Add 'Open Command Window Here' prompts to context menu"
+Write-Host "Add 'Open Command Window Here' prompts to context menu:"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 Push-Location -Path "HKCR:\"
 	Push-Location -Path ".\Directory\shell\"
 		Push-Indent
-			Write-Host (Add-Indent "Directory shell")
+			Write-Host (Add-Indent "Directory shell:")
 			Set-RegistryEntries
 		Pop-Indent
 	Pop-Location
 
 	Push-Location -Path ".\Directory\Background\shell\"
 		Push-Indent
-			Write-Host (Add-Indent "Directory background shell")
+			Write-Host (Add-Indent "Directory background shell:")
 			Set-RegistryEntries
 		Pop-Indent
 	Pop-Location
 
 	Push-Location -Path ".\Drive\shell\"
 		Push-Indent
-			Write-Host (Add-Indent "Drive shell")
+			Write-Host (Add-Indent "Drive shell:")
 			Set-RegistryEntries
 		Pop-Indent
 	Pop-Location

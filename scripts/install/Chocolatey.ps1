@@ -1,5 +1,8 @@
 # Load supporting script files
-. "..\Utilities.ps1"
+try {
+	. "..\Utilities.ps1"
+}
+catch { }
 
 Write-Header "Install Chocolatey"
 
