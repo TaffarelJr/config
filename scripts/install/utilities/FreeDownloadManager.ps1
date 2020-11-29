@@ -1,5 +1,5 @@
 # Load supporting script files
-. "..\Utilities.ps1"
+. "..\..\Utilities.ps1"
 
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
@@ -9,6 +9,6 @@ if (-NOT (Get-Command 'Verify-Chocolatey' -errorAction SilentlyContinue)) {
 	. ".\Chocolatey.ps1"
 }
 
-Write-Header "Install Adobe Acrobat Reader"
+Write-Header "Install Free Download Manager"
 
-choco install adobereader -y
+choco install freedownloadmanager -y

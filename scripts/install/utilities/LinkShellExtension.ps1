@@ -1,5 +1,5 @@
 # Load supporting script files
-. "..\Utilities.ps1"
+. "..\..\Utilities.ps1"
 
 # Ensure Admin permissions
 Test-IsRunningAsAdmin

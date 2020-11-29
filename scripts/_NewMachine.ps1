@@ -52,19 +52,21 @@ Push-Location -Path ".\install\"
 	& ".\GoogleChrome.ps1"
 
 	# Install utilities
-	& ".\7Zip.ps1"
-	& ".\AttributeChanger.ps1"
-	& ".\LinkShellExtension.ps1"
-	& ".\NotepadPlusPlus.ps1"
-	& ".\PiriformCCleaner.ps1"
-	& ".\PiriformDefraggler.ps1"
-	& ".\SpaceSniffer.ps1"
-	if ($isRJsProfile) {
-		& ".\AdvancedRenamer.ps1"
-		& ".\Divvy.ps1"
-		& ".\DuplicateCleaner.ps1"
-		& ".\FreeDownloadManager.ps1"
-	}
+	Push-Location -Path ".\utilities\"
+		& ".\7Zip.ps1"
+		& ".\AttributeChanger.ps1"
+		& ".\LinkShellExtension.ps1"
+		& ".\NotepadPlusPlus.ps1"
+		& ".\PiriformCCleaner.ps1"
+		& ".\PiriformDefraggler.ps1"
+		& ".\SpaceSniffer.ps1"
+		if ($isRJsProfile) {
+			& ".\AdvancedRenamer.ps1"
+			& ".\Divvy.ps1"
+			& ".\DuplicateCleaner.ps1"
+			& ".\FreeDownloadManager.ps1"
+		}
+	Pop-Location
 
 	# Install cloud storage
 	& ".\Dropbox.ps1"
