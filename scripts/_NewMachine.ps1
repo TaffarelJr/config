@@ -40,6 +40,9 @@ Push-Location -Path ".\install\"
 	# Install Chocolatey
 	. ".\Chocolatey.ps1"
 
+	# Install Browsers
+	& ".\GoogleChrome.ps1"
+
 	# Install common utilities
 	& ".\7Zip.ps1"
 	& ".\AttributeChanger.ps1"
@@ -51,10 +54,8 @@ Push-Location -Path ".\install\"
 		& ".\AdvancedRenamer.ps1"
 		& ".\Divvy.ps1"
 		& ".\DuplicateCleaner.ps1"
+		& ".\FreeDownloadManager.ps1"
 	}
-
-	# Install Browsers
-	& ".\GoogleChrome.ps1"
 
 	# Install cloud storage
 	& ".\Dropbox.ps1"
