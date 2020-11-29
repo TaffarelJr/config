@@ -65,4 +65,7 @@ Push-Location -Path ".\install\"
 	# Install communications tools
 	& ".\Slack.ps1"
 	& ".\Zoom.ps1"
+
+	# Install graphics tools
+	& ".\Paint.NET.ps1"
 Pop-Location
