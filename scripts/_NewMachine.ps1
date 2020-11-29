@@ -54,4 +54,7 @@ Push-Location -Path ".\install\"
 
 	# Install Browsers
 	& ".\GoogleChrome.ps1"
+
+	# Install cloud storage
+	& ".\Dropbox.ps1"
 Pop-Location
