@@ -43,5 +43,9 @@ Push-Location -Path ".\configure\"
 Pop-Location
 
 Push-Location -Path ".\install\"
+	# Install Chocolatey
 	. ".\Chocolatey.ps1"
+
+	# Install common utilities
+	& ".\7Zip.ps1"
 Pop-Location
