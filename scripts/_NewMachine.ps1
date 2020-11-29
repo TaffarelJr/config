@@ -51,4 +51,7 @@ Push-Location -Path ".\install\"
 	& ".\PiriformCCleaner.ps1"
 	& ".\PiriformDefraggler.ps1"
 	& ".\SpaceSniffer.ps1"
+
+	# Install Browsers
+	& ".\GoogleChrome.ps1"
 Pop-Location
