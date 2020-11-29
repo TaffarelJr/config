@@ -21,6 +21,10 @@ $installAdvGraphicsTools = Show-BooleanChoice -Caption "Graphics Tools" -Message
 	-YesHelpText "Install advanced graphics editing tools." `
 	-NoHelpText "Do not install advanced graphics editing tools."
 
+$installGames = Show-BooleanChoice -Caption "Games" -Message "Install games?" `
+	-YesHelpText "Install games." `
+	-NoHelpText "Do not install games."
+
 Push-Location -Path ".\configure\"
 	# Set computer name
 	& ".\ComputerName.ps1"
@@ -78,5 +82,10 @@ Push-Location -Path ".\install\"
 		& ".\Inkscape.ps1"
 		& ".\MicrosoftICE.ps1"
 		& ".\Shotcut.ps1"
+	}
+
+	# Install games
+	if ($installGames) {
+		& ".\Minecraft.ps1"
 	}
 Pop-Location
