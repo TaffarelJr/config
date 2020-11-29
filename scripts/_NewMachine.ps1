@@ -17,6 +17,10 @@ if ($isRJsProfile) {
 		-NoHelpText "The computer will be configured with standard options for regular use."
 }
 
+$installAdvGraphicsTools = Show-BooleanChoice -Caption "Graphics Tools" -Message "Install advanced graphics editing tools?" `
+	-YesHelpText "Install advanced graphics editing tools." `
+	-NoHelpText "Do not install advanced graphics editing tools."
+
 Push-Location -Path ".\configure\"
 	# Set computer name
 	& ".\ComputerName.ps1"
@@ -68,4 +72,7 @@ Push-Location -Path ".\install\"
 
 	# Install graphics tools
 	& ".\Paint.NET.ps1"
+	if ($installAdvGraphicsTools) {
+		& ".\Gimp.ps1"
+	}
 Pop-Location
