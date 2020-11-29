@@ -27,13 +27,9 @@ Push-Location -Path ".\configure\"
 	& ".\SearchExtensions.ps1"
 	& ".\WindowsExplorer.ps1"
 	& ".\WindowsStore.ps1"
-
-	# Configure RJ's profile, if necessary
 	if ($isRJsProfile) {
 		& ".\SearchOptions.ps1"
 		& ".\WindowsTheme.ps1"
-
-		# Configure developer settings, if necessary
 		if ($isDevMachine) {
 			& ".\DeveloperMode.ps1"
 		}
@@ -50,6 +46,9 @@ Push-Location -Path ".\install\"
 	& ".\PiriformCCleaner.ps1"
 	& ".\PiriformDefraggler.ps1"
 	& ".\SpaceSniffer.ps1"
+	if ($isRJsProfile) {
+		& ".\AdvancedRenamer.ps1"
+	}
 
 	# Install Browsers
 	& ".\GoogleChrome.ps1"
