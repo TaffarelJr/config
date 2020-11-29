@@ -89,5 +89,6 @@ Push-Location -Path ".\install\"
 		& ".\EAOrigin.ps1"
 		& ".\Minecraft.ps1"
 		& ".\Steam.ps1"
+		& ".\UbisoftUplay.ps1"
 	}
 Pop-Location
