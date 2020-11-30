@@ -87,6 +87,7 @@ Push-Location -Path ".\install\"
 				& ".\Postman.ps1"
 				& ".\PuTTY.ps1"
 				& ".\Sysinternals.ps1"
+				& ".\WinSCP.ps1"
 			Pop-Location
 		Pop-Location
 	}
