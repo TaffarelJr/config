@@ -104,12 +104,16 @@ Push-Location -Path ".\install\"
 
 			Push-Location -Path ".\tools\"
 				& ".\LINQPad.ps1"
-				& ".\Make.ps1"
-				& ".\Node.js.ps1"
-				& ".\NuGetCLI.ps1"
 				& ".\VisualStudio2019.ps1"
 				& ".\VisualStudioCode.ps1"
 				& ".\ReSharper.ps1"
+			Pop-Location
+
+			Push-Location -Path ".\frameworks\"
+				& ".\Make.ps1"
+				& ".\NETFramework4.8.ps1"
+				& ".\Node.js.ps1"
+				& ".\NuGetCLI.ps1"
 			Pop-Location
 		Pop-Location
 	}
