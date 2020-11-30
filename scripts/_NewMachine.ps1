@@ -107,6 +107,7 @@ Push-Location -Path ".\install\"
 				& ".\VisualStudio2019.ps1"
 				& ".\VisualStudioCode.ps1"
 				& ".\ReSharper.ps1"
+				& ".\AzureDataStudio.ps1"
 			Pop-Location
 
 			Push-Location -Path ".\frameworks\"
