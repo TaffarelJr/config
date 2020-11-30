@@ -110,6 +110,7 @@ Push-Location -Path ".\install\"
 			Pop-Location
 
 			Push-Location -Path ".\frameworks\"
+				& ".\AzureCLI.ps1"
 				& ".\Make.ps1"
 				& ".\NETFramework4.8.ps1"
 				& ".\NET5.0.ps1"
