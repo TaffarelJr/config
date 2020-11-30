@@ -101,6 +101,10 @@ Push-Location -Path ".\install\"
 				& ".\GitHubDesktop.ps1"
 				& ".\TortoiseGit.ps1"
 			Pop-Location
+
+			Push-Location -Path ".\tools\"
+				& ".\LINQPad.ps1"
+			Pop-Location
 		Pop-Location
 	}
 
