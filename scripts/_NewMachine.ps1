@@ -95,6 +95,10 @@ Push-Location -Path ".\install\"
 				& ".\CascadiaCodePL.ps1"
 				& ".\FiraCode.ps1"
 			Pop-Location
+
+			Push-Location -Path ".\sourceControl\"
+				& ".\Git.ps1"
+			Pop-Location
 		Pop-Location
 	}
 
