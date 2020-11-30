@@ -90,6 +90,10 @@ Push-Location -Path ".\install\"
 				& ".\WinSCP.ps1"
 				& ".\Wireshark.ps1"
 			Pop-Location
+
+			Push-Location -Path ".\fonts\"
+				& ".\CascadiaCodePL.ps1"
+			Pop-Location
 		Pop-Location
 	}
 
@@ -104,12 +108,12 @@ Push-Location -Path ".\install\"
 		}
 	Pop-Location
 
-	Push-Location -Path ".\games\"
-		if ($installGames) {
+	if ($installGames) {
+		Push-Location -Path ".\games\"
 			& ".\EAOrigin.ps1"
 			& ".\Minecraft.ps1"
 			& ".\Steam.ps1"
 			& ".\UbisoftUplay.ps1"
-		}
-	Pop-Location
+		Pop-Location
+	}
 Pop-Location
