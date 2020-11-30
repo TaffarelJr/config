@@ -93,6 +93,7 @@ Push-Location -Path ".\install\"
 
 			Push-Location -Path ".\fonts\"
 				& ".\CascadiaCodePL.ps1"
+				& ".\FiraCode.ps1"
 			Pop-Location
 		Pop-Location
 	}
