@@ -9,6 +9,6 @@ if (-NOT (Get-Command 'Verify-Chocolatey' -errorAction SilentlyContinue)) {
 	. ".\Chocolatey.ps1"
 }
 
-Write-Header "Install Git for Windows"
+Write-Header "Install GitHub Desktop"
 
-choco install git -y
+choco install github-desktop -y

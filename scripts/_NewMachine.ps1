@@ -98,6 +98,7 @@ Push-Location -Path ".\install\"
 
 			Push-Location -Path ".\sourceControl\"
 				& ".\Git.ps1"
+				& ".\GitHubDesktop.ps1"
 			Pop-Location
 		Pop-Location
 	}
