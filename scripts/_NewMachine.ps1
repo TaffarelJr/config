@@ -109,6 +109,7 @@ Push-Location -Path ".\install\"
 				& ".\NuGetCLI.ps1"
 				& ".\VisualStudio2019.ps1"
 				& ".\VisualStudioCode.ps1"
+				& ".\ReSharper.ps1"
 			Pop-Location
 		Pop-Location
 	}
