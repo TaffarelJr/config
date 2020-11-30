@@ -112,6 +112,7 @@ Push-Location -Path ".\install\"
 			Push-Location -Path ".\frameworks\"
 				& ".\Make.ps1"
 				& ".\NETFramework4.8.ps1"
+				& ".\NET5.0.ps1"
 				& ".\Node.js.ps1"
 				& ".\NuGetCLI.ps1"
 			Pop-Location
