@@ -5,7 +5,7 @@
 Test-IsRunningAsAdmin
 
 # Install Chocolatey if necessary
-if (-NOT (Get-Command 'Verify-Chocolatey' -errorAction SilentlyContinue)) {
+if (-NOT (Get-Command 'Install-Chocolatey' -errorAction SilentlyContinue)) {
 	. ".\Chocolatey.ps1"
 }
 

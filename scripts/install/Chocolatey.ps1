@@ -7,10 +7,11 @@ catch { }
 # Ensure Admin permissions
 Test-IsRunningAsAdmin
 
-function Verify-Chocolatey {
-	if(test-path "C:\ProgramData\chocolatey\choco.exe"){
+function Install-Chocolatey {
+	if (test-path "C:\ProgramData\chocolatey\choco.exe") {
 		Write-Host "Chocolatey detected"
-	} else {
+	}
+	else {
 		Write-Output "Installing Chocolatey ..."
 		Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	}
@@ -18,4 +19,4 @@ function Verify-Chocolatey {
 
 Write-Header "Install Chocolatey"
 
-Verify-Chocolatey
+Install-Chocolatey
