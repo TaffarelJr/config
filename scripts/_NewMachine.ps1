@@ -85,6 +85,7 @@ Push-Location -Path ".\install\"
 			Push-Location -Path ".\utilities\"
 				& ".\Fiddler.ps1"
 				& ".\Postman.ps1"
+				& ".\PuTTY.ps1"
 			Pop-Location
 		Pop-Location
 	}
