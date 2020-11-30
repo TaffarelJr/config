@@ -53,7 +53,7 @@ Push-Location -Path ".\install\"
 
 	Push-Location -Path ".\browsers\"
 	& {
-		& ".\GoogleChrome.ps1"
+		& ".\Chrome.ps1"
 
 		if ($isDevMachine) {
 			& ".\Firefox.ps1"
