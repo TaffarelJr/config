@@ -86,6 +86,7 @@ Push-Location -Path ".\install\"
 				& ".\Fiddler.ps1"
 				& ".\Postman.ps1"
 				& ".\PuTTY.ps1"
+				& ".\Sysinternals.ps1"
 			Pop-Location
 		Pop-Location
 	}
