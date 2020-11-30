@@ -102,13 +102,11 @@ Push-Location -Path ".\install\"
 				& ".\TortoiseGit.ps1"
 			Pop-Location
 
-			Push-Location -Path ".\tools\"
+			Push-Location -Path ".\ide\"
 				& ".\LINQPad.ps1"
 				& ".\VisualStudio2019.ps1"
 				& ".\VisualStudioCode.ps1"
 				& ".\ReSharper.ps1"
-				& ".\AzureDataStudio.ps1"
-				& ".\AzureServiceBusExplorer.ps1"
 			Pop-Location
 
 			Push-Location -Path ".\frameworks\"
@@ -118,6 +116,11 @@ Push-Location -Path ".\install\"
 				& ".\NET5.0.ps1"
 				& ".\Node.js.ps1"
 				& ".\NuGetCLI.ps1"
+			Pop-Location
+
+			Push-Location -Path ".\databases\"
+				& ".\AzureDataStudio.ps1"
+				& ".\AzureServiceBusExplorer.ps1"
 			Pop-Location
 		Pop-Location
 	}
