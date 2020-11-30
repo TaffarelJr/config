@@ -121,6 +121,7 @@ Push-Location -Path ".\install\"
 			Push-Location -Path ".\databases\"
 				& ".\AzureDataStudio.ps1"
 				& ".\AzureServiceBusExplorer.ps1"
+				& ".\SQLServer2019.ps1"
 			Pop-Location
 		Pop-Location
 	}
