@@ -105,6 +105,7 @@ Push-Location -Path ".\install\"
 			Push-Location -Path ".\tools\"
 				& ".\LINQPad.ps1"
 				& ".\Make.ps1"
+				& ".\Node.js.ps1"
 			Pop-Location
 		Pop-Location
 	}
