@@ -107,6 +107,7 @@ Push-Location -Path ".\install\"
 				& ".\Make.ps1"
 				& ".\Node.js.ps1"
 				& ".\NuGetCLI.ps1"
+				& ".\VisualStudio2019.ps1"
 			Pop-Location
 		Pop-Location
 	}
