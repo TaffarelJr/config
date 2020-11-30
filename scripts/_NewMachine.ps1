@@ -80,6 +80,14 @@ Push-Location -Path ".\install\"
 		& ".\Zoom.ps1"
 	Pop-Location
 
+	if ($isDevMachine) {
+		Push-Location -Path ".\development\"
+			Push-Location -Path ".\utilities\"
+				& ".\Fiddler.ps1"
+			Pop-Location
+		Pop-Location
+	}
+
 	Push-Location -Path ".\graphics\"
 		& ".\Paint.NET.ps1"
 		if ($installAdvGraphicsTools) {
