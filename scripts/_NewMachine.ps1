@@ -88,6 +88,7 @@ Push-Location -Path ".\install\"
 				& ".\PuTTY.ps1"
 				& ".\Sysinternals.ps1"
 				& ".\WinSCP.ps1"
+				& ".\Wireshark.ps1"
 			Pop-Location
 		Pop-Location
 	}
