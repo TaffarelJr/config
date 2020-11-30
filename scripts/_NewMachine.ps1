@@ -108,6 +108,7 @@ Push-Location -Path ".\install\"
 				& ".\VisualStudioCode.ps1"
 				& ".\ReSharper.ps1"
 				& ".\AzureDataStudio.ps1"
+				& ".\AzureServiceBusExplorer.ps1"
 			Pop-Location
 
 			Push-Location -Path ".\frameworks\"
