@@ -24,36 +24,45 @@ $installGames = Show-BooleanChoice -Caption "Games" -Message "Install games?" `
 	-YesHelpText "Install games." `
 	-NoHelpText "Do not install games."
 
+# Configure Windows
 Push-Location -Path ".\configure\"
-	# Set computer name
+& {
 	& ".\ComputerName.ps1"
 
-	# Configure Windows
 	& ".\OneDrive.ps1"
 	& ".\OpenCommandWindowHere.ps1"
 	& ".\SearchExtensions.ps1"
 	& ".\WindowsExplorer.ps1"
 	& ".\WindowsStore.ps1"
+
 	if ($isRJsProfile) {
 		& ".\SearchOptions.ps1"
 		& ".\WindowsTheme.ps1"
+
 		if ($isDevMachine) {
 			& ".\DeveloperMode.ps1"
 		}
 	}
+}
 Pop-Location
 
+# Install applications
 Push-Location -Path ".\install\"
+& {
 	. ".\Chocolatey.ps1"
 
 	Push-Location -Path ".\browsers\"
+	& {
 		& ".\GoogleChrome.ps1"
+
 		if ($isDevMachine) {
 			& ".\Firefox.ps1"
 		}
+	}
 	Pop-Location
 
 	Push-Location -Path ".\utilities\"
+	& {
 		& ".\7Zip.ps1"
 		& ".\AttributeChanger.ps1"
 		& ".\LinkShellExtension.ps1"
@@ -61,75 +70,97 @@ Push-Location -Path ".\install\"
 		& ".\PiriformCCleaner.ps1"
 		& ".\PiriformDefraggler.ps1"
 		& ".\SpaceSniffer.ps1"
+
 		if ($isRJsProfile) {
 			& ".\AdvancedRenamer.ps1"
 			& ".\Divvy.ps1"
 			& ".\DuplicateCleaner.ps1"
 			& ".\FreeDownloadManager.ps1"
 		}
+	}
 	Pop-Location
 
 	Push-Location -Path ".\cloudStorage\"
+	& {
 		& ".\Dropbox.ps1"
 		& ".\GoogleBackupAndSync.ps1"
+	}
 	Pop-Location
 
 	Push-Location -Path ".\communications\"
+	& {
 		& ".\Slack.ps1"
 		& ".\Zoom.ps1"
+	}
 	Pop-Location
 
 	if ($isDevMachine) {
 		Push-Location -Path ".\development\"
+		& {
 			Push-Location -Path ".\utilities\"
+			& {
 				& ".\Fiddler.ps1"
 				& ".\Postman.ps1"
 				& ".\PuTTY.ps1"
 				& ".\Sysinternals.ps1"
 				& ".\WinSCP.ps1"
 				& ".\Wireshark.ps1"
+			}
 			Pop-Location
 
 			Push-Location -Path ".\fonts\"
+			& {
 				& ".\CascadiaCodePL.ps1"
 				& ".\FiraCode.ps1"
+			}
 			Pop-Location
 
 			Push-Location -Path ".\sourceControl\"
+			& {
 				& ".\Git.ps1"
 				& ".\GitHubDesktop.ps1"
 				& ".\TortoiseGit.ps1"
+			}
 			Pop-Location
 
 			Push-Location -Path ".\ide\"
+			& {
 				& ".\LINQPad.ps1"
 				& ".\VisualStudio2019.ps1"
 				& ".\VisualStudioCode.ps1"
 				& ".\ReSharper.ps1"
+			}
 			Pop-Location
 
 			Push-Location -Path ".\frameworks\"
+			& {
 				& ".\AzureCLI.ps1"
 				& ".\Make.ps1"
 				& ".\NETFramework4.8.ps1"
 				& ".\NET5.0.ps1"
 				& ".\Node.js.ps1"
 				& ".\NuGetCLI.ps1"
+			}
 			Pop-Location
 
 			Push-Location -Path ".\databases\"
+			& {
 				& ".\AzureDataStudio.ps1"
 				& ".\AzureServiceBusExplorer.ps1"
 				& ".\PostgreSQL.ps1"
 				& ".\pgAdmin.ps1"
 				& ".\SQLServer2019.ps1"
 				& ".\SQLServerManagementStudio.ps1"
+			}
 			Pop-Location
+		}
 		Pop-Location
 	}
 
 	Push-Location -Path ".\graphics\"
+	& {
 		& ".\Paint.NET.ps1"
+
 		if ($installAdvGraphicsTools) {
 			& ".\Gimp.ps1"
 			& ".\Hugin.ps1"
@@ -137,14 +168,18 @@ Push-Location -Path ".\install\"
 			& ".\MicrosoftICE.ps1"
 			& ".\Shotcut.ps1"
 		}
+	}
 	Pop-Location
 
 	if ($installGames) {
 		Push-Location -Path ".\games\"
+		& {
 			& ".\EAOrigin.ps1"
 			& ".\Minecraft.ps1"
 			& ".\Steam.ps1"
 			& ".\UbisoftUplay.ps1"
+		}
 		Pop-Location
 	}
+}
 Pop-Location
