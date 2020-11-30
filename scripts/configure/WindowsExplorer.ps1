@@ -7,6 +7,7 @@ Test-IsRunningAsAdmin
 Write-Header "Configure Windows Explorer"
 
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\"
+& {
 	Write-Host "Show hidden files, folders, and drives"
 	Set-ItemProperty -Path "." -Name "Hidden" -Type "DWord" -Value "1"
 
@@ -27,4 +28,5 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Ad
 
 	Write-Host "Show encrypted or compressed NTFS files in color"
 	Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1"
+}
 Pop-Location

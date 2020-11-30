@@ -16,15 +16,19 @@ $accentPalette_PurpleShadowDark = [byte[]]@(`
 Write-Header "Configure Windows theme"
 
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"
+& {
 	Push-Location -Path ".\Themes\Personalize\"
+	& {
 		Write-Host (Add-Indent "Apply dark theme to Windows")
 		Set-ItemProperty -Path "." -Name "SystemUsesLightTheme" -Type "DWord" -Value "0"
 
 		Write-Host (Add-Indent "Apply dark theme to applications")
 		Set-ItemProperty -Path "." -Name "AppsUseLightTheme" -Type "DWord" -Value "0"
+	}
 	Pop-Location
 
 	Push-Location -Path ".\Explorer\Accent\"
+	& {
 		Write-Host (Add-Indent "Set Windows accent color")
 		Set-ItemProperty -Path "." -Name "AccentColorMenu" -Type "DWord" -Value $accentColorMenu_PurpleShadowDark
 
@@ -33,5 +37,7 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"
 
 		Write-Host (Add-Indent "Set Windows start color")
 		Set-ItemProperty -Path "." -Name "StartColorMenu" -Type "DWord" -Value $startColorMenu_PurpleShadowDark
+	}
 	Pop-Location
+}
 Pop-Location
