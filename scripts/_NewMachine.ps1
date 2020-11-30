@@ -1,5 +1,4 @@
 # Load supporting script files
-. ".\UserPrompts.ps1"
 . ".\Utilities.ps1"
 
 # Ensure Admin permissions
