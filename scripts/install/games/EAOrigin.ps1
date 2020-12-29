@@ -6,9 +6,8 @@ Test-IsRunningAsAdmin
 
 # Install Chocolatey if necessary
 if (-NOT (Get-Command 'Install-Chocolatey' -errorAction SilentlyContinue)) {
-	. ".\Chocolatey.ps1"
+    . ".\Chocolatey.ps1"
 }
 
 Write-Header "Install EA Origin"
-
 choco install origin -y

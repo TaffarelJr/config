@@ -6,9 +6,8 @@ Test-IsRunningAsAdmin
 
 # Install Chocolatey if necessary
 if (-NOT (Get-Command 'Install-Chocolatey' -errorAction SilentlyContinue)) {
-	. ".\Chocolatey.ps1"
+    . ".\Chocolatey.ps1"
 }
 
 Write-Header "Install Google Backup And Sync"
-
 choco install google-backup-and-sync -y

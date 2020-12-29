@@ -1,58 +1,58 @@
 <UserSettings>
-	<ApplicationIdentity version="16.0"/>
-	<ToolsOptions>
-		<ToolsOptionsCategory name="Environment" RegisteredName="Environment">
-			<ToolsOptionsSubCategory name="ProjectsAndSolution" RegisteredName="ProjectsAndSolution" PackageName="Visual Studio Environment Package">
-				<PropertyValue name="MSBuildOutputVerbosity">2</PropertyValue><!--2=Normal, 3=Detailed-->
-			</ToolsOptionsSubCategory>
-		</ToolsOptionsCategory>
-		<ToolsOptionsCategory name="Projects" RegisteredName="Projects">
-			<ToolsOptionsSubCategory name="VBDefaults" RegisteredName="VBDefaults" PackageName="Visual Basic Project System">
-				<PropertyValue name="OptionCompare">0</PropertyValue>
-				<PropertyValue name="OptionExplicit">1</PropertyValue>
-				<PropertyValue name="OptionInfer">1</PropertyValue>
-				<PropertyValue name="OptionStrict">1</PropertyValue>
-			</ToolsOptionsSubCategory>
-		</ToolsOptionsCategory>
-		<ToolsOptionsCategory name="TextEditor" RegisteredName="TextEditor">
-			<ToolsOptionsSubCategory name="AllLanguages" RegisteredName="AllLanguages" PackageName="Text Management Package">
-				<PropertyValue name="ShowLineNumbers">true</PropertyValue>
-				<PropertyValue name="IndentStyle">2</PropertyValue>
-				<PropertyValue name="TabSize">4</PropertyValue>
-				<PropertyValue name="IndentSize">4</PropertyValue>
-				<PropertyValue name="InsertTabs">true</PropertyValue>
-			</ToolsOptionsSubCategory>
-		</ToolsOptionsCategory>
-	</ToolsOptions>
-	<Category name="Environment_Group" RegisteredName="Environment_Group">
-		<Category name="Environment_ObjectBrowser" Category="{D98D784D-88BF-4EBF-B039-C146EC14F472}" Package="{DA9FB551-C724-11d0-AE1F-00A0C90FFFC3}" RegisteredName="Environment_ObjectBrowser" PackageName="Visual Studio Environment Package">
-			<PropertyValue name="ObjectBrowserViewNamespaces">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserShowHiddenTypesAndMembers">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserTypesSortAlphabetically">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserTypesSortByType">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserTypesSortByAccess">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserTypesGroupByType">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserSearchResultsSortByBestMatch">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserSearchResultsSortAlphabetically">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserSearchResultsSortByType">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserSearchResultsSortByAccess">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserSearchResultsGroupByType">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserMembersViewPublic">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserMembersViewProtected">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserMembersViewPrivate">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserMembersViewOther">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserMembersShowInherited">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserShowExtensionMembers">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserShowBaseTypes">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserShowDerivedTypes">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserMembersSortAlphabetically">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserMembersSortByType">true</PropertyValue>
-			<PropertyValue name="ObjectBrowserMembersSortByAccess">false</PropertyValue>
-			<PropertyValue name="ObjectBrowserScope">{B1BA9461-FC54-45B3-A484-CB6DD0B95C94}</PropertyValue>
-			<PropertyValue name="ObjectBrowserScopeSubScope">0</PropertyValue>
-		</Category>
-	</Category>
-	<Category name="WebProjects" Category="{C78AFEEB-A722-4cf3-AD3F-8694126C2145}" Package="{39c9c826-8ef8-4079-8c95-428f5b1c323f}" RegisteredName="WebProjects" PackageName="Visual Web Developer Project System Package">
-		<PropertyValue name="Use64BitIISExpress">true</PropertyValue>
-	</Category>
+    <ApplicationIdentity version="16.0"/>
+    <ToolsOptions>
+        <ToolsOptionsCategory name="Environment" RegisteredName="Environment">
+            <ToolsOptionsSubCategory name="ProjectsAndSolution" RegisteredName="ProjectsAndSolution" PackageName="Visual Studio Environment Package">
+                <PropertyValue name="MSBuildOutputVerbosity">2</PropertyValue><!--2=Normal, 3=Detailed-->
+            </ToolsOptionsSubCategory>
+        </ToolsOptionsCategory>
+        <ToolsOptionsCategory name="Projects" RegisteredName="Projects">
+            <ToolsOptionsSubCategory name="VBDefaults" RegisteredName="VBDefaults" PackageName="Visual Basic Project System">
+                <PropertyValue name="OptionCompare">0</PropertyValue>
+                <PropertyValue name="OptionExplicit">1</PropertyValue>
+                <PropertyValue name="OptionInfer">1</PropertyValue>
+                <PropertyValue name="OptionStrict">1</PropertyValue>
+            </ToolsOptionsSubCategory>
+        </ToolsOptionsCategory>
+        <ToolsOptionsCategory name="TextEditor" RegisteredName="TextEditor">
+            <ToolsOptionsSubCategory name="AllLanguages" RegisteredName="AllLanguages" PackageName="Text Management Package">
+                <PropertyValue name="ShowLineNumbers">true</PropertyValue>
+                <PropertyValue name="IndentStyle">2</PropertyValue>
+                <PropertyValue name="TabSize">4</PropertyValue>
+                <PropertyValue name="IndentSize">4</PropertyValue>
+                <PropertyValue name="InsertTabs">true</PropertyValue>
+            </ToolsOptionsSubCategory>
+        </ToolsOptionsCategory>
+    </ToolsOptions>
+    <Category name="Environment_Group" RegisteredName="Environment_Group">
+        <Category name="Environment_ObjectBrowser" Category="{D98D784D-88BF-4EBF-B039-C146EC14F472}" Package="{DA9FB551-C724-11d0-AE1F-00A0C90FFFC3}" RegisteredName="Environment_ObjectBrowser" PackageName="Visual Studio Environment Package">
+            <PropertyValue name="ObjectBrowserViewNamespaces">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserShowHiddenTypesAndMembers">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserTypesSortAlphabetically">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserTypesSortByType">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserTypesSortByAccess">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserTypesGroupByType">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserSearchResultsSortByBestMatch">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserSearchResultsSortAlphabetically">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserSearchResultsSortByType">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserSearchResultsSortByAccess">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserSearchResultsGroupByType">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserMembersViewPublic">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserMembersViewProtected">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserMembersViewPrivate">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserMembersViewOther">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserMembersShowInherited">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserShowExtensionMembers">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserShowBaseTypes">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserShowDerivedTypes">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserMembersSortAlphabetically">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserMembersSortByType">true</PropertyValue>
+            <PropertyValue name="ObjectBrowserMembersSortByAccess">false</PropertyValue>
+            <PropertyValue name="ObjectBrowserScope">{B1BA9461-FC54-45B3-A484-CB6DD0B95C94}</PropertyValue>
+            <PropertyValue name="ObjectBrowserScopeSubScope">0</PropertyValue>
+        </Category>
+    </Category>
+    <Category name="WebProjects" Category="{C78AFEEB-A722-4cf3-AD3F-8694126C2145}" Package="{39c9c826-8ef8-4079-8c95-428f5b1c323f}" RegisteredName="WebProjects" PackageName="Visual Web Developer Project System Package">
+        <PropertyValue name="Use64BitIISExpress">true</PropertyValue>
+    </Category>
 </UserSettings>
