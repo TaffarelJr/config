@@ -12,9 +12,10 @@ $computerName = Read-Host -Prompt (Add-Indent "<press ENTER to skip>")
 
 Write-Host
 if ($computerName.Length -gt 0) {
-	Write-Host "Renaming ..."
-	Rename-Computer -NewName $computerName
-	Write-Host "Done. A restart will be required before this takes effect."
-} else {
-	Write-Host "Skipping ..."
+    Write-Host "Renaming ..."
+    Rename-Computer -NewName $computerName
+    Write-Host "Done. A restart will be required before this takes effect."
+}
+else {
+    Write-Host "Skipping ..."
 }
