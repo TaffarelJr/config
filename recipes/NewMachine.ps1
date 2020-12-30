@@ -14,12 +14,7 @@ function Invoke-Script {
     Invoke-Expression ((New-Object Net.WebClient).DownloadString("$scriptUri/$script"))
 }
 
-function Import-Script {
-    param ([string]$script)
-    Invoke-Expression ". $((New-Object Net.WebClient).DownloadString("$scriptUri/$script"))"
-}
-
-Import-Script "Utilities.ps1"
+Invoke-Script "Utilities.ps1"
 
 #--- Run scripts ---
 Invoke-Script "WindowsUpdates.ps1"
