@@ -11,10 +11,16 @@ Write-Host "Script base URI is '$scriptUri'"
 
 function Invoke-Script {
     param ([string]$script)
-    Write-Host "Invoking script '$scriptUri/$script' ..."
     Invoke-Expression ((New-Object Net.WebClient).DownloadString("$scriptUri/$script"))
 }
 
+function Import-Script {
+    param ([string]$script)
+    Invoke-Expression ". $((New-Object Net.WebClient).DownloadString("$scriptUri/$script"))"
+}
+
+Import-Script "Utilities.ps1"
+
 #--- Run scripts ---
-Invoke-Script "WindowsUpdates.ps1";
-Invoke-Script "WindowsExplorer.ps1";
+Invoke-Script "WindowsUpdates.ps1"
+Invoke-Script "WindowsExplorer.ps1"
