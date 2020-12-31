@@ -25,13 +25,12 @@ Push-Location -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnl
 # Enable Windows Subsystem for Linux (WSL)
 choco install -y Microsoft-Hyper-V-All -source windowsFeatures
 choco install -y Microsoft-Windows-Subsystem-Linux -source windowsfeatures
-Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-1804 -OutFile ~/Ubuntu.appx -UseBasicParsing
+Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-2004 -OutFile ~/Ubuntu.appx -UseBasicParsing
 Add-AppxPackage -Path ~/Ubuntu.appx
-
 RefreshEnv
-Ubuntu1804 install --root
-Ubuntu1804 run apt update
-Ubuntu1804 run apt upgrade
+Ubuntu2004 install --root
+Ubuntu2004 run apt update
+Ubuntu2004 run apt upgrade
 
 # Install additional browsers
 choco install -y firefox
@@ -49,12 +48,18 @@ choco install -y cascadiacodepl
 choco install -y firacode
 
 # Install source control tools
-choco install -y git
+choco install -y git --package-parameters="'/GitAndUnixToolsOnPath /WindowsTerminal'"
 choco install -y github-desktop
 choco install -y tortoisegit
 
+# Install Docker
+Enable-WindowsOptionalFeature -Online -FeatureName containers -All
+RefreshEnv
+choco install -y docker-for-windows
+
 # Install Visual Studio
 choco install -y visualstudio2019professional
+RefreshEnv
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile ".\VisualStudio.vssettings"
 devenv /ResetSettings ".\VisualStudio.vssettings"
 
