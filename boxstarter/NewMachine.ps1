@@ -151,40 +151,43 @@ Move-LibraryDirectory "Downloads" "$env:UserProfile\OneDrive\Downloads"
 
 # Install browsers
 choco install -y googlechrome
-Remove-Item "C:\Users\Public\Desktop\Google Chrome"
+Remove-Item "C:\Users\Public\Desktop\Google Chrome.lnk"
 
 # Install utilities
 choco install -y 7zip
 choco install -y ccleaner
-Remove-Item "C:\Users\Public\Desktop\CCleaner"
+Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk"
 choco install -y defraggler
-Remove-Item "C:\Users\Public\Desktop\Defraggler"
+Remove-Item "C:\Users\Public\Desktop\Defraggler.lnk"
 choco install -y notepadplusplus
 choco install -y spacesniffer
 
 # Install additional cloud storage providers
 choco install -y dropbox
 choco install -y google-backup-and-sync
-Remove-Item "C:\Users\Public\Desktop\Google Docs"
-Remove-Item "C:\Users\Public\Desktop\Google Sheets"
-Remove-Item "C:\Users\Public\Desktop\Google Slides"
+Remove-Item "C:\Users\Public\Desktop\Google Docs.lnk"
+Remove-Item "C:\Users\Public\Desktop\Google Sheets.lnk"
+Remove-Item "C:\Users\Public\Desktop\Google Slides.lnk"
 
 # Install communications tools
 choco install -y slack
 choco install -y zoom
-Remove-Item "C:\Users\Public\Desktop\Zoom"
+Remove-Item "C:\Users\Public\Desktop\Zoom.lnk"
 
 # Install graphics tools
 choco install -y paint.net
-Remove-Item "C:\Users\Public\Desktop\paint.net"
+Remove-Item "C:\Users\Public\Desktop\paint.net.lnk"
 
-# Unlock Windows Store
-Write-Host "Unlock Windows Store"
-Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"; & {
-    Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
-    Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
-    Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
-}; Pop-Location
+# Unlock Windows Store (Windows 10 Pro only)
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"
+if (Test-Path $regPath) {
+    Write-Host "Unlock Windows Store"
+    Push-Location -Path $regPath; & {
+        Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
+        Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
+        Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
+    }; Pop-Location
+}
 
 # Post
 Enable-UAC
