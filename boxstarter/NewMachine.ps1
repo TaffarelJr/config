@@ -178,13 +178,16 @@ Remove-Item "C:\Users\Public\Desktop\Zoom.lnk"
 choco install -y paint.net
 Remove-Item "C:\Users\Public\Desktop\paint.net.lnk"
 
-# Unlock Windows Store
-Write-Host "Unlock Windows Store"
-Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"; & {
-    Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
-    Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
-    Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
-}; Pop-Location
+# Unlock Windows Store (Windows 10 Pro only)
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"
+if (Test-Path $regPath) {
+    Write-Host "Unlock Windows Store"
+    Push-Location -Path $regPath; & {
+        Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
+        Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
+        Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
+    }; Pop-Location
+}
 
 # Post
 Enable-UAC
