@@ -110,7 +110,9 @@ Write-Host "Configure Windows Search file extensions"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 Push-Location -Path "HKCR:\"; & {
     foreach ($extension in $indexExtensions) {
-        Push-Location -Path ".\$extension\PersistentHandler\"; & {
+        $regPath = "HKCR:\$extension\PersistentHandler"
+        New-Item $regPath -Force | Out-Null
+        Push-Location -Path $regPath; & {
             Set-ItemProperty -Path "." -Name "(Default)"                 -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
             Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
         }; Pop-Location
