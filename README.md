@@ -1,24 +1,38 @@
 # Config
 
-Machine configuration and setup.
+Contains various files and scripts geared towards configuring a computer and installing standard tools applications.
+
+## App Configuration Files
 
 Configuration files for common applications are stored in the [apps](./apps) folder.
 
-PowerShell scripts for automatically installing & configuring various applications are stored in the [scripts](./scripts) folder.
+## [Boxstarter](https://boxstarter.org)
 
-- Just about all scripts require PowerShell to be launched with Administrator privileges.
-- Running the [NewMachine](./scripts/_NewMachine.ps1) script will run all the other scripts in turn, effectively configuring a blank machine with everything it needs.
+The [boxstarter](./boxstarter) folder contains scripts to automatically configure a computer and install various applications on it. To run them manually:
 
-## Boxstarter
+```powershell
+# Install Boxstarter
+. { iwr -useb https://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
 
-To install these recipies, follow these steps:
+# Set execution policy
+Set-ExecutionPolicy RemoteSigned
+
+# Launch Boxstarter, pointing to a URL or local path to the script to be run
+Install-BoxstarterPackage -PackageName <URL-TO-RAW-OR-GIST> -DisableReboots
+```
+
+Or, a quicker way to run these scripts is to use ClickOnce:
 
 1. Open the Microsoft Edge browser (required to launch ClickOnce applications)
-2. Navigate to [edge://flags](edge://flags/#edge-click-once) and enable `ClickOnce Support`
+2. Navigate to [edge://flags/#edge-click-once](edge://flags/#edge-click-once) and enable `ClickOnce Support`
 3. Relaunch the Microsoft Edge browser as Administrator
 4. Navigate back to this repository
-5. Click on the link(s) below to install the desired recipies
+5. Click on the link(s) below to run the desired scripts (as necessary; perfer top to bottom)
 
-| Recipe<br/>_(click to run)_                                                                                                      | Description                                                  |
-| -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| [New Machine](http://boxstarter.org/package/url?https://raw.githubusercontent.com/TaffarelJr/config/main/recipes/NewMachine.ps1) | Configure basic settings for a clean Windows 10 installation |
+| Recipe<br/>_(click to run)_                                                                                                         | Description                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [New Machine](http://boxstarter.org/package/url?https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/NewMachine.ps1) | Configure basic settings for a clean Windows 10 installation          |
+| [Profile: RJ](http://boxstarter.org/package/url?https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Profile-RJ.ps1) | Configure RJ's user profile settings & install preferred applications |
+| [Developer](http://boxstarter.org/package/url?https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Developer.ps1)    | Install developer tools, frameworks, and SDKs                         |
+| [Graphics](http://boxstarter.org/package/url?https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Graphics.ps1)      | Install advanced graphics editing tools                               |
+| [Games](http://boxstarter.org/package/url?https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Games.ps1)            | Install games & game platforms                                        |
