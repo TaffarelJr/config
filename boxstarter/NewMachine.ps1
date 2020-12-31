@@ -151,24 +151,32 @@ Move-LibraryDirectory "Downloads" "$env:UserProfile\OneDrive\Downloads"
 
 # Install browsers
 choco install -y googlechrome
+Remove-Item "C:\Users\Public\Desktop\Google Chrome"
 
 # Install utilities
 choco install -y 7zip
 choco install -y ccleaner
+Remove-Item "C:\Users\Public\Desktop\CCleaner"
 choco install -y defraggler
+Remove-Item "C:\Users\Public\Desktop\Defraggler"
 choco install -y notepadplusplus
 choco install -y spacesniffer
 
 # Install additional cloud storage providers
 choco install -y dropbox
 choco install -y google-backup-and-sync
+Remove-Item "C:\Users\Public\Desktop\Google Docs"
+Remove-Item "C:\Users\Public\Desktop\Google Sheets"
+Remove-Item "C:\Users\Public\Desktop\Google Slides"
 
 # Install communications tools
 choco install -y slack
 choco install -y zoom
+Remove-Item "C:\Users\Public\Desktop\Zoom"
 
 # Install graphics tools
 choco install -y paint.net
+Remove-Item "C:\Users\Public\Desktop\paint.net"
 
 # Unlock Windows Store
 Write-Host "Unlock Windows Store"
