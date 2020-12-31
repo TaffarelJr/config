@@ -168,7 +168,7 @@ choco install -y zoom
 choco install -y paint.net
 
 # Unlock Windows Store
-Write-Header "Unlock Windows Store"
+Write-Host "Unlock Windows Store"
 Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"; & {
     Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
     Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
