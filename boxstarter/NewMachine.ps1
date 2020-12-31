@@ -86,8 +86,9 @@ if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
 Install-WindowsUpdate -AcceptEula
 
 # Remove bloatware
+Write-Host "Remove Windows Bloatware"
 foreach ($app in $unwantedApps) {
-    Write-Host "Trying to remove $app"
+    Write-Host "    $app"
     $ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
     Get-AppxPackage $app -AllUsers | Remove-AppxPackage
     $ProgressPreference = "Continue"
@@ -113,6 +114,7 @@ Write-Host "Configure Windows Search file extensions"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 Push-Location -Path "HKCR:\"; & {
     foreach ($extension in $indexExtensions) {
+        Write-Host "    $extension"
         $regPath = "HKCR:\$extension\PersistentHandler\"
         New-Item $regPath -Force | Out-Null
         Push-Location -Path $regPath; & {
