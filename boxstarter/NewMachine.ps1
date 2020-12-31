@@ -16,10 +16,12 @@
 $unwantedApps = @(
     "*BubbleWitch*"
     "*CandyCrush*"
+    "*Dell*"
     "*Facebook*"
     "*Flipboard*"
     "*iHeartRadio*"
     "*McAfee*"
+    "*Minecraft*"
     "*Netflix*"
     "*Shazam*"
     "*Twitter*"
@@ -32,9 +34,10 @@ $unwantedApps = @(
     "Microsoft.GetHelp"
     "Microsoft.Getstarted"
     "Microsoft.Messaging"
+    "Microsoft.Microsoft3DViewer"
     "Microsoft.MicrosoftOfficeHub"
     "Microsoft.MicrosoftSolitaireCollection"
-    "Microsoft.MinecraftUWP"
+    "Microsoft.MixedReality.Portal"
     "Microsoft.NetworkSpeedTest"
     "Microsoft.Office.Sway"
     "Microsoft.OneConnect"
@@ -83,8 +86,9 @@ if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
 Install-WindowsUpdate -AcceptEula
 
 # Remove bloatware
+Write-Host "Remove Windows Bloatware"
 foreach ($app in $unwantedApps) {
-    Write-Host "Trying to remove $app"
+    Write-Host "    $app"
     $ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
     Get-AppxPackage $app -AllUsers | Remove-AppxPackage
     $ProgressPreference = "Continue"
@@ -110,6 +114,7 @@ Write-Host "Configure Windows Search file extensions"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 Push-Location -Path "HKCR:\"; & {
     foreach ($extension in $indexExtensions) {
+        Write-Host "    $extension"
         $regPath = "HKCR:\$extension\PersistentHandler\"
         New-Item $regPath -Force | Out-Null
         Push-Location -Path $regPath; & {
@@ -141,29 +146,40 @@ if (Test-Path $regPath) {
     }; Pop-Location
 }
 
+# Move 'Downloads' folder to OneDrive
+Move-LibraryDirectory "Downloads" "$env:UserProfile\OneDrive\Downloads"
+
 # Install browsers
 choco install -y googlechrome
+Remove-Item "C:\Users\Public\Desktop\Google Chrome"
 
 # Install utilities
 choco install -y 7zip
 choco install -y ccleaner
+Remove-Item "C:\Users\Public\Desktop\CCleaner"
 choco install -y defraggler
+Remove-Item "C:\Users\Public\Desktop\Defraggler"
 choco install -y notepadplusplus
 choco install -y spacesniffer
 
 # Install additional cloud storage providers
 choco install -y dropbox
 choco install -y google-backup-and-sync
+Remove-Item "C:\Users\Public\Desktop\Google Docs"
+Remove-Item "C:\Users\Public\Desktop\Google Sheets"
+Remove-Item "C:\Users\Public\Desktop\Google Slides"
 
 # Install communications tools
 choco install -y slack
 choco install -y zoom
+Remove-Item "C:\Users\Public\Desktop\Zoom"
 
 # Install graphics tools
 choco install -y paint.net
+Remove-Item "C:\Users\Public\Desktop\paint.net"
 
 # Unlock Windows Store
-Write-Header "Unlock Windows Store"
+Write-Host "Unlock Windows Store"
 Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"; & {
     Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
     Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
