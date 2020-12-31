@@ -146,6 +146,9 @@ if (Test-Path $regPath) {
     }; Pop-Location
 }
 
+# Move 'Downloads' folder to OneDrive
+Move-LibraryDirectory "Downloads" "$env:UserProfile\OneDrive\Downloads"
+
 # Install browsers
 choco install -y googlechrome
 
