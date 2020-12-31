@@ -110,7 +110,7 @@ Write-Host "Configure Windows Search file extensions"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 Push-Location -Path "HKCR:\"; & {
     foreach ($extension in $indexExtensions) {
-        $regPath = "HKCR:\$extension\PersistentHandler"
+        $regPath = "HKCR:\$extension\PersistentHandler\"
         New-Item $regPath -Force | Out-Null
         Push-Location -Path $regPath; & {
             Set-ItemProperty -Path "." -Name "(Default)"                 -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
@@ -121,7 +121,7 @@ Push-Location -Path "HKCR:\"; & {
 
 # Configure Windows Search options
 Write-Host "Configure Windows Search options"
-Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Search\"; & {
+Push-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Search\"; & {
     Push-Location -Path ".\Preferences\"; & {
         Set-ItemProperty -Path "." -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
     }; Pop-Location
@@ -131,12 +131,15 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Se
     }; Pop-Location
 }; Pop-Location
 
-# Unlock Microsoft OneDrive
-Write-Host "Unlock Microsoft OneDrive"
-Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive\"; & {
-    Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
-    Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
-}; Pop-Location
+# Unlock Microsoft OneDrive (Windows 10 Pro only)
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive\"
+if (Test-Path $regPath) {
+    Write-Host "Unlock Microsoft OneDrive"
+    Push-Location -Path $regPath; & {
+        Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
+        Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
+    }; Pop-Location
+}
 
 # Install browsers
 choco install -y googlechrome
