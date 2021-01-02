@@ -150,15 +150,29 @@ Push-Location -Path "HKCR:\"; & {
     }
 }; Pop-Location
 
-# Unlock Microsoft OneDrive (Windows 10 Pro only)
-$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive\"
-if (Test-Path $regPath) {
-    Write-Host "Unlock Microsoft OneDrive"
-    Push-Location -Path $regPath; & {
-        Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
-        Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
-    }; Pop-Location
-}
+# Unlock Group Policy settings (Windows 10 Pro only)
+Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
+    # Microsoft OneDrive
+    $regPath = ".\Windows\OneDrive\"
+    if (Test-Path $regPath) {
+        Write-Host "Unlock Microsoft OneDrive"
+        Push-Location -Path $regPath; & {
+            Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
+            Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
+        }; Pop-Location
+    }
+
+    # Windows Store
+    $regPath = ".\WindowsStore\"
+    if (Test-Path $regPath) {
+        Write-Host "Unlock Windows Store"
+        Push-Location -Path $regPath; & {
+            Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
+            Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
+            Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
+        }; Pop-Location
+    }
+}; Pop-Location
 
 # Move 'Downloads' folder to OneDrive
 Move-LibraryDirectory "Downloads" "$env:UserProfile\OneDrive\Downloads"
@@ -191,17 +205,6 @@ Remove-Item "C:\Users\Public\Desktop\Zoom.lnk"
 # Install graphics tools
 choco install -y paint.net
 Remove-Item "C:\Users\Public\Desktop\paint.net.lnk"
-
-# Unlock Windows Store (Windows 10 Pro only)
-$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"
-if (Test-Path $regPath) {
-    Write-Host "Unlock Windows Store"
-    Push-Location -Path $regPath; & {
-        Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
-        Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
-        Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
-    }; Pop-Location
-}
 
 # Post
 Enable-UAC
