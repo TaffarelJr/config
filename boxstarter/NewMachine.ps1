@@ -174,8 +174,14 @@ Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
     }
 }; Pop-Location
 
-# Move 'Downloads' folder to OneDrive
-Move-LibraryDirectory "Downloads" "$env:UserProfile\OneDrive\Downloads"
+# Move library folders to OneDrive
+Write-Host "Move library directories"
+Move-LibraryDirectory -LibraryName "Desktop"     -NewPath "$env:OneDrive\Desktop"   -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "Downloads"   -NewPath "$env:OneDrive\Downloads" -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "My Music"    -NewPath "$env:OneDrive\Music"     -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "My Pictures" -NewPath "$env:OneDrive\Pictures"  -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "My Video"    -NewPath "$env:OneDrive\Videos"    -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "Personal"    -NewPath "$env:OneDrive\Documents" -DoNotMoveOldContent
 
 # Install browsers
 choco install -y googlechrome
