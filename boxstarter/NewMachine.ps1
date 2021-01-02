@@ -14,44 +14,46 @@
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
 $unwantedApps = @(
-    "*BubbleWitch*"
-    "*CandyCrush*"
-    "*Dell*"
-    "*Facebook*"
-    "*Flipboard*"
+    "*HiddenCity*"
     "*iHeartRadio*"
     "*McAfee*"
-    "*Minecraft*"
     "*Netflix*"
-    "*Shazam*"
     "*Twitter*"
-    "Microsoft.3DBuilder"
-    "Microsoft.BingFinance"
-    "Microsoft.BingNews"
-    "Microsoft.BingSports"
-    "Microsoft.BingWeather"
-    "Microsoft.FreshPaint"
-    "Microsoft.GetHelp"
-    "Microsoft.Getstarted"
-    "Microsoft.Messaging"
-    "Microsoft.Microsoft3DViewer"
-    "Microsoft.MicrosoftOfficeHub"
-    "Microsoft.MicrosoftSolitaireCollection"
-    "Microsoft.MixedReality.Portal"
-    "Microsoft.NetworkSpeedTest"
-    "Microsoft.Office.Sway"
-    "Microsoft.OneConnect"
-    "Microsoft.Print3D"
-    "Microsoft.SkypeApp"
-    "Microsoft.WindowsAlarms"
-    "Microsoft.WindowsFeedbackHub"
-    "Microsoft.WindowsMaps"
-    "Microsoft.WindowsPhone"
-    "Microsoft.WindowsSoundRecorder"
-    "Microsoft.XboxApp"
-    "Microsoft.XboxIdentityProvider"
-    "Microsoft.ZuneMusic"
-    "Microsoft.ZuneVideo"
+    "Adobe*"
+    "Dell*"
+    "Dolby*"
+    "Facebook*"
+    "Flipboard*"
+    "Hulu*"
+    "king.com*"
+    "Microsoft.3DBuilder*"
+    "Microsoft.Bing*"
+    "Microsoft.FreshPaint*"
+    "Microsoft.GetHelp*"
+    "Microsoft.Getstarted*"
+    "Microsoft.Messaging*"
+    "Microsoft.Microsoft3DViewer*"
+    "Microsoft.MicrosoftOfficeHub*"
+    "Microsoft.MicrosoftSolitaireCollection*"
+    "Microsoft.Minecraft*"
+    "Microsoft.MixedReality.Portal*"
+    "Microsoft.MSPaint*"
+    "Microsoft.NetworkSpeedTest*"
+    "Microsoft.Office.OneNote*"
+    "Microsoft.Office.Sway*"
+    "Microsoft.OneConnect*"
+    "Microsoft.Print3D*"
+    "Microsoft.SkypeApp*"
+    "Microsoft.WindowsAlarms*"
+    "Microsoft.WindowsFeedbackHub*"
+    "Microsoft.WindowsMaps*"
+    "Microsoft.WindowsPhone*"
+    "Microsoft.WindowsSoundRecorder*"
+    "Microsoft.XboxApp*"
+    "Microsoft.XboxIdentityProvider*"
+    "Microsoft.Zune*"
+    "Roblox*"
+    "Spotify*"
 )
 
 $indexExtensions = @(
@@ -82,32 +84,56 @@ Write-Host "What would you like to rename it to?"
 $computerName = Read-Host -Prompt "<press ENTER to skip>"
 if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
 
-# Install Windows Updates
-Install-WindowsUpdate -AcceptEula
-
-# Remove bloatware
+# Remove bloatware, so we don't update it
 Write-Host "Remove Windows Bloatware"
+$ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
 foreach ($app in $unwantedApps) {
     Write-Host "    $app"
-    $ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
     Get-AppxPackage $app -AllUsers | Remove-AppxPackage
-    $ProgressPreference = "Continue"
     Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $app | Remove-AppxProvisionedPackage -Online
-    $appPath = "$Env:LOCALAPPDATA\Packages\$app*"
-    Remove-Item $appPath -Recurse -Force -ErrorAction 0
+    Remove-Item "$Env:LOCALAPPDATA\Packages\$app" -Recurse -Force -ErrorAction 0
 }
+$ProgressPreference = "Continue"
+
+# Install Windows Updates, so everything's current
+Install-WindowsUpdate -AcceptEula
+# TODO: Update Windows Store apps here
 
 # Configure Windows Explorer
 Write-Host "Configure Windows Explorer"
-Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\"; & {
-    Set-ItemProperty -Path "." -Name "Hidden"                     -Type "DWord" -Value "1" # Show hidden files, folders, and drives
-    Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
-    Set-ItemProperty -Path "." -Name "HideFileExt"                -Type "DWord" -Value "0" # Show extensions for known file types
-    Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value "0" # Show folder merge conflicts
-    Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value "1" # Restore previous folder windows at logon
-    Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value "1" # Launch folder windows in a separate process
-    Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
+Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
+    Push-Location -Path ".\Advanced\"; & {
+        Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
+        Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value "0" # Show folder merge conflicts
+        Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value "1" # Launch folder windows in a separate process
+        Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value "1" # Restore previous folder windows at logon
+        Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
+        Set-ItemProperty -Path "." -Name "NavPaneShowAllFolders"      -Type "DWord" -Value "1" # Show all folders
+    }; Pop-Location
+    Push-Location -Path ".\Search\"; & {
+        Set-ItemProperty -Path ".\Preferences\"                          -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
+        Set-ItemProperty -Path ".\PrimaryProperties\UnindexedLocations\" -Name "SearchOnly"    -Type "DWord" -Value "0" # Always search file names and contents
+    }; Pop-Location
 }; Pop-Location
+
+Set-WindowsExplorerOptions `
+    -DisableOpenFileExplorerToQuickAccess `
+    -EnableShowRecentFilesInQuickAccess `
+    -EnableShowFrequentFoldersInQuickAccess `
+    -EnableShowFullPathInTitleBar `
+    -EnableShowHiddenFilesFoldersDrives `
+    -EnableShowFileExtensions `
+    -DisableShowProtectedOSFiles `
+    -EnableExpandToOpenFolder `
+    -EnableShowRibbon `
+    -EnableSnapAssist
+
+Disable-BingSearch
+
+# Disable Xbox Gamebar
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type "DWord" -Value "0"
+Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                            -Name "GameDVR_Enabled"   -Type "DWord" -Value "0"
+Disable-GameBarTips
 
 # Configure Windows Search file extensions
 Write-Host "Configure Windows Search file extensions"
@@ -124,70 +150,74 @@ Push-Location -Path "HKCR:\"; & {
     }
 }; Pop-Location
 
-# Configure Windows Search options
-Write-Host "Configure Windows Search options"
-Push-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Search\"; & {
-    Push-Location -Path ".\Preferences\"; & {
-        Set-ItemProperty -Path "." -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
-    }; Pop-Location
+# Unlock Group Policy settings (Windows 10 Pro only)
+Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
+    # Microsoft OneDrive
+    $regPath = ".\Windows\OneDrive\"
+    if (Test-Path $regPath) {
+        Write-Host "Unlock Microsoft OneDrive"
+        Push-Location -Path $regPath; & {
+            Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
+            Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
+        }; Pop-Location
+    }
 
-    Push-Location -Path ".\PrimaryProperties\UnindexedLocations\"; & {
-        Set-ItemProperty -Path "." -Name "SearchOnly" -Type "DWord" -Value "0" # Always search file names and contents
-    }; Pop-Location
+    # Windows Store
+    $regPath = ".\WindowsStore\"
+    if (Test-Path $regPath) {
+        Write-Host "Unlock Windows Store"
+        Push-Location -Path $regPath; & {
+            Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
+            Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
+            Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
+        }; Pop-Location
+    }
 }; Pop-Location
 
-# Unlock Microsoft OneDrive (Windows 10 Pro only)
-$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive\"
-if (Test-Path $regPath) {
-    Write-Host "Unlock Microsoft OneDrive"
-    Push-Location -Path $regPath; & {
-        Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
-        Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
-    }; Pop-Location
-}
-
-# Move 'Downloads' folder to OneDrive
-Move-LibraryDirectory "Downloads" "$env:UserProfile\OneDrive\Downloads"
+# Move library folders to OneDrive
+Write-Host "Move library directories"
+Move-LibraryDirectory -LibraryName "Desktop"     -NewPath "$env:OneDrive\Desktop"   -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "Downloads"   -NewPath "$env:OneDrive\Downloads" -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "My Music"    -NewPath "$env:OneDrive\Music"     -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "My Pictures" -NewPath "$env:OneDrive\Pictures"  -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "My Video"    -NewPath "$env:OneDrive\Videos"    -DoNotMoveOldContent
+Move-LibraryDirectory -LibraryName "Personal"    -NewPath "$env:OneDrive\Documents" -DoNotMoveOldContent
 
 # Install browsers
 choco install -y googlechrome
-Remove-Item "C:\Users\Public\Desktop\Google Chrome.lnk"
+Remove-Item "C:\Users\Public\Desktop\Google Chrome.lnk" -ErrorAction Ignore
+Remove-Item "$env:OneDrive\Desktop\Google Chrome.lnk"   -ErrorAction Ignore
 
 # Install utilities
 choco install -y 7zip
+
 choco install -y ccleaner
-Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk"
+Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk" -ErrorAction Ignore
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/ccleaner.ini" -OutFile "C:\Program Files\CCleaner\ccleaner.ini"
+
 choco install -y defraggler
-Remove-Item "C:\Users\Public\Desktop\Defraggler.lnk"
+Remove-Item "C:\Users\Public\Desktop\Defraggler.lnk" -ErrorAction Ignore
+
 choco install -y notepadplusplus
 choco install -y spacesniffer
 
 # Install additional cloud storage providers
 choco install -y dropbox
+
 choco install -y google-backup-and-sync
-Remove-Item "C:\Users\Public\Desktop\Google Docs.lnk"
-Remove-Item "C:\Users\Public\Desktop\Google Sheets.lnk"
-Remove-Item "C:\Users\Public\Desktop\Google Slides.lnk"
+Remove-Item "C:\Users\Public\Desktop\Google Docs.lnk" -ErrorAction Ignore
+Remove-Item "C:\Users\Public\Desktop\Google Sheets.lnk" -ErrorAction Ignore
+Remove-Item "C:\Users\Public\Desktop\Google Slides.lnk" -ErrorAction Ignore
 
 # Install communications tools
 choco install -y slack
+
 choco install -y zoom
-Remove-Item "C:\Users\Public\Desktop\Zoom.lnk"
+Remove-Item "C:\Users\Public\Desktop\Zoom.lnk" -ErrorAction Ignore
 
 # Install graphics tools
 choco install -y paint.net
-Remove-Item "C:\Users\Public\Desktop\paint.net.lnk"
-
-# Unlock Windows Store (Windows 10 Pro only)
-$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\"
-if (Test-Path $regPath) {
-    Write-Host "Unlock Windows Store"
-    Push-Location -Path $regPath; & {
-        Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
-        Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
-        Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
-    }; Pop-Location
-}
+Remove-Item "C:\Users\Public\Desktop\paint.net.lnk" -ErrorAction Ignore
 
 # Post
 Enable-UAC
