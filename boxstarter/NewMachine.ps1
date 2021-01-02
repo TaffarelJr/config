@@ -193,6 +193,7 @@ choco install -y 7zip
 
 choco install -y ccleaner
 Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk" -ErrorAction Ignore
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/ccleaner.ini" -OutFile "C:\Program Files\CCleaner\ccleaner.ini"
 
 choco install -y defraggler
 Remove-Item "C:\Users\Public\Desktop\Defraggler.lnk" -ErrorAction Ignore
