@@ -130,6 +130,11 @@ Set-WindowsExplorerOptions `
 
 Disable-BingSearch
 
+# Disable Xbox Gamebar
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type "DWord" -Value "0"
+Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                            -Name "GameDVR_Enabled"   -Type "DWord" -Value "0"
+Disable-GameBarTips
+
 # Configure Windows Search file extensions
 Write-Host "Configure Windows Search file extensions"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
