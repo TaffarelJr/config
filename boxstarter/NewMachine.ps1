@@ -185,32 +185,38 @@ Move-LibraryDirectory -LibraryName "Personal"    -NewPath "$env:OneDrive\Documen
 
 # Install browsers
 choco install -y googlechrome
-Remove-Item "C:\Users\Public\Desktop\Google Chrome.lnk"
+Remove-Item "C:\Users\Public\Desktop\Google Chrome.lnk" -ErrorAction Ignore
+Remove-Item "$env:OneDrive\Desktop\Google Chrome.lnk"   -ErrorAction Ignore
 
 # Install utilities
 choco install -y 7zip
+
 choco install -y ccleaner
-Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk"
+Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk" -ErrorAction Ignore
+
 choco install -y defraggler
-Remove-Item "C:\Users\Public\Desktop\Defraggler.lnk"
+Remove-Item "C:\Users\Public\Desktop\Defraggler.lnk" -ErrorAction Ignore
+
 choco install -y notepadplusplus
 choco install -y spacesniffer
 
 # Install additional cloud storage providers
 choco install -y dropbox
+
 choco install -y google-backup-and-sync
-Remove-Item "C:\Users\Public\Desktop\Google Docs.lnk"
-Remove-Item "C:\Users\Public\Desktop\Google Sheets.lnk"
-Remove-Item "C:\Users\Public\Desktop\Google Slides.lnk"
+Remove-Item "C:\Users\Public\Desktop\Google Docs.lnk" -ErrorAction Ignore
+Remove-Item "C:\Users\Public\Desktop\Google Sheets.lnk" -ErrorAction Ignore
+Remove-Item "C:\Users\Public\Desktop\Google Slides.lnk" -ErrorAction Ignore
 
 # Install communications tools
 choco install -y slack
+
 choco install -y zoom
-Remove-Item "C:\Users\Public\Desktop\Zoom.lnk"
+Remove-Item "C:\Users\Public\Desktop\Zoom.lnk" -ErrorAction Ignore
 
 # Install graphics tools
 choco install -y paint.net
-Remove-Item "C:\Users\Public\Desktop\paint.net.lnk"
+Remove-Item "C:\Users\Public\Desktop\paint.net.lnk" -ErrorAction Ignore
 
 # Post
 Enable-UAC
