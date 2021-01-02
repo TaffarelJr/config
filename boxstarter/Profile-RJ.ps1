@@ -22,7 +22,9 @@ $purpleShadowDark_accentPalette = [byte[]]@(`
         "0x1f", "0x1f", "0x4d", "0x00", "0x00", "0xcc", "0x6a", "0x00"
 )
 
-$searchLocations = @("C:\Code")
+$searchLocations = @(
+    "C:\Code"
+)
 
 #----------------------------------------------------------------------------------------------------
 # Pre
@@ -57,11 +59,9 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main
 Add-Type -Path ".\Microsoft.Search.Interop.dll"
 $crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
 
-Push-Indent; & {
-    foreach ($location in $searchLocations) {
-        $crawlManager.AddUserScopeRule("file:///$location", $true, $false, $null)
-    }
-}; Pop-Indent
+foreach ($location in $searchLocations) {
+    $crawlManager.AddUserScopeRule("file:///$location", $true, $false, $null)
+}
 
 $crawlManager.SaveAll()
 
