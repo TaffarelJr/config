@@ -95,20 +95,36 @@ foreach ($app in $unwantedApps) {
 }
 $ProgressPreference = "Continue"
 
-# Install Windows Updates
+# Install Windows Updates, so everything's current
 Install-WindowsUpdate -AcceptEula
+# TODO: Update Windows Store apps here
 
 # Configure Windows Explorer
 Write-Host "Configure Windows Explorer"
-Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\"; & {
-    Set-ItemProperty -Path "." -Name "Hidden"                     -Type "DWord" -Value "1" # Show hidden files, folders, and drives
-    Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
-    Set-ItemProperty -Path "." -Name "HideFileExt"                -Type "DWord" -Value "0" # Show extensions for known file types
-    Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value "0" # Show folder merge conflicts
-    Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value "1" # Restore previous folder windows at logon
-    Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value "1" # Launch folder windows in a separate process
-    Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
+Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
+    Push-Location -Path ".\Advanced\"; & {
+        Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
+        Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value "0" # Show folder merge conflicts
+        Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value "1" # Launch folder windows in a separate process
+        Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value "1" # Restore previous folder windows at logon
+        Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
+        Set-ItemProperty -Path "." -Name "NavPaneShowAllFolders"      -Type "DWord" -Value "1" # Show all folders
+    }; Pop-Location
 }; Pop-Location
+
+Set-WindowsExplorerOptions `
+    -DisableOpenFileExplorerToQuickAccess `
+    -EnableShowRecentFilesInQuickAccess `
+    -EnableShowFrequentFoldersInQuickAccess `
+    -EnableShowFullPathInTitleBar `
+    -EnableShowHiddenFilesFoldersDrives `
+    -EnableShowFileExtensions `
+    -DisableShowProtectedOSFiles `
+    -EnableExpandToOpenFolder `
+    -EnableShowRibbon `
+    -EnableSnapAssist
+
+Disable-BingSearch
 
 # Configure Windows Search file extensions
 Write-Host "Configure Windows Search file extensions"

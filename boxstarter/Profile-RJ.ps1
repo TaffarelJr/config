@@ -27,9 +27,6 @@ $searchLocations = @("C:\Code")
 # Pre
 Disable-UAC
 
-# Configure system options
-Disable-BingSearch
-
 # Configure Windows Theme
 Write-Host "Configure Windows theme"
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
