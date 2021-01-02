@@ -14,44 +14,46 @@
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
 $unwantedApps = @(
-    "*BubbleWitch*"
-    "*CandyCrush*"
-    "*Dell*"
-    "*Facebook*"
-    "*Flipboard*"
+    "*HiddenCity*"
     "*iHeartRadio*"
     "*McAfee*"
-    "*Minecraft*"
     "*Netflix*"
-    "*Shazam*"
     "*Twitter*"
-    "Microsoft.3DBuilder"
-    "Microsoft.BingFinance"
-    "Microsoft.BingNews"
-    "Microsoft.BingSports"
-    "Microsoft.BingWeather"
-    "Microsoft.FreshPaint"
-    "Microsoft.GetHelp"
-    "Microsoft.Getstarted"
-    "Microsoft.Messaging"
-    "Microsoft.Microsoft3DViewer"
-    "Microsoft.MicrosoftOfficeHub"
-    "Microsoft.MicrosoftSolitaireCollection"
-    "Microsoft.MixedReality.Portal"
-    "Microsoft.NetworkSpeedTest"
-    "Microsoft.Office.Sway"
-    "Microsoft.OneConnect"
-    "Microsoft.Print3D"
-    "Microsoft.SkypeApp"
-    "Microsoft.WindowsAlarms"
-    "Microsoft.WindowsFeedbackHub"
-    "Microsoft.WindowsMaps"
-    "Microsoft.WindowsPhone"
-    "Microsoft.WindowsSoundRecorder"
-    "Microsoft.XboxApp"
-    "Microsoft.XboxIdentityProvider"
-    "Microsoft.ZuneMusic"
-    "Microsoft.ZuneVideo"
+    "Adobe*"
+    "Dell*"
+    "Dolby*"
+    "Facebook*"
+    "Flipboard*"
+    "Hulu*"
+    "king.com*"
+    "Microsoft.3DBuilder*"
+    "Microsoft.Bing*"
+    "Microsoft.FreshPaint*"
+    "Microsoft.GetHelp*"
+    "Microsoft.Getstarted*"
+    "Microsoft.Messaging*"
+    "Microsoft.Microsoft3DViewer*"
+    "Microsoft.MicrosoftOfficeHub*"
+    "Microsoft.MicrosoftSolitaireCollection*"
+    "Microsoft.Minecraft*"
+    "Microsoft.MixedReality.Portal*"
+    "Microsoft.MSPaint*"
+    "Microsoft.NetworkSpeedTest*"
+    "Microsoft.Office.OneNote*"
+    "Microsoft.Office.Sway*"
+    "Microsoft.OneConnect*"
+    "Microsoft.Print3D*"
+    "Microsoft.SkypeApp*"
+    "Microsoft.WindowsAlarms*"
+    "Microsoft.WindowsFeedbackHub*"
+    "Microsoft.WindowsMaps*"
+    "Microsoft.WindowsPhone*"
+    "Microsoft.WindowsSoundRecorder*"
+    "Microsoft.XboxApp*"
+    "Microsoft.XboxIdentityProvider*"
+    "Microsoft.Zune*"
+    "Roblox*"
+    "Spotify*"
 )
 
 $indexExtensions = @(
@@ -82,20 +84,19 @@ Write-Host "What would you like to rename it to?"
 $computerName = Read-Host -Prompt "<press ENTER to skip>"
 if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
 
-# Install Windows Updates
-Install-WindowsUpdate -AcceptEula
-
-# Remove bloatware
+# Remove bloatware, so we don't update it
 Write-Host "Remove Windows Bloatware"
+$ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
 foreach ($app in $unwantedApps) {
     Write-Host "    $app"
-    $ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
     Get-AppxPackage $app -AllUsers | Remove-AppxPackage
-    $ProgressPreference = "Continue"
     Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $app | Remove-AppxProvisionedPackage -Online
-    $appPath = "$Env:LOCALAPPDATA\Packages\$app*"
-    Remove-Item $appPath -Recurse -Force -ErrorAction 0
+    Remove-Item "$Env:LOCALAPPDATA\Packages\$app" -Recurse -Force -ErrorAction 0
 }
+$ProgressPreference = "Continue"
+
+# Install Windows Updates
+Install-WindowsUpdate -AcceptEula
 
 # Configure Windows Explorer
 Write-Host "Configure Windows Explorer"
