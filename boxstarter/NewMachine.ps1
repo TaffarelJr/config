@@ -110,6 +110,10 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\";
         Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
         Set-ItemProperty -Path "." -Name "NavPaneShowAllFolders"      -Type "DWord" -Value "1" # Show all folders
     }; Pop-Location
+    Push-Location -Path ".\Search\"; & {
+        Set-ItemProperty -Path ".\Preferences\"                          -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
+        Set-ItemProperty -Path ".\PrimaryProperties\UnindexedLocations\" -Name "SearchOnly"    -Type "DWord" -Value "0" # Always search file names and contents
+    }; Pop-Location
 }; Pop-Location
 
 Set-WindowsExplorerOptions `
@@ -139,18 +143,6 @@ Push-Location -Path "HKCR:\"; & {
             Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
         }; Pop-Location
     }
-}; Pop-Location
-
-# Configure Windows Search options
-Write-Host "Configure Windows Search options"
-Push-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Search\"; & {
-    Push-Location -Path ".\Preferences\"; & {
-        Set-ItemProperty -Path "." -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
-    }; Pop-Location
-
-    Push-Location -Path ".\PrimaryProperties\UnindexedLocations\"; & {
-        Set-ItemProperty -Path "." -Name "SearchOnly" -Type "DWord" -Value "0" # Always search file names and contents
-    }; Pop-Location
 }; Pop-Location
 
 # Unlock Microsoft OneDrive (Windows 10 Pro only)
