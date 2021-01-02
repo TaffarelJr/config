@@ -24,10 +24,16 @@ $purpleShadowDark_accentPalette = [byte[]]@(`
 
 $searchLocations = @("C:\Code")
 
+#----------------------------------------------------------------------------------------------------
 # Pre
+#----------------------------------------------------------------------------------------------------
+
 Disable-UAC
 
+#----------------------------------------------------------------------------------------------------
 # Configure Windows Theme
+#----------------------------------------------------------------------------------------------------
+
 Write-Host "Configure Windows theme"
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
     Push-Location -Path ".\Themes\Personalize\"; & {
@@ -42,27 +48,38 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
     }; Pop-Location
 }; Pop-Location
 
+#----------------------------------------------------------------------------------------------------
 # Configure Windows Search locations
+#----------------------------------------------------------------------------------------------------
+
 Write-Host "Add Windows Search locations"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile ".\Microsoft.Search.Interop.dll"
 Add-Type -Path ".\Microsoft.Search.Interop.dll"
 $crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
+
 Push-Indent; & {
     foreach ($location in $searchLocations) {
         $crawlManager.AddUserScopeRule("file:///$location", $true, $false, $null)
     }
 }; Pop-Indent
+
 $crawlManager.SaveAll()
 
+#----------------------------------------------------------------------------------------------------
 # Install personal utilities
-choco install -y advanced-renamer
-choco install -y attributechanger
-choco install -y divvy
-choco install -y duplicatecleaner
-choco install -y freedownloadmanager
-choco install -y linkshellextension
+#----------------------------------------------------------------------------------------------------
 
+choco install -y "advanced-renamer"
+choco install -y "attributechanger"
+choco install -y "divvy"
+choco install -y "duplicatecleaner"
+choco install -y "freedownloadmanager"
+choco install -y "linkshellextension"
+
+#----------------------------------------------------------------------------------------------------
 # Post
+#----------------------------------------------------------------------------------------------------
+
 Enable-UAC
 Enable-MicrosoftUpdate
 Install-WindowsUpdate -acceptEula
