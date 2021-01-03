@@ -93,7 +93,6 @@ Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
 
 # Remove unnecessary services
 Set-service -Name "lmhosts"  -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
-Set-service -Name "MSISCSI"  -StartupType "Disabled" # Don't need SCSI
 Set-service -Name "SNMPTRAP" -StartupType "Disabled" # Don't need SNMP
 Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
 
