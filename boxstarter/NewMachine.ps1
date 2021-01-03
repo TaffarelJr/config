@@ -250,7 +250,7 @@ choco install -y "7zip"
 # Piriform CCleaner
 choco install -y "ccleaner"
 Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk" -ErrorAction "Ignore"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/PiriformCCleaner.ini" -OutFile "C:\Program Files\CCleaner\ccleaner.ini"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CCleaner.ini" -OutFile "C:\Program Files\CCleaner\ccleaner.ini"
 
 # Piriform Defraggler
 choco install -y "defraggler"
