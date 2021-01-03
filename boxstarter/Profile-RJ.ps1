@@ -69,12 +69,25 @@ $crawlManager.SaveAll()
 # Install personal utilities
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "advanced-renamer"
+# Attribute Changer
 choco install -y "attributechanger"
-choco install -y "divvy"
-choco install -y "duplicatecleaner"
-choco install -y "freedownloadmanager"
+
+# Link Shell Extension
 choco install -y "linkshellextension"
+
+# Advanced Renamer
+choco install -y "advanced-renamer"
+
+# Duplicate Cleaner
+choco install -y "duplicatecleaner"
+Remove-Item "C:\Users\Public\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore"
+
+# Free Download Manager
+choco install -y "freedownloadmanager"
+
+# Divvy
+choco install -y "divvy"
+Remove-Item "$env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
 # Post
