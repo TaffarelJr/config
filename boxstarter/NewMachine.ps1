@@ -53,6 +53,7 @@ $unwantedApps = @(
     "Microsoft.XboxApp*"
     "Microsoft.XboxIdentityProvider*"
     "Microsoft.Zune*"
+    "Pandora*"
     "Roblox*"
     "Spotify*"
 )
