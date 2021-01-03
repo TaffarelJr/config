@@ -92,16 +92,16 @@ Disable-UAC
 Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
 
 # Remove unnecessary services
-Set-service -Name "lmhosts"           -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
-Set-service -Name "MSISCSI"           -StartupType "Disabled" # Don't need SCSI
-Set-service -Name "SNMPTRAP"          -StartupType "Disabled" # Don't need SNMP
-Set-service -Name "TapiSrv"           -StartupType "Disabled" # Don't need Telephony API
+Set-service -Name "lmhosts"  -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
+Set-service -Name "MSISCSI"  -StartupType "Disabled" # Don't need SCSI
+Set-service -Name "SNMPTRAP" -StartupType "Disabled" # Don't need SNMP
+Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
 
 #----------------------------------------------------------------------------------------------------
 # Prompt the user to pick a name for the computer
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Computer name is: $env:computername"
+Write-Host "Computer name is: $Env:COMPUTERNAME"
 Write-Host "What would you like to rename it to?"
 $computerName = Read-Host -Prompt "<press ENTER to skip>"
 if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
@@ -224,12 +224,12 @@ Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
 #----------------------------------------------------------------------------------------------------
 
 Write-Host "Move library directories"
-Move-LibraryDirectory -libraryName "Desktop"     -newPath "$env:OneDrive\Desktop"
-Move-LibraryDirectory -libraryName "Downloads"   -newPath "$env:OneDrive\Downloads"
-Move-LibraryDirectory -libraryName "My Music"    -newPath "$env:OneDrive\Music"
-Move-LibraryDirectory -libraryName "My Pictures" -newPath "$env:OneDrive\Pictures"
-Move-LibraryDirectory -libraryName "My Video"    -newPath "$env:OneDrive\Videos"
-Move-LibraryDirectory -libraryName "Personal"    -newPath "$env:OneDrive\Documents"
+Move-LibraryDirectory -libraryName "Desktop"     -newPath "$Env:OneDrive\Desktop"
+Move-LibraryDirectory -libraryName "Downloads"   -newPath "$Env:OneDrive\Downloads"
+Move-LibraryDirectory -libraryName "My Music"    -newPath "$Env:OneDrive\Music"
+Move-LibraryDirectory -libraryName "My Pictures" -newPath "$Env:OneDrive\Pictures"
+Move-LibraryDirectory -libraryName "My Video"    -newPath "$Env:OneDrive\Videos"
+Move-LibraryDirectory -libraryName "Personal"    -newPath "$Env:OneDrive\Documents"
 
 #----------------------------------------------------------------------------------------------------
 # Install browsers
@@ -237,8 +237,8 @@ Move-LibraryDirectory -libraryName "Personal"    -newPath "$env:OneDrive\Documen
 
 # Google Chrome
 choco install -y "googlechrome"
-Remove-Item "C:\Users\Public\Desktop\Google Chrome.lnk" -ErrorAction "Ignore"
-Remove-Item "$env:OneDrive\Desktop\Google Chrome.lnk"   -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Google Chrome.lnk"   -ErrorAction "Ignore"
+Remove-Item "$Env:OneDrive\Desktop\Google Chrome.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
 # Install utilities
@@ -249,12 +249,12 @@ choco install -y "7zip"
 
 # Piriform CCleaner
 choco install -y "ccleaner"
-Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk" -ErrorAction "Ignore"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CCleaner.ini" -OutFile "C:\Program Files\CCleaner\ccleaner.ini"
+Remove-Item "$Env:PUBLIC\Desktop\CCleaner.lnk" -ErrorAction "Ignore"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CCleaner.ini" -OutFile "$Env:ProgramFiles\CCleaner\ccleaner.ini"
 
 # Piriform Defraggler
 choco install -y "defraggler"
-Remove-Item "C:\Users\Public\Desktop\Defraggler.lnk" -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Defraggler.lnk" -ErrorAction "Ignore"
 
 # Notepad++
 choco install -y "notepadplusplus"
@@ -271,9 +271,9 @@ choco install -y "dropbox"
 
 # Google Backup and Sync
 choco install -y "google-backup-and-sync"
-Remove-Item "C:\Users\Public\Desktop\Google Docs.lnk"   -ErrorAction "Ignore"
-Remove-Item "C:\Users\Public\Desktop\Google Sheets.lnk" -ErrorAction "Ignore"
-Remove-Item "C:\Users\Public\Desktop\Google Slides.lnk" -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Google Docs.lnk"   -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Google Sheets.lnk" -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Google Slides.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
 # Install communications tools
@@ -284,7 +284,7 @@ choco install -y "slack"
 
 # Zoom
 choco install -y "zoom"
-Remove-Item "C:\Users\Public\Desktop\Zoom.lnk" -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Zoom.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
 # Install basic graphics tools
@@ -292,7 +292,7 @@ Remove-Item "C:\Users\Public\Desktop\Zoom.lnk" -ErrorAction "Ignore"
 
 # Paint.net
 choco install -y "paint.net"
-Remove-Item "C:\Users\Public\Desktop\paint.net.lnk" -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\paint.net.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
 # Post

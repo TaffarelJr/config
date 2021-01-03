@@ -25,9 +25,7 @@ Disable-UAC
 #----------------------------------------------------------------------------------------------------
 
 Write-Host "Enable Windows Developer Mode"
-Push-Location -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\"; & {
-    Set-ItemProperty -Path "." -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value "1"
-}; Pop-Location
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\" -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value "1"
 
 #----------------------------------------------------------------------------------------------------
 # Enable Windows Subsystem for Linux (WSL)
@@ -72,7 +70,7 @@ choco install -y "firacode"
 # Install source control tools
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "git" --package-parameters="'/GitAndUnixToolsOnPath /WindowsTerminal'"
+choco install -y "git"            --package-parameters="'/GitAndUnixToolsOnPath /WindowsTerminal'"
 choco install -y "github-desktop"
 choco install -y "tortoisegit"
 
@@ -91,6 +89,7 @@ choco install -y "docker-for-windows"
 
 # Visual Studio 2019
 choco install -y "visualstudio2019professional"
+
 RefreshEnv
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile ".\VisualStudio.vssettings"
 devenv /ResetSettings ".\VisualStudio.vssettings"

@@ -81,14 +81,14 @@ choco install -y "advanced-renamer"
 
 # Duplicate Cleaner
 choco install -y "duplicatecleaner"
-Remove-Item "C:\Users\Public\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore"
 
 # Free Download Manager
 choco install -y "freedownloadmanager"
 
 # Divvy
 choco install -y "divvy"
-Remove-Item "$env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
+Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
 # Post
