@@ -213,12 +213,12 @@ Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
 #----------------------------------------------------------------------------------------------------
 
 Write-Host "Move library directories"
-Move-LibraryDirectory -LibraryName "Desktop"     -NewPath "$env:OneDrive\Desktop"   -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "Downloads"   -NewPath "$env:OneDrive\Downloads" -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "My Music"    -NewPath "$env:OneDrive\Music"     -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "My Pictures" -NewPath "$env:OneDrive\Pictures"  -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "My Video"    -NewPath "$env:OneDrive\Videos"    -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "Personal"    -NewPath "$env:OneDrive\Documents" -DoNotMoveOldContent
+Move-LibraryDirectory -libraryName "Desktop"     -newPath "$env:OneDrive\Desktop"
+Move-LibraryDirectory -libraryName "Downloads"   -newPath "$env:OneDrive\Downloads"
+Move-LibraryDirectory -libraryName "My Music"    -newPath "$env:OneDrive\Music"
+Move-LibraryDirectory -libraryName "My Pictures" -newPath "$env:OneDrive\Pictures"
+Move-LibraryDirectory -libraryName "My Video"    -newPath "$env:OneDrive\Videos"
+Move-LibraryDirectory -libraryName "Personal"    -newPath "$env:OneDrive\Documents"
 
 #----------------------------------------------------------------------------------------------------
 # Install browsers
