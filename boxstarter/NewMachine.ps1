@@ -10,6 +10,7 @@
 # Pulled from samples by:
 # - Microsoft https://github.com/Microsoft/windows-dev-box-setup-scripts
 # - elithrar https://github.com/elithrar/dotfiles
+# - ElJefeDSecurIT https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
@@ -80,6 +81,10 @@ $indexExtensions = @(
 #----------------------------------------------------------------------------------------------------
 
 Disable-UAC
+
+# Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
+# https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
+Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
 
 #----------------------------------------------------------------------------------------------------
 # Prompt the user to pick a name for the computer
