@@ -10,6 +10,7 @@
 # Pulled from samples by:
 # - Microsoft https://github.com/Microsoft/windows-dev-box-setup-scripts
 # - elithrar https://github.com/elithrar/dotfiles
+# - ElJefeDSecurIT https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
@@ -52,6 +53,7 @@ $unwantedApps = @(
     "Microsoft.XboxApp*"
     "Microsoft.XboxIdentityProvider*"
     "Microsoft.Zune*"
+    "Pandora*"
     "Roblox*"
     "Spotify*"
 )
@@ -75,31 +77,62 @@ $indexExtensions = @(
     ".xaml", ".xbap", ".xproj"
 )
 
+#----------------------------------------------------------------------------------------------------
 # Pre
+#----------------------------------------------------------------------------------------------------
+
 Disable-UAC
 
+#----------------------------------------------------------------------------------------------------
+# Disable services
+#----------------------------------------------------------------------------------------------------
+
+# Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
+# https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
+Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
+
+# Remove unnecessary services
+Set-service -Name "lmhosts"  -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
+Set-service -Name "SNMPTRAP" -StartupType "Disabled" # Don't need SNMP
+Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
+
+#----------------------------------------------------------------------------------------------------
 # Prompt the user to pick a name for the computer
-Write-Host "Computer name is: $env:computername"
+#----------------------------------------------------------------------------------------------------
+
+Write-Host "Computer name is: $Env:COMPUTERNAME"
 Write-Host "What would you like to rename it to?"
 $computerName = Read-Host -Prompt "<press ENTER to skip>"
 if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
 
+#----------------------------------------------------------------------------------------------------
 # Remove bloatware, so we don't update it
+#----------------------------------------------------------------------------------------------------
+
 Write-Host "Remove Windows Bloatware"
 $ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
+
 foreach ($app in $unwantedApps) {
     Write-Host "    $app"
     Get-AppxPackage $app -AllUsers | Remove-AppxPackage
     Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $app | Remove-AppxProvisionedPackage -Online
     Remove-Item "$Env:LOCALAPPDATA\Packages\$app" -Recurse -Force -ErrorAction 0
 }
+
 $ProgressPreference = "Continue"
 
+#----------------------------------------------------------------------------------------------------
 # Install Windows Updates, so everything's current
+#----------------------------------------------------------------------------------------------------
+
 Install-WindowsUpdate -AcceptEula
+
 # TODO: Update Windows Store apps here
 
+#----------------------------------------------------------------------------------------------------
 # Configure Windows Explorer
+#----------------------------------------------------------------------------------------------------
+
 Write-Host "Configure Windows Explorer"
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
     Push-Location -Path ".\Advanced\"; & {
@@ -130,14 +163,22 @@ Set-WindowsExplorerOptions `
 
 Disable-BingSearch
 
+#----------------------------------------------------------------------------------------------------
 # Disable Xbox Gamebar
+#----------------------------------------------------------------------------------------------------
+
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type "DWord" -Value "0"
 Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                            -Name "GameDVR_Enabled"   -Type "DWord" -Value "0"
+
 Disable-GameBarTips
 
+#----------------------------------------------------------------------------------------------------
 # Configure Windows Search file extensions
+#----------------------------------------------------------------------------------------------------
+
 Write-Host "Configure Windows Search file extensions"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
+
 Push-Location -Path "HKCR:\"; & {
     foreach ($extension in $indexExtensions) {
         Write-Host "    $extension"
@@ -150,7 +191,10 @@ Push-Location -Path "HKCR:\"; & {
     }
 }; Pop-Location
 
+#----------------------------------------------------------------------------------------------------
 # Unlock Group Policy settings (Windows 10 Pro only)
+#----------------------------------------------------------------------------------------------------
+
 Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
     # Microsoft OneDrive
     $regPath = ".\Windows\OneDrive\"
@@ -174,52 +218,85 @@ Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
     }
 }; Pop-Location
 
+#----------------------------------------------------------------------------------------------------
 # Move library folders to OneDrive
+#----------------------------------------------------------------------------------------------------
+
 Write-Host "Move library directories"
-Move-LibraryDirectory -LibraryName "Desktop"     -NewPath "$env:OneDrive\Desktop"   -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "Downloads"   -NewPath "$env:OneDrive\Downloads" -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "My Music"    -NewPath "$env:OneDrive\Music"     -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "My Pictures" -NewPath "$env:OneDrive\Pictures"  -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "My Video"    -NewPath "$env:OneDrive\Videos"    -DoNotMoveOldContent
-Move-LibraryDirectory -LibraryName "Personal"    -NewPath "$env:OneDrive\Documents" -DoNotMoveOldContent
+Move-LibraryDirectory -libraryName "Desktop"     -newPath "$Env:OneDrive\Desktop"
+Move-LibraryDirectory -libraryName "Downloads"   -newPath "$Env:OneDrive\Downloads"
+Move-LibraryDirectory -libraryName "My Music"    -newPath "$Env:OneDrive\Music"
+Move-LibraryDirectory -libraryName "My Pictures" -newPath "$Env:OneDrive\Pictures"
+Move-LibraryDirectory -libraryName "My Video"    -newPath "$Env:OneDrive\Videos"
+Move-LibraryDirectory -libraryName "Personal"    -newPath "$Env:OneDrive\Documents"
 
+#----------------------------------------------------------------------------------------------------
 # Install browsers
-choco install -y googlechrome
-Remove-Item "C:\Users\Public\Desktop\Google Chrome.lnk" -ErrorAction Ignore
-Remove-Item "$env:OneDrive\Desktop\Google Chrome.lnk"   -ErrorAction Ignore
+#----------------------------------------------------------------------------------------------------
 
+# Google Chrome
+choco install -y "googlechrome"
+Remove-Item "$Env:PUBLIC\Desktop\Google Chrome.lnk"   -ErrorAction "Ignore"
+Remove-Item "$Env:OneDrive\Desktop\Google Chrome.lnk" -ErrorAction "Ignore"
+
+#----------------------------------------------------------------------------------------------------
 # Install utilities
-choco install -y 7zip
+#----------------------------------------------------------------------------------------------------
 
-choco install -y ccleaner
-Remove-Item "C:\Users\Public\Desktop\CCleaner.lnk" -ErrorAction Ignore
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/ccleaner.ini" -OutFile "C:\Program Files\CCleaner\ccleaner.ini"
+# 7-Zip
+choco install -y "7zip"
 
-choco install -y defraggler
-Remove-Item "C:\Users\Public\Desktop\Defraggler.lnk" -ErrorAction Ignore
+# Piriform CCleaner
+choco install -y "ccleaner"
+Remove-Item "$Env:PUBLIC\Desktop\CCleaner.lnk" -ErrorAction "Ignore"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CCleaner.ini" -OutFile "$Env:ProgramFiles\CCleaner\ccleaner.ini"
 
-choco install -y notepadplusplus
-choco install -y spacesniffer
+# Piriform Defraggler
+choco install -y "defraggler"
+Remove-Item "$Env:PUBLIC\Desktop\Defraggler.lnk" -ErrorAction "Ignore"
 
+# Notepad++
+choco install -y "notepadplusplus"
+
+# SpaceSniffer
+choco install -y "spacesniffer"
+
+#----------------------------------------------------------------------------------------------------
 # Install additional cloud storage providers
-choco install -y dropbox
+#----------------------------------------------------------------------------------------------------
 
-choco install -y google-backup-and-sync
-Remove-Item "C:\Users\Public\Desktop\Google Docs.lnk" -ErrorAction Ignore
-Remove-Item "C:\Users\Public\Desktop\Google Sheets.lnk" -ErrorAction Ignore
-Remove-Item "C:\Users\Public\Desktop\Google Slides.lnk" -ErrorAction Ignore
+# Dropbox
+choco install -y "dropbox"
 
+# Google Backup and Sync
+choco install -y "google-backup-and-sync"
+Remove-Item "$Env:PUBLIC\Desktop\Google Docs.lnk"   -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Google Sheets.lnk" -ErrorAction "Ignore"
+Remove-Item "$Env:PUBLIC\Desktop\Google Slides.lnk" -ErrorAction "Ignore"
+
+#----------------------------------------------------------------------------------------------------
 # Install communications tools
-choco install -y slack
+#----------------------------------------------------------------------------------------------------
 
-choco install -y zoom
-Remove-Item "C:\Users\Public\Desktop\Zoom.lnk" -ErrorAction Ignore
+# Slack
+choco install -y "slack"
 
-# Install graphics tools
-choco install -y paint.net
-Remove-Item "C:\Users\Public\Desktop\paint.net.lnk" -ErrorAction Ignore
+# Zoom
+choco install -y "zoom"
+Remove-Item "$Env:PUBLIC\Desktop\Zoom.lnk" -ErrorAction "Ignore"
 
+#----------------------------------------------------------------------------------------------------
+# Install basic graphics tools
+#----------------------------------------------------------------------------------------------------
+
+# Paint.net
+choco install -y "paint.net"
+Remove-Item "$Env:PUBLIC\Desktop\paint.net.lnk" -ErrorAction "Ignore"
+
+#----------------------------------------------------------------------------------------------------
 # Post
+#----------------------------------------------------------------------------------------------------
+
 Enable-UAC
 Enable-MicrosoftUpdate
 Install-WindowsUpdate -acceptEula

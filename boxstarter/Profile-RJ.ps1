@@ -10,6 +10,7 @@
 # Pulled from samples by:
 # - Microsoft https://github.com/Microsoft/windows-dev-box-setup-scripts
 # - elithrar https://github.com/elithrar/dotfiles
+# - ElJefeDSecurIT https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
@@ -22,12 +23,20 @@ $purpleShadowDark_accentPalette = [byte[]]@(`
         "0x1f", "0x1f", "0x4d", "0x00", "0x00", "0xcc", "0x6a", "0x00"
 )
 
-$searchLocations = @("C:\Code")
+$searchLocations = @(
+    "C:\Code"
+)
 
+#----------------------------------------------------------------------------------------------------
 # Pre
+#----------------------------------------------------------------------------------------------------
+
 Disable-UAC
 
+#----------------------------------------------------------------------------------------------------
 # Configure Windows Theme
+#----------------------------------------------------------------------------------------------------
+
 Write-Host "Configure Windows theme"
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
     Push-Location -Path ".\Themes\Personalize\"; & {
@@ -42,27 +51,60 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
     }; Pop-Location
 }; Pop-Location
 
+#----------------------------------------------------------------------------------------------------
 # Configure Windows Search locations
+#----------------------------------------------------------------------------------------------------
+
 Write-Host "Add Windows Search locations"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile ".\Microsoft.Search.Interop.dll"
 Add-Type -Path ".\Microsoft.Search.Interop.dll"
 $crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
-Push-Indent; & {
-    foreach ($location in $searchLocations) {
-        $crawlManager.AddUserScopeRule("file:///$location", $true, $false, $null)
-    }
-}; Pop-Indent
+
+foreach ($location in $searchLocations) {
+    $crawlManager.AddUserScopeRule("file:///$location", $true, $false, $null)
+}
+
 $crawlManager.SaveAll()
 
+#----------------------------------------------------------------------------------------------------
 # Install personal utilities
-choco install -y advanced-renamer
-choco install -y attributechanger
-choco install -y divvy
-choco install -y duplicatecleaner
-choco install -y freedownloadmanager
-choco install -y linkshellextension
+#----------------------------------------------------------------------------------------------------
 
+# Attribute Changer
+choco install -y "attributechanger"
+
+# Link Shell Extension
+choco install -y "linkshellextension"
+
+# Advanced Renamer
+choco install -y "advanced-renamer"
+
+# Duplicate Cleaner
+choco install -y "duplicatecleaner"
+Remove-Item "$Env:PUBLIC\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore"
+
+# Free Download Manager
+choco install -y "freedownloadmanager"
+
+# Divvy
+choco install -y "divvy"
+Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
+
+#----------------------------------------------------------------------------------------------------
+# Configure applications
+#----------------------------------------------------------------------------------------------------
+
+# Windows Power & Sleep settings
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile ".\Windows.pow"
+powercfg /import ".\Windows.pow"
+
+# Notepad++
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -OutFile "$Env:APPDATA\Notepad++\config.xml"
+
+#----------------------------------------------------------------------------------------------------
 # Post
+#----------------------------------------------------------------------------------------------------
+
 Enable-UAC
 Enable-MicrosoftUpdate
 Install-WindowsUpdate -acceptEula
