@@ -91,8 +91,12 @@ choco install -y "divvy"
 Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Configure application themes
+# Configure applications
 #----------------------------------------------------------------------------------------------------
+
+# Windows Power & Sleep settings
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile ".\Windows.pow"
+powercfg /import ".\Windows.pow"
 
 # Notepad++
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -OutFile "$Env:APPDATA\Notepad++\config.xml"
