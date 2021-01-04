@@ -42,6 +42,10 @@ Ubuntu2004 install --root
 Ubuntu2004 run apt update
 Ubuntu2004 run apt upgrade
 
+Restart-Service -Name "LxssManager"
+
+Ubuntu2004 run sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+
 #----------------------------------------------------------------------------------------------------
 # Install additional browsers
 #----------------------------------------------------------------------------------------------------
