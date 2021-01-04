@@ -283,7 +283,7 @@ Remove-Item "$Env:PUBLIC\Desktop\Google Slides.lnk" -ErrorAction "Ignore"
 choco install -y "slack"
 
 # Zoom
-choco install -y "zoom"
+choco install -y "zoom" -DisableVideo=1 -MuteVoipWhenJoin=1 -AutoJoinVOIP=1
 Remove-Item "$Env:PUBLIC\Desktop\Zoom.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
