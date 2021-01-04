@@ -91,6 +91,13 @@ choco install -y "divvy"
 Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
+# Configure application themes
+#----------------------------------------------------------------------------------------------------
+
+# Notepad++
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -OutFile "$Env:APPDATA\Notepad++\config.xml"
+
+#----------------------------------------------------------------------------------------------------
 # Post
 #----------------------------------------------------------------------------------------------------
 
