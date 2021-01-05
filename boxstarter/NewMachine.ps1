@@ -87,11 +87,12 @@ Disable-UAC
 # Disable services
 #----------------------------------------------------------------------------------------------------
 
+Write-Host "Disable uneeded services"
+
 # Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
 # https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
 Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
 
-# Remove unnecessary services
 Set-service -Name "lmhosts"  -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
 Set-service -Name "SNMPTRAP" -StartupType "Disabled" # Don't need SNMP
 Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
@@ -282,7 +283,7 @@ Remove-Item "$Env:PUBLIC\Desktop\Google Slides.lnk" -ErrorAction "Ignore"
 choco install -y "slack"
 
 # Zoom
-choco install -y "zoom"
+choco install -y "zoom" -DisableVideo=1 -MuteVoipWhenJoin=1 -AutoJoinVOIP=1
 Remove-Item "$Env:PUBLIC\Desktop\Zoom.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------

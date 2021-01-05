@@ -42,6 +42,10 @@ Ubuntu2004 install --root
 Ubuntu2004 run apt update
 Ubuntu2004 run apt upgrade
 
+Restart-Service -Name "LxssManager"
+
+Ubuntu2004 run sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+
 #----------------------------------------------------------------------------------------------------
 # Install additional browsers
 #----------------------------------------------------------------------------------------------------
@@ -91,8 +95,8 @@ choco install -y "docker-for-windows"
 choco install -y "visualstudio2019professional"
 
 RefreshEnv
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile ".\VisualStudio.vssettings"
-devenv /ResetSettings ".\VisualStudio.vssettings"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile "$Env:TEMP\VisualStudio.vssettings"
+devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
 
 # JetBrains ReSharper Ultimate
 choco install -y "resharper"

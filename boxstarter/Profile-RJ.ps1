@@ -95,11 +95,15 @@ Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 #----------------------------------------------------------------------------------------------------
 
 # Windows Power & Sleep settings
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile ".\Windows.pow"
-powercfg /import ".\Windows.pow"
+Write-Host "Set Windows Power & battery configuration"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow"
+powercfg /import "$Env:TEMP\Windows.pow"
 
 # Notepad++
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -OutFile "$Env:APPDATA\Notepad++\config.xml"
+Write-Host "Set Notepad++ configuration"
+$file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml").Content
+[regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
+$file | Out-File "$Env:APPDATA\Notepad++\config.xml"
 
 #----------------------------------------------------------------------------------------------------
 # Post
