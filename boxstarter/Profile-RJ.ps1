@@ -56,8 +56,8 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
 #----------------------------------------------------------------------------------------------------
 
 Write-Host "Add Windows Search locations"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile ".\Microsoft.Search.Interop.dll" -UseBasicParsing
-Add-Type -Path ".\Microsoft.Search.Interop.dll"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile "$Env:TEMP\Microsoft.Search.Interop.dll" -UseBasicParsing
+Add-Type -Path "$Env:TEMP\Microsoft.Search.Interop.dll"
 $crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
 
 foreach ($location in $searchLocations) {
