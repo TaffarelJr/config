@@ -95,7 +95,7 @@ choco install -y "docker-for-windows"
 choco install -y "visualstudio2019professional"
 
 RefreshEnv
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile "$Env:TEMP\VisualStudio.vssettings"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
 devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
 
 # JetBrains ReSharper Ultimate
