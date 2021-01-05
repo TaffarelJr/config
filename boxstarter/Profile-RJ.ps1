@@ -101,7 +101,9 @@ powercfg /import "$Env:TEMP\Windows.pow"
 
 # Notepad++
 Write-Host "Set Notepad++ configuration"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -OutFile "$Env:APPDATA\Notepad++\config.xml"
+$file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml").Content
+[regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
+$file | Out-File "$Env:APPDATA\Notepad++\config.xml"
 
 #----------------------------------------------------------------------------------------------------
 # Post
