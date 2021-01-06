@@ -27,20 +27,15 @@ Disable-UAC
 choco install -y "Microsoft-Hyper-V-All" -source "windowsFeatures"
 
 #----------------------------------------------------------------------------------------------------
-# Windows Subsystem for Linux (WSL)
+# Windows Subsystem for Linux 2 (WSL2)
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "Microsoft-Windows-Subsystem-Linux" -source "windowsfeatures"
-
-# Install Ubuntu from Windows Store
-Invoke-WebRequest -Uri "https://aka.ms/wsl-ubuntu-2004" -OutFile "~/Ubuntu.appx" -UseBasicParsing
-Add-AppxPackage -Path "~/Ubuntu.appx"
-RefreshEnv
+choco install -y "wsl2" --package-parameters="/Retry:true"
+choco install -y "wsl-ubuntu-2004"
 
 # Update Ubuntu with latest packages & install brew
-Ubuntu2004 install --root
-Ubuntu2004 run apt update
-Ubuntu2004 run apt upgrade
+Ubuntu2004 run sudo apt update
+Ubuntu2004 run sudo apt upgrade
 Ubuntu2004 run sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 Restart-Service -Name "LxssManager"
 
