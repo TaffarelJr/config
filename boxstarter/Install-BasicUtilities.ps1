@@ -51,6 +51,9 @@ choco install -y "notepadplusplus"
 # SpaceSniffer
 choco install -y "spacesniffer"
 
+# Chocolatey
+choco install -y "chocolatey"
+
 #----------------------------------------------------------------------------------------------------
 # Install additional cloud storage providers
 #----------------------------------------------------------------------------------------------------
