@@ -21,22 +21,17 @@
 Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
-# Hyper-V (required for WSL)
-#----------------------------------------------------------------------------------------------------
-
-choco install -y "Microsoft-Hyper-V-All" -source "windowsFeatures"
-
-#----------------------------------------------------------------------------------------------------
 # Windows Subsystem for Linux 2 (WSL2)
 #----------------------------------------------------------------------------------------------------
 
+Write-Host "Install WSL 2"
 choco install -y "wsl2" --package-parameters="/Retry:true"
-choco install -y "wsl-ubuntu-2004"
 
-# Update Ubuntu with latest packages & install brew
-Ubuntu2004 run sudo apt update
-Ubuntu2004 run sudo apt upgrade
-Ubuntu2004 run sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+Write-Host "Install Ubuntu"
+choco install -y "wsl-ubuntu-2004"
+wsl sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Ubuntu.sh)'
+
+# Reboot WSL
 Restart-Service -Name "LxssManager"
 
 #----------------------------------------------------------------------------------------------------
