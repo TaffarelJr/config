@@ -28,25 +28,6 @@ Write-Host "Enable Windows Developer Mode"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\" -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value "1"
 
 #----------------------------------------------------------------------------------------------------
-# Enable Windows Subsystem for Linux (WSL)
-#----------------------------------------------------------------------------------------------------
-
-choco install -y "Microsoft-Hyper-V-All"             -source "windowsFeatures"
-choco install -y "Microsoft-Windows-Subsystem-Linux" -source "windowsfeatures"
-
-Invoke-WebRequest -Uri "https://aka.ms/wsl-ubuntu-2004" -OutFile "~/Ubuntu.appx" -UseBasicParsing
-Add-AppxPackage -Path "~/Ubuntu.appx"
-
-RefreshEnv
-Ubuntu2004 install --root
-Ubuntu2004 run apt update
-Ubuntu2004 run apt upgrade
-
-Restart-Service -Name "LxssManager"
-
-Ubuntu2004 run sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-
-#----------------------------------------------------------------------------------------------------
 # Install additional browsers
 #----------------------------------------------------------------------------------------------------
 
@@ -77,15 +58,6 @@ choco install -y "firacode"
 choco install -y "git"            --package-parameters="'/GitAndUnixToolsOnPath /WindowsTerminal'"
 choco install -y "github-desktop"
 choco install -y "tortoisegit"
-
-#----------------------------------------------------------------------------------------------------
-# Install Docker
-#----------------------------------------------------------------------------------------------------
-
-Enable-WindowsOptionalFeature -Online -FeatureName "containers" -All
-
-RefreshEnv
-choco install -y "docker-for-windows"
 
 #----------------------------------------------------------------------------------------------------
 # Install IDEs
