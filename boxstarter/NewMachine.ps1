@@ -84,7 +84,7 @@ $indexExtensions = @(
 Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
-# Disable services
+# Disable unneeded services
 #----------------------------------------------------------------------------------------------------
 
 Write-Host "Disable uneeded services"
@@ -107,7 +107,7 @@ $computerName = Read-Host -Prompt "<press ENTER to skip>"
 if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
 
 #----------------------------------------------------------------------------------------------------
-# Remove bloatware, so we don't update it
+# Remove bloatware, so we don't update them
 #----------------------------------------------------------------------------------------------------
 
 Write-Host "Remove Windows Bloatware"
@@ -128,7 +128,9 @@ $ProgressPreference = "Continue"
 
 Install-WindowsUpdate -AcceptEula
 
-# TODO: Update Windows Store apps here
+# Update Windows Store apps (async - not blocking)
+Write-Host "Update Windows Store applications"
+(Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod()
 
 #----------------------------------------------------------------------------------------------------
 # Configure Windows Explorer
