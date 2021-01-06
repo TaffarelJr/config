@@ -24,24 +24,26 @@ Disable-UAC
 # Windows Subsystem for Linux 2 (WSL2)
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Install WSL 2"
-choco install -y "wsl2" --package-parameters="/Retry:true"
+$edition = (Get-WindowsEdition -Online).Edition
+if ($edition -ne "Home") {
+    # WSL 2
+    choco install -y "wsl2" --package-parameters="/Retry:true"
 
-Write-Host "Install Ubuntu"
-choco install -y "wsl-ubuntu-2004"
-wsl sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Ubuntu.sh)'
+    # Ubuntu
+    choco install -y "wsl-ubuntu-2004"
 
-# Reboot WSL
-Restart-Service -Name "LxssManager"
+    Write-Host "Setup Ubuntu"
+    wsl sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Ubuntu.sh)'
+
+    Write-Host "Reboot WSL"
+    Restart-Service -Name "LxssManager"
+}
 
 #----------------------------------------------------------------------------------------------------
 # Docker
 #----------------------------------------------------------------------------------------------------
 
-Enable-WindowsOptionalFeature -Online -FeatureName "containers" -All
-RefreshEnv
-
-choco install -y "docker-for-windows"
+choco install -y "docker-desktop"
 
 #----------------------------------------------------------------------------------------------------
 # Post
