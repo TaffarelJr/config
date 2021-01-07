@@ -38,6 +38,14 @@ choco install -y "firefox" --package-parameters="/NoDesktopShortcut"
 # Install developer tools (part 1)
 #----------------------------------------------------------------------------------------------------
 
+# Developer fonts
+choco install -y "cascadiacodepl"
+choco install -y "firacode"
+
+# Visual Studio Code
+choco install -y "vscode" --package-parameters="/NoDesktopIcon"
+choco install -y "vscode-settingssync"
+
 # Devart Code Compare
 # https://docs.devart.com/code-compare/
 # https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
@@ -57,13 +65,6 @@ choco install -y "putty"
 choco install -y "sysinternals"
 choco install -y "winscp"
 choco install -y "wireshark"
-
-#----------------------------------------------------------------------------------------------------
-# Install developer fonts
-#----------------------------------------------------------------------------------------------------
-
-choco install -y "cascadiacodepl"
-choco install -y "firacode"
 
 #----------------------------------------------------------------------------------------------------
 # Install source control tools
@@ -86,9 +87,6 @@ devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
 
 # JetBrains ReSharper Ultimate
 choco install -y "resharper"
-
-# Visual Studio Code
-choco install -y "vscode"
 
 # LINQPad
 choco install -y "linqpad"
