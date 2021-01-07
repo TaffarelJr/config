@@ -35,6 +35,19 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModel
 choco install -y "firefox" --package-parameters="/NoDesktopShortcut"
 
 #----------------------------------------------------------------------------------------------------
+# Install developer tools (part 1)
+#----------------------------------------------------------------------------------------------------
+
+# Devart Code Compare
+# https://docs.devart.com/code-compare/
+# https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
+Write-Host "Install Devart Code Compare"
+Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
+Invoke-Expression "$Env:TEMP\codecompare.exe /SILENT /NORESTART"
+Start-Sleep -Seconds 15
+Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
+
+#----------------------------------------------------------------------------------------------------
 # Install developer utilities
 #----------------------------------------------------------------------------------------------------
 

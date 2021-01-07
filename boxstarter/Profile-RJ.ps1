@@ -67,7 +67,7 @@ foreach ($location in $searchLocations) {
 $crawlManager.SaveAll()
 
 #----------------------------------------------------------------------------------------------------
-# Install personal utilities
+# Install personal preferred utilities
 #----------------------------------------------------------------------------------------------------
 
 # Attribute Changer
@@ -104,6 +104,8 @@ Write-Host "Set Notepad++ configuration"
 $file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -UseBasicParsing).Content
 [regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
 $file | Out-File "$Env:APPDATA\Notepad++\config.xml"
+
+# TODO: Figure out how to import the '..\apps\CodeCompare.settings' file into Code Compare via command line
 
 #----------------------------------------------------------------------------------------------------
 # Post

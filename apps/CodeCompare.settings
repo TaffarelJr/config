@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserSettings Version="1.1">
+    <Settings Category="Shell" Controller="">
+        <PropertyValue Name="VisualStyle" xml:space="preserve">5</PropertyValue>
+        <PropertyValue Name="ClosingByEscBehavior">1</PropertyValue>
+    </Settings>
+    <Settings Category="Text" Controller="">
+        <PropertyValue Name="ShowWhiteSpaces">true</PropertyValue>
+        <PropertyValue Name="ShowLineNumbers">true</PropertyValue>
+    </Settings>
+    <Settings Category="CodeCompareOptions" Controller="">
+        <CodeCompareOptions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <StandaloneClosingBehavior>Hide</StandaloneClosingBehavior>
+        </CodeCompareOptions>
+        <FileCompareOptions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <EnableStructureComparison>true</EnableStructureComparison>
+        </FileCompareOptions>
+    </Settings>
+</UserSettings>
