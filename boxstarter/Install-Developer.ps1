@@ -56,6 +56,14 @@ Start-Sleep -Seconds 15
 Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
+# Install source control tools
+#----------------------------------------------------------------------------------------------------
+
+choco install -y "git"
+choco install -y "github-desktop"
+choco install -y "tortoisegit"
+
+#----------------------------------------------------------------------------------------------------
 # Install developer utilities
 #----------------------------------------------------------------------------------------------------
 
@@ -65,14 +73,6 @@ choco install -y "putty"
 choco install -y "sysinternals"
 choco install -y "winscp"
 choco install -y "wireshark"
-
-#----------------------------------------------------------------------------------------------------
-# Install source control tools
-#----------------------------------------------------------------------------------------------------
-
-choco install -y "git"            --package-parameters="'/GitAndUnixToolsOnPath /WindowsTerminal'"
-choco install -y "github-desktop"
-choco install -y "tortoisegit"
 
 #----------------------------------------------------------------------------------------------------
 # Install IDEs

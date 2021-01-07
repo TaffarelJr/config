@@ -95,17 +95,25 @@ Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 #----------------------------------------------------------------------------------------------------
 
 # Windows Power & Sleep settings
-Write-Host "Set Windows Power & battery configuration"
+Write-Host "Configure Windows Power & Battery settings"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
 powercfg /import "$Env:TEMP\Windows.pow"
 
 # Notepad++
-Write-Host "Set Notepad++ configuration"
+Write-Host "Configure Notepad++"
 $file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -UseBasicParsing).Content
 [regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
 $file | Out-File "$Env:APPDATA\Notepad++\config.xml"
 
 # TODO: Figure out how to import the '..\apps\CodeCompare.settings' file into Code Compare via command line
+Write-Host "Configure Code Compare"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.settings" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
+
+# Git
+Write-Host "Configure Git"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig"     -OutFile "$Env:USERPROFILE\.gitconfig"     -UseBasicParsing
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig-rj"  -OutFile "$Env:USERPROFILE\.gitconfig-rj"  -UseBasicParsing
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig-wtw" -OutFile "$Env:USERPROFILE\.gitconfig-wtw" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
 # Post
