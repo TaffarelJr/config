@@ -30,7 +30,10 @@ if ($edition -ne "Home") {
     choco install -y "wsl2" --package-parameters="/Retry:true"
 
     # Ubuntu
+    # https://docs.microsoft.com/en-us/windows/wsl/install-manual
     choco install -y "wsl-ubuntu-2004"
+
+    # TODO: Need to somehow launch Ubuntu here, to let it initialize itself
 
     Write-Host "Setup Ubuntu"
     wsl sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Ubuntu.sh)'
