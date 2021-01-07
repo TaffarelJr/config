@@ -31,7 +31,8 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModel
 # Install additional browsers
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "firefox"
+# Firefox
+choco install -y "firefox" --package-parameters="/NoDesktopShortcut"
 
 #----------------------------------------------------------------------------------------------------
 # Install developer utilities

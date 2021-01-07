@@ -47,6 +47,7 @@ if ($edition -ne "Home") {
 #----------------------------------------------------------------------------------------------------
 
 choco install -y "docker-desktop"
+Remove-Item "$Env:OneDrive\Desktop\Docker Desktop.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
 # Post
