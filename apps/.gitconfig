@@ -1,0 +1,8 @@
+[core]
+	editor = \"C:\\Users\\rohol\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe\" --wait
+[user]
+	name = RJ Hollberg
+[includeIf "gitdir:C:/Code/RJ/"]
+	path = ~/.gitconfig-rj
+[includeIf "gitdir:C:/Code/WTW/"]
+	path = ~/.gitconfig-wtw
