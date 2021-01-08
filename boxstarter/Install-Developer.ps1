@@ -96,10 +96,12 @@ choco install -y "vscode-settingssync"
 # Devart Code Compare
 # https://docs.devart.com/code-compare/
 # https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
-Write-Host "Install Devart Code Compare"
-Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
-Start-Process -Filepath "$Env:TEMP\codecompare.exe" -ArgumentList "/SILENT /NORESTART" -Wait
-Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
+if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
+    Write-Host "Install Devart Code Compare"
+    Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
+    Start-Process -Filepath "$Env:TEMP\codecompare.exe" -ArgumentList "/SILENT /NORESTART" -Wait
+    Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
+}
 
 #----------------------------------------------------------------------------------------------------
 # Install source control tools
