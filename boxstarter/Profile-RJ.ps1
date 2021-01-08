@@ -148,6 +148,11 @@ Push-Location -Path "HKCU:\Software\"; & {
     }; Pop-Location
 }; Pop-Location
 
+# Visual Studio 2019
+Write-Host "Configure Visual Studio 2019"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
+devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
+
 #----------------------------------------------------------------------------------------------------
 # Post
 #----------------------------------------------------------------------------------------------------
