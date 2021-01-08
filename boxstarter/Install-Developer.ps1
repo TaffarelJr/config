@@ -69,6 +69,10 @@ choco install -y "tortoisegit"
 choco install -y "github-desktop"
 Remove-Item "$Env:OneDrive\Desktop\GitHub Desktop.lnk" -ErrorAction "Ignore"
 
+# Sourcetree
+choco install -y "sourcetree"
+Remove-Item "$Env:PUBLIC\Desktop\Sourcetree.lnk" -ErrorAction "Ignore"
+
 #----------------------------------------------------------------------------------------------------
 # Install developer utilities
 #----------------------------------------------------------------------------------------------------
