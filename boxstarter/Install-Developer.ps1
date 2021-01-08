@@ -59,8 +59,14 @@ Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
 # Install source control tools
 #----------------------------------------------------------------------------------------------------
 
+# Git for Windows
 choco install -y "git"
+
+# GitHub Desktop
 choco install -y "github-desktop"
+Remove-Item "$Env:OneDrive\Desktop\GitHub Desktop.lnk" -ErrorAction "Ignore"
+
+# TortoiseGit
 choco install -y "tortoisegit"
 
 #----------------------------------------------------------------------------------------------------
