@@ -122,6 +122,17 @@ foreach ($app in $unwantedApps) {
 
 $ProgressPreference = "Continue"
 
+Write-Host "Remove McAfee Security App, if installed"
+$mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" | `
+    ForEach-Object { Get-ItemProperty $_.PSPath } | `
+    Where-Object { $_ -match "McAfee Security" } | `
+    Select-Object UninstallString
+if ($mcafee) {
+    $mcafee = $mcafee.UninstallString -Replace "C:\Program Files\McAfee\MSC\mcuihost.exe", ""
+    Write-Output "Uninstalling McAfee..."
+    start-process "C:\Program Files\McAfee\MSC\mcuihost.exe" -arg "$mcafee" -Wait
+}
+
 #----------------------------------------------------------------------------------------------------
 # Install Windows Updates, so everything's current
 #----------------------------------------------------------------------------------------------------
