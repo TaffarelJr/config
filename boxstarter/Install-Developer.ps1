@@ -14,6 +14,20 @@
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
+function Invoke-ExpressionAndWait() {
+    param (
+        [string]$program = $(throw "Please specify a program" ),
+        [string]$argumentString = ""
+    )
+
+    $psi = new-object "Diagnostics.ProcessStartInfo"
+    $psi.FileName = $program
+    $psi.Arguments = $argumentString
+
+    $proc = [Diagnostics.Process]::Start($psi)
+    $proc.WaitForExit();
+}
+
 #----------------------------------------------------------------------------------------------------
 # Pre
 #----------------------------------------------------------------------------------------------------
@@ -51,8 +65,7 @@ choco install -y "vscode-settingssync"
 # https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
 Write-Host "Install Devart Code Compare"
 Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
-Invoke-Expression "$Env:TEMP\codecompare.exe /SILENT /NORESTART"
-Start-Sleep -Seconds 15
+Invoke-ExpressionAndWait "$Env:TEMP\codecompare.exe" "/SILENT /NORESTART"
 Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
