@@ -14,6 +14,15 @@
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
+$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
+$marketplace = "https://marketplace.visualstudio.com"
+
+Write-Host "Get list of Visual Studio extensions that are already installed"
+$installedVsExtensions = Get-ChildItem -Path "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
+    Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
+    ForEach-Object { $_.Matches.Groups[1].Value } | `
+    Sort-Object
+
 function Install-VsixPackage() {
     # Modified from https://gist.github.com/ScottHutchinson/b22339c3d3688da5c9b477281e258400
     param (
@@ -22,43 +31,35 @@ function Install-VsixPackage() {
 
     $ErrorActionPreference = "Stop"
 
-    $marketplaceHost = "https://marketplace.visualstudio.com"
-    $packageUri = "$marketplaceHost/items?itemName=$packageName"
-    $vsixFileName = "$Env:TEMP\$packageName.vsix"
-    $vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\resources\app\ServiceHub\Services\Microsoft.VisualStudio.Setup.Service"
-
-    Write-Host "Grabbing VSIX extension at $packageUri"
-    $html = Invoke-WebRequest -Uri $packageUri -UseBasicParsing
-
-    Write-Host "Attempting to download $packageName ..."
-    $anchor = $html.Links | `
-        Where-Object { $_.class -eq 'install-button-container' } | `
-        Select-Object -ExpandProperty href
-
+    $packagePage = "$marketplace/items?itemName=$packageName"
+    Write-Host "Scraping VSIX details from $packagePage"
+    $response = Invoke-WebRequest -Uri $packagePage -UseBasicParsing
+    $anchor = $response.Links | Where-Object { $_.class -eq "install-button-container" } | Select-Object -ExpandProperty "href"
     if (-Not $anchor) {
         Write-Error "Could not find download anchor tag on the Visual Studio Extensions page"
-        Exit 1
+        exit 1
+    }
+    $vsixId = $response.Content | Select-String -List -Pattern '"VsixId":"(.+?)"' | ForEach-Object { $_.Matches.Groups[1].Value }
+    if (-Not $vsixId) {
+        Write-Error "Could not find VSIX ID on the Visual Studio Extensions page"
+        exit 1
     }
 
-    Write-Host "Anchor is $anchor"
-    $href = "$marketplaceHost$anchor"
-    Write-Host "Href is $href"
-    Invoke-WebRequest -Uri $href -OutFile $vsixFileName -UseBasicParsing
+    if (-Not ($installedVsExtensions -Contains $vsixId)) {
+        $packageUri = "$marketplace$anchor"
+        $vsixFileName = "$Env:TEMP\$packageName.vsix"
+        Write-Host "Attempting to download $packageUri ..."
+        Invoke-WebRequest -Uri $packageUri -OutFile $vsixFileName -UseBasicParsing
+        if (-Not (Test-Path $vsixFileName)) {
+            Write-Error "Downloaded VSIX file could not be located"
+            exit 1
+        }
 
-    if (-Not (Test-Path $vsixFileName)) {
-        Write-Error "Downloaded VSIX file could not be located"
-        Exit 1
+        Write-Host "Installing $vsixFileName ..."
+        Start-Process -Filepath "$vsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$vsixFileName'" -Wait
+        Remove-Item $vsixFileName
+        Write-Host "Installation of $packageName complete!"
     }
-
-    Write-Host "VS Install Dir is $vsInstallDir"
-    Write-Host "VSIX File Name is $vsixFileName"
-    Write-Host "Installing $packageName ..."
-    Start-Process -Filepath "$vsInstallDir\VSIXInstaller" -ArgumentList "/q /a $vsixFileName" -Wait
-
-    Write-Host "Cleanup..."
-    Remove-Item $vsixFileName
-
-    Write-Host "Installation of $packageName complete!"
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -82,28 +83,6 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModel
 choco install -y "firefox" --package-parameters="/NoDesktopShortcut"
 
 #----------------------------------------------------------------------------------------------------
-# Install developer tools (part 1)
-#----------------------------------------------------------------------------------------------------
-
-# Developer fonts
-choco install -y "cascadiacodepl"
-choco install -y "firacode"
-
-# Visual Studio Code
-choco install -y "vscode" --package-parameters="/NoDesktopIcon"
-choco install -y "vscode-settingssync"
-
-# Devart Code Compare
-# https://docs.devart.com/code-compare/
-# https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
-if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
-    Write-Host "Install Devart Code Compare"
-    Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
-    Start-Process -Filepath "$Env:TEMP\codecompare.exe" -ArgumentList "/SILENT /NORESTART" -Wait
-    Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
-}
-
-#----------------------------------------------------------------------------------------------------
 # Install source control tools
 #----------------------------------------------------------------------------------------------------
 
@@ -122,13 +101,25 @@ choco install -y "sourcetree"
 Remove-Item "$Env:PUBLIC\Desktop\Sourcetree.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Install developer tools (part 2)
+# Install Visual Studio Code
 #----------------------------------------------------------------------------------------------------
 
-# Visual Studio 2019 Core
-choco install -y "visualstudio2019professional"             --package-parameters "--passive"
+# Developer fonts
+choco install -y "cascadiacodepl"
+choco install -y "firacode"
 
-# Visual Studio 2019 workloads
+# Visual Studio Code
+choco install -y "vscode" --package-parameters="/NoDesktopIcon"
+choco install -y "vscode-settingssync"
+
+#----------------------------------------------------------------------------------------------------
+# Install Visual Studio 2019
+#----------------------------------------------------------------------------------------------------
+
+# Install Visual Studio 2019 Core
+choco install -y "visualstudio2019professional" --package-parameters "--passive"
+
+# Install workloads
 choco install -y "visualstudio2019-workload-azure"                 --package-parameters "--passive --includeOptional" # Azure development workload
 choco install -y "visualstudio2019-workload-data"                  --package-parameters "--passive --includeOptional" # Data storage and processing workload
 # choco install -y "visualstudio2019-workload-datascience"           --package-parameters "--passive --includeOptional" # Data science and analytical applications workload
@@ -146,16 +137,18 @@ choco install -y "visualstudio2019-workload-netweb"                --package-par
 # choco install -y "visualstudio2019-workload-python"                --package-parameters "--passive --includeOptional" # Python development workload
 choco install -y "visualstudio2019-workload-universal"             --package-parameters "--passive --includeOptional" # Universal Windows Platform development workload
 # choco install -y "visualstudio2019-workload-visualstudioextension" --package-parameters "--passive --includeOptional" # Visual Studio extension development workload
+
+# Cleanup
 Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
 RefreshEnv
 
-# Visual Studio 2019 extensions from Microsoft
-Install-VsixPackage "VisualStudioPlatformTeam.ProductivityPowerPack2017" # Productivity Power Tools
+# Install extensions from Microsoft
+Install-VsixPackage "VisualStudioPlatformTeam.ProductivityPowerPack2017" # Productivity Power Tools 2017/2019
 Install-VsixPackage "VisualStudioProductTeam.ProjectSystemTools"         # Project System Tools
 Install-VsixPackage "azsdktm.SecurityIntelliSense-Preview"               # Security IntelliSense
 Install-VsixPackage "EWoodruff.VisualStudioSpellCheckerVS2017andLater"   # Visual Studio Spell Checker (VS2017 and Later)
 
-# Visual Studio 2019 extensions from Mads Kristensen
+# Install extensions from Mads Kristensen
 Install-VsixPackage "MadsKristensen.ignore"                        # .ignore
 Install-VsixPackage "MadsKristensen.BrowserLinkInspector2019"      # Browser Link Inspector 2019
 Install-VsixPackage "MadsKristensen.DummyTextGenerator"            # Dummy Text Generator
@@ -167,6 +160,23 @@ Install-VsixPackage "MadsKristensen.WebEssentials2019"             # Web Essenti
 
 # Trust development certificates
 dotnet dev-certs https --trust
+
+#----------------------------------------------------------------------------------------------------
+# Install Devart utilities
+#----------------------------------------------------------------------------------------------------
+
+# Code Compare
+# https://docs.devart.com/code-compare/
+# https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
+if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
+    Write-Host "Install Devart Code Compare"
+    Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
+    Start-Process -Filepath "$Env:TEMP\codecompare.exe" -ArgumentList "/SILENT /NORESTART" -Wait
+    Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
+}
+
+# T4 Editor for Visual Studio
+Install-VsixPackage "DevartSoftware.DevartT4EditorforVisualStudio" # Devart T4 Editor for Visual Studio
 
 #----------------------------------------------------------------------------------------------------
 # Install developer utilities
