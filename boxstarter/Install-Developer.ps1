@@ -175,6 +175,9 @@ if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
     Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
 }
 
+# T4 Editor for Visual Studio
+Install-VsixPackage "DevartSoftware.DevartT4EditorforVisualStudio" # Devart T4 Editor for Visual Studio
+
 #----------------------------------------------------------------------------------------------------
 # Install developer utilities
 #----------------------------------------------------------------------------------------------------
