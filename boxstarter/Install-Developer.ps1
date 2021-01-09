@@ -17,12 +17,6 @@
 $vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
 $marketplace = "https://marketplace.visualstudio.com"
 
-Write-Host "Get list of Visual Studio extensions that are already installed"
-$installedVsExtensions = Get-ChildItem -Path "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
-    Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
-    ForEach-Object { $_.Matches.Groups[1].Value } | `
-    Sort-Object
-
 function Install-VsixPackage() {
     # Modified from https://gist.github.com/ScottHutchinson/b22339c3d3688da5c9b477281e258400
     param (
@@ -144,6 +138,13 @@ choco install -y "visualstudio2019-workload-universal"             --package-par
 # Cleanup
 Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
 RefreshEnv
+
+# Gather installed VS extensions (after VS is installed)
+Write-Host "Get list of Visual Studio extensions that are already installed"
+$installedVsExtensions = Get-ChildItem -Path "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
+    Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
+    ForEach-Object { $_.Matches.Groups[1].Value } | `
+    Sort-Object
 
 # Install extensions from Microsoft
 Install-VsixPackage "Diagnostics.DiagnosticsConcurrencyVisualizer2019"   # Concurrency Visualizer for Visual Studio 2019
