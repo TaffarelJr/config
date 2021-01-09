@@ -146,10 +146,10 @@ Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
 RefreshEnv
 
 # Install extensions from Microsoft
+Install-VsixPackage "Diagnostics.DiagnosticsConcurrencyVisualizer2019"   # Concurrency Visualizer for Visual Studio 2019
 Install-VsixPackage "VisualStudioPlatformTeam.ProductivityPowerPack2017" # Productivity Power Tools 2017/2019
 Install-VsixPackage "VisualStudioProductTeam.ProjectSystemTools"         # Project System Tools
 Install-VsixPackage "azsdktm.SecurityIntelliSense-Preview"               # Security IntelliSense
-Install-VsixPackage "EWoodruff.VisualStudioSpellCheckerVS2017andLater"   # Visual Studio Spell Checker (VS2017 and Later)
 
 # Install extensions from Mads Kristensen
 Install-VsixPackage "MadsKristensen.ignore"                        # .ignore
@@ -161,14 +161,19 @@ Install-VsixPackage "MadsKristensen.TrailingWhitespaceVisualizer"  # Trailing Wh
 Install-VsixPackage "MadsKristensen.TypeScriptDefinitionGenerator" # TypeScript Definition Generator
 Install-VsixPackage "MadsKristensen.WebEssentials2019"             # Web Essentials 2019
 
+# Install extensions from other providers
+Install-VsixPackage "DevartSoftware.DevartT4EditorforVisualStudio"     # Devart T4 Editor for Visual Studio
+Install-VsixPackage "GitHub.GitHubExtensionforVisualStudio"            # GitHub Extension for Visual Studio
+Install-VsixPackage "EWoodruff.VisualStudioSpellCheckerVS2017andLater" # Visual Studio Spell Checker (VS2017 and Later)
+
 # Trust development certificates
 dotnet dev-certs https --trust
 
 #----------------------------------------------------------------------------------------------------
-# Install Devart utilities
+# Install developer utilities
 #----------------------------------------------------------------------------------------------------
 
-# Code Compare
+# Devart Code Compare
 # https://docs.devart.com/code-compare/
 # https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
 if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
@@ -177,13 +182,6 @@ if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
     Start-Process -Filepath "$Env:TEMP\codecompare.exe" -ArgumentList "/SILENT /NORESTART" -Wait
     Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
 }
-
-# T4 Editor for Visual Studio
-Install-VsixPackage "DevartSoftware.DevartT4EditorforVisualStudio" # Devart T4 Editor for Visual Studio
-
-#----------------------------------------------------------------------------------------------------
-# Install developer utilities
-#----------------------------------------------------------------------------------------------------
 
 choco install -y "fiddler"
 choco install -y "postman"
