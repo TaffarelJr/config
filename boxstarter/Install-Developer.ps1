@@ -183,6 +183,10 @@ if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
     Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
 }
 
+# NuGet CLI
+Write-Host "Download NuGet CLI"
+Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile "$Env:ProgramFiles\dotnet\nuget.exe" -UseBasicParsing
+
 choco install -y "fiddler"
 choco install -y "postman"
 choco install -y "putty"
