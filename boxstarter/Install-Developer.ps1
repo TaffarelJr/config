@@ -14,6 +14,15 @@
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
+$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
+$marketplace = "https://marketplace.visualstudio.com"
+
+Write-Host "Get list of Visual Studio extensions that are already installed"
+$installedVsExtensions = Get-ChildItem -Path "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
+    Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
+    ForEach-Object { $_.Matches.Groups[1].Value } | `
+    Sort-Object
+
 function Install-VsixPackage() {
     # Modified from https://gist.github.com/ScottHutchinson/b22339c3d3688da5c9b477281e258400
     param (
@@ -22,43 +31,35 @@ function Install-VsixPackage() {
 
     $ErrorActionPreference = "Stop"
 
-    $marketplaceHost = "https://marketplace.visualstudio.com"
-    $packageUri = "$marketplaceHost/items?itemName=$packageName"
-    $vsixFileName = "$Env:TEMP\$packageName.vsix"
-    $vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\resources\app\ServiceHub\Services\Microsoft.VisualStudio.Setup.Service"
-
-    Write-Host "Grabbing VSIX extension at $packageUri"
-    $html = Invoke-WebRequest -Uri $packageUri -UseBasicParsing
-
-    Write-Host "Attempting to download $packageName ..."
-    $anchor = $html.Links | `
-        Where-Object { $_.class -eq 'install-button-container' } | `
-        Select-Object -ExpandProperty href
-
+    $packagePage = "$marketplace/items?itemName=$packageName"
+    Write-Host "Scraping VSIX details from $packagePage"
+    $response = Invoke-WebRequest -Uri $packagePage -UseBasicParsing
+    $anchor = $response.Links | Where-Object { $_.class -eq "install-button-container" } | Select-Object -ExpandProperty "href"
     if (-Not $anchor) {
         Write-Error "Could not find download anchor tag on the Visual Studio Extensions page"
-        Exit 1
+        exit 1
+    }
+    $vsixId = $response.Content | Select-String -List -Pattern '"VsixId":"(.+?)"' | ForEach-Object { $_.Matches.Groups[1].Value }
+    if (-Not $vsixId) {
+        Write-Error "Could not find VSIX ID on the Visual Studio Extensions page"
+        exit 1
     }
 
-    Write-Host "Anchor is $anchor"
-    $href = "$marketplaceHost$anchor"
-    Write-Host "Href is $href"
-    Invoke-WebRequest -Uri $href -OutFile $vsixFileName -UseBasicParsing
+    if (-Not ($installedVsExtensions -Contains $vsixId)) {
+        $packageUri = "$marketplace$anchor"
+        $vsixFileName = "$Env:TEMP\$packageName.vsix"
+        Write-Host "Attempting to download $packageUri ..."
+        Invoke-WebRequest -Uri $packageUri -OutFile $vsixFileName -UseBasicParsing
+        if (-Not (Test-Path $vsixFileName)) {
+            Write-Error "Downloaded VSIX file could not be located"
+            exit 1
+        }
 
-    if (-Not (Test-Path $vsixFileName)) {
-        Write-Error "Downloaded VSIX file could not be located"
-        Exit 1
+        Write-Host "Installing $vsixFileName ..."
+        Start-Process -Filepath "$vsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$vsixFileName'" -Wait
+        Remove-Item $vsixFileName
+        Write-Host "Installation of $packageName complete!"
     }
-
-    Write-Host "VS Install Dir is $vsInstallDir"
-    Write-Host "VSIX File Name is $vsixFileName"
-    Write-Host "Installing $packageName ..."
-    Start-Process -Filepath "$vsInstallDir\VSIXInstaller" -ArgumentList "/q /a $vsixFileName" -Wait
-
-    Write-Host "Cleanup..."
-    Remove-Item $vsixFileName
-
-    Write-Host "Installation of $packageName complete!"
 }
 
 #----------------------------------------------------------------------------------------------------
