@@ -83,28 +83,6 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModel
 choco install -y "firefox" --package-parameters="/NoDesktopShortcut"
 
 #----------------------------------------------------------------------------------------------------
-# Install developer tools (part 1)
-#----------------------------------------------------------------------------------------------------
-
-# Developer fonts
-choco install -y "cascadiacodepl"
-choco install -y "firacode"
-
-# Visual Studio Code
-choco install -y "vscode" --package-parameters="/NoDesktopIcon"
-choco install -y "vscode-settingssync"
-
-# Devart Code Compare
-# https://docs.devart.com/code-compare/
-# https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
-if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
-    Write-Host "Install Devart Code Compare"
-    Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
-    Start-Process -Filepath "$Env:TEMP\codecompare.exe" -ArgumentList "/SILENT /NORESTART" -Wait
-    Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
-}
-
-#----------------------------------------------------------------------------------------------------
 # Install source control tools
 #----------------------------------------------------------------------------------------------------
 
@@ -123,13 +101,25 @@ choco install -y "sourcetree"
 Remove-Item "$Env:PUBLIC\Desktop\Sourcetree.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Install developer tools (part 2)
+# Install Visual Studio Code
 #----------------------------------------------------------------------------------------------------
 
-# Visual Studio 2019 Core
-choco install -y "visualstudio2019professional"             --package-parameters "--passive"
+# Developer fonts
+choco install -y "cascadiacodepl"
+choco install -y "firacode"
 
-# Visual Studio 2019 workloads
+# Visual Studio Code
+choco install -y "vscode" --package-parameters="/NoDesktopIcon"
+choco install -y "vscode-settingssync"
+
+#----------------------------------------------------------------------------------------------------
+# Install Visual Studio 2019
+#----------------------------------------------------------------------------------------------------
+
+# Install Visual Studio 2019 Core
+choco install -y "visualstudio2019professional" --package-parameters "--passive"
+
+# Install workloads
 choco install -y "visualstudio2019-workload-azure"                 --package-parameters "--passive --includeOptional" # Azure development workload
 choco install -y "visualstudio2019-workload-data"                  --package-parameters "--passive --includeOptional" # Data storage and processing workload
 # choco install -y "visualstudio2019-workload-datascience"           --package-parameters "--passive --includeOptional" # Data science and analytical applications workload
@@ -147,16 +137,18 @@ choco install -y "visualstudio2019-workload-netweb"                --package-par
 # choco install -y "visualstudio2019-workload-python"                --package-parameters "--passive --includeOptional" # Python development workload
 choco install -y "visualstudio2019-workload-universal"             --package-parameters "--passive --includeOptional" # Universal Windows Platform development workload
 # choco install -y "visualstudio2019-workload-visualstudioextension" --package-parameters "--passive --includeOptional" # Visual Studio extension development workload
+
+# Cleanup
 Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
 RefreshEnv
 
-# Visual Studio 2019 extensions from Microsoft
-Install-VsixPackage "VisualStudioPlatformTeam.ProductivityPowerPack2017" # Productivity Power Tools
+# Install extensions from Microsoft
+Install-VsixPackage "VisualStudioPlatformTeam.ProductivityPowerPack2017" # Productivity Power Tools 2017/2019
 Install-VsixPackage "VisualStudioProductTeam.ProjectSystemTools"         # Project System Tools
 Install-VsixPackage "azsdktm.SecurityIntelliSense-Preview"               # Security IntelliSense
 Install-VsixPackage "EWoodruff.VisualStudioSpellCheckerVS2017andLater"   # Visual Studio Spell Checker (VS2017 and Later)
 
-# Visual Studio 2019 extensions from Mads Kristensen
+# Install extensions from Mads Kristensen
 Install-VsixPackage "MadsKristensen.ignore"                        # .ignore
 Install-VsixPackage "MadsKristensen.BrowserLinkInspector2019"      # Browser Link Inspector 2019
 Install-VsixPackage "MadsKristensen.DummyTextGenerator"            # Dummy Text Generator
@@ -168,6 +160,20 @@ Install-VsixPackage "MadsKristensen.WebEssentials2019"             # Web Essenti
 
 # Trust development certificates
 dotnet dev-certs https --trust
+
+#----------------------------------------------------------------------------------------------------
+# Install Devart utilities
+#----------------------------------------------------------------------------------------------------
+
+# Code Compare
+# https://docs.devart.com/code-compare/
+# https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
+if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
+    Write-Host "Install Devart Code Compare"
+    Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
+    Start-Process -Filepath "$Env:TEMP\codecompare.exe" -ArgumentList "/SILENT /NORESTART" -Wait
+    Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
+}
 
 #----------------------------------------------------------------------------------------------------
 # Install developer utilities

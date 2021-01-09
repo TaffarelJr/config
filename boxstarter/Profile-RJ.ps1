@@ -105,10 +105,6 @@ $file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/co
 [regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
 $file | Out-File "$Env:APPDATA\Notepad++\config.xml"
 
-# TODO: Figure out how to import the '..\apps\CodeCompare.settings' file into Code Compare via command line
-Write-Host "Configure Code Compare"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.settings" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
-
 # Git
 Write-Host "Configure Git"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig"     -OutFile "$Env:USERPROFILE\.gitconfig"     -UseBasicParsing
@@ -152,6 +148,10 @@ Push-Location -Path "HKCU:\Software\"; & {
 Write-Host "Configure Visual Studio 2019"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
 devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
+
+# TODO: Figure out how to import the '..\apps\CodeCompare.settings' file into Code Compare via command line
+Write-Host "Configure Code Compare"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.settings" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
 # Post
