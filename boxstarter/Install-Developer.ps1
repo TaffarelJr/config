@@ -45,7 +45,10 @@ function Install-VsixPackage() {
         exit 1
     }
 
-    if (-Not ($installedVsExtensions -Contains $vsixId)) {
+    if ($installedVsExtensions -Contains $vsixId) {
+        Write-Host "Already installed. Skipping"
+    }
+    else {
         $packageUri = "$marketplace$anchor"
         $vsixFileName = "$Env:TEMP\$packageName.vsix"
         Write-Host "Attempting to download $packageUri ..."
