@@ -153,6 +153,9 @@ devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
 Write-Host "Configure Code Compare"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.settings" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
 
+# LINQPad
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
+
 #----------------------------------------------------------------------------------------------------
 # Post
 #----------------------------------------------------------------------------------------------------

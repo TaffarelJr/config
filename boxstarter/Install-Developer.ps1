@@ -45,7 +45,10 @@ function Install-VsixPackage() {
         exit 1
     }
 
-    if (-Not ($installedVsExtensions -Contains $vsixId)) {
+    if ($installedVsExtensions -Contains $vsixId) {
+        Write-Host "Already installed. Skipping"
+    }
+    else {
         $packageUri = "$marketplace$anchor"
         $vsixFileName = "$Env:TEMP\$packageName.vsix"
         Write-Host "Attempting to download $packageUri ..."
@@ -143,10 +146,10 @@ Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
 RefreshEnv
 
 # Install extensions from Microsoft
+Install-VsixPackage "Diagnostics.DiagnosticsConcurrencyVisualizer2019"   # Concurrency Visualizer for Visual Studio 2019
 Install-VsixPackage "VisualStudioPlatformTeam.ProductivityPowerPack2017" # Productivity Power Tools 2017/2019
 Install-VsixPackage "VisualStudioProductTeam.ProjectSystemTools"         # Project System Tools
 Install-VsixPackage "azsdktm.SecurityIntelliSense-Preview"               # Security IntelliSense
-Install-VsixPackage "EWoodruff.VisualStudioSpellCheckerVS2017andLater"   # Visual Studio Spell Checker (VS2017 and Later)
 
 # Install extensions from Mads Kristensen
 Install-VsixPackage "MadsKristensen.ignore"                        # .ignore
@@ -158,35 +161,70 @@ Install-VsixPackage "MadsKristensen.TrailingWhitespaceVisualizer"  # Trailing Wh
 Install-VsixPackage "MadsKristensen.TypeScriptDefinitionGenerator" # TypeScript Definition Generator
 Install-VsixPackage "MadsKristensen.WebEssentials2019"             # Web Essentials 2019
 
+# Install extensions from other providers
+Install-VsixPackage "DevartSoftware.DevartT4EditorforVisualStudio"     # Devart T4 Editor for Visual Studio
+Install-VsixPackage "GitHub.GitHubExtensionforVisualStudio"            # GitHub Extension for Visual Studio
+Install-VsixPackage "EWoodruff.VisualStudioSpellCheckerVS2017andLater" # Visual Studio Spell Checker (VS2017 and Later)
+
 # Trust development certificates
 dotnet dev-certs https --trust
-
-#----------------------------------------------------------------------------------------------------
-# Install Devart utilities
-#----------------------------------------------------------------------------------------------------
-
-# Code Compare
-# https://docs.devart.com/code-compare/
-# https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
-if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
-    Write-Host "Install Devart Code Compare"
-    Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile "$Env:TEMP\codecompare.exe" -UseBasicParsing
-    Start-Process -Filepath "$Env:TEMP\codecompare.exe" -ArgumentList "/SILENT /NORESTART" -Wait
-    Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
-}
-
-# T4 Editor for Visual Studio
-Install-VsixPackage "DevartSoftware.DevartT4EditorforVisualStudio" # Devart T4 Editor for Visual Studio
 
 #----------------------------------------------------------------------------------------------------
 # Install developer utilities
 #----------------------------------------------------------------------------------------------------
 
+# Azure CLI
+choco install -y "azure-cli"
+
+# Devart Code Compare
+# https://docs.devart.com/code-compare/
+# https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
+if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
+    Write-Host "Install Devart Code Compare"
+    $file = "$Env:TEMP\codecompare.exe"
+    Invoke-WebRequest -Uri "https://www.devart.com/codecompare/codecompare.exe" -OutFile $file -UseBasicParsing
+    Start-Process -Filepath $file -ArgumentList "/SILENT /NORESTART" -Wait
+    Remove-Item "$Env:PUBLIC\Desktop\Code Compare.lnk" -ErrorAction "Ignore"
+}
+
+# Fiddler
 choco install -y "fiddler"
+
+# GNU Make
+choco install -y "make"
+
+# LINQPad
+choco install -y "linqpad"
+Remove-Item "$Env:OneDrive\Desktop\LINQPad 6 (x64).lnk" -ErrorAction "Ignore"
+
+# Node.js
+choco install -y "nodejs"
+
+# NuGet CLI
+Write-Host "Download NuGet CLI"
+Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile "$Env:ProgramFiles\dotnet\nuget.exe" -UseBasicParsing
+
+# Postman
 choco install -y "postman"
+Remove-Item "$Env:OneDrive\Desktop\Postman.lnk" -ErrorAction "Ignore"
+
+# PuTTY
 choco install -y "putty"
+
+# Sysinternals
 choco install -y "sysinternals"
+
+# WinGPG
+Write-Host "Install WinGPG"
+$file = "$Env:TEMP\WinGPG-setup.exe"
+Invoke-WebRequest -Uri "https://s3.amazonaws.com/assets.scand.com/WinGPG/WinGPG-1.0.1-setup.exe" -OutFile $file -UseBasicParsing
+Start-Process -Filepath $file -ArgumentList "/SILENT /NORESTART" -Wait
+
+# WinSCP
 choco install -y "winscp"
+Remove-Item "$Env:PUBLIC\Desktop\WinSCP.lnk" -ErrorAction "Ignore"
+
+# Wireshark
 choco install -y "wireshark"
 
 #----------------------------------------------------------------------------------------------------
@@ -196,19 +234,12 @@ choco install -y "wireshark"
 # JetBrains ReSharper Ultimate
 choco install -y "resharper"
 
-# LINQPad
-choco install -y "linqpad"
-
 #----------------------------------------------------------------------------------------------------
 # Install additional frameworks & SDKs
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "azure-cli"
-choco install -y "make"
 choco install -y "netfx-4.8-devpack"
 choco install -y "dotnet-5.0-sdk"
-choco install -y "nodejs"
-choco install -y "nuget.commandline"
 
 #----------------------------------------------------------------------------------------------------
 # Install database tools
