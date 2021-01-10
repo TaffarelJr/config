@@ -23,6 +23,34 @@ $purpleShadowDark_accentPalette = [byte[]]@(`
         "0x1f", "0x1f", "0x4d", "0x00", "0x00", "0xcc", "0x6a", "0x00"
 )
 
+$dracula = [PSCustomObject]@{
+    Name            = "Dracula"
+    NotepadPlusPlus = "https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml"
+}
+
+$tomorrowNight = [PSCustomObject]@{
+    Name            = "Tomorrow Night"
+    NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night.xml"
+}
+
+$tomorrowNightEighties = [PSCustomObject]@{
+    Name            = "Tomorrow Night Eighties"
+    NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_eighties.xml"
+}
+
+$options = [System.Management.Automation.Host.ChoiceDescription[]](
+    New-Object System.Management.Automation.Host.ChoiceDescription "&Dracula", "'Dracula' theme, by Zeno Rocha",
+    New-Object System.Management.Automation.Host.ChoiceDescription "&Tomorrow Night", "'Tomorrow Night' theme, by Chris Kempson",
+    New-Object System.Management.Automation.Host.ChoiceDescription "Tomorrow Night &Eighties", "'Tomorrow Night Eighties' theme, by Chris Kempson"
+)
+
+$theme = switch ($host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 0)) {
+    0 { $dracula }
+    1 { $tomorrowNight }
+    2 { $tomorrowNightEighties }
+    default { Write-Host "Invalid selection"; exit 1 }
+}
+
 $searchLocations = @(
     "C:\Code"
 )
@@ -97,8 +125,10 @@ Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 
 # Notepad++
 Write-Host "Configure Notepad++"
+Invoke-WebRequest -Uri $theme.NotepadPlusPlus -OutFile "$Env:APPDATA\Notepad++\themes\$($theme.Name).xml" -UseBasicParsing
 $file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -UseBasicParsing).Content
 [regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
+[regex]::Matches($file, "«theme»") | ForEach-Object { $file = $file.Replace($_, $theme.Name) }
 $file | Out-File "$Env:APPDATA\Notepad++\config.xml"
 
 # Git
