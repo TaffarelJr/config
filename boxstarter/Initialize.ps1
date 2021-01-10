@@ -110,18 +110,18 @@ if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
 # Remove bloatware, so we don't update them
 #----------------------------------------------------------------------------------------------------
 
+# Windows Store Apps
 Write-Host "Remove Windows Bloatware"
 $ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
-
 foreach ($app in $unwantedApps) {
     Write-Host "    $app"
     Get-AppxPackage $app -AllUsers | Remove-AppxPackage
     Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $app | Remove-AppxProvisionedPackage -Online
     Remove-Item "$Env:LOCALAPPDATA\Packages\$app" -Recurse -Force -ErrorAction 0
 }
-
 $ProgressPreference = "Continue"
 
+# McAfee
 Write-Host "Remove McAfee Security App, if installed"
 $mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" | `
     ForEach-Object { Get-ItemProperty $_.PSPath } | `
