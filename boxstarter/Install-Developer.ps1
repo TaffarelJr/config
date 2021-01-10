@@ -85,13 +85,16 @@ choco install -y "firefox" --package-parameters="/NoDesktopShortcut"
 
 # Git for Windows
 choco install -y "git"
+RefreshEnv
 
 # TortoiseGit
 choco install -y "tortoisegit"
+RefreshEnv
 
 # GitHub Desktop
 choco install -y "github-desktop"
 Remove-Item "$Env:OneDrive\Desktop\GitHub Desktop.lnk" -ErrorAction "Ignore"
+RefreshEnv
 
 # Sourcetree
 choco install -y "sourcetree"
