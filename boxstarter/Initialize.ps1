@@ -110,18 +110,18 @@ if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
 # Remove bloatware, so we don't update them
 #----------------------------------------------------------------------------------------------------
 
+# Windows Store Apps
 Write-Host "Remove Windows Bloatware"
 $ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
-
 foreach ($app in $unwantedApps) {
     Write-Host "    $app"
     Get-AppxPackage $app -AllUsers | Remove-AppxPackage
     Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $app | Remove-AppxProvisionedPackage -Online
     Remove-Item "$Env:LOCALAPPDATA\Packages\$app" -Recurse -Force -ErrorAction 0
 }
-
 $ProgressPreference = "Continue"
 
+# McAfee
 Write-Host "Remove McAfee Security App, if installed"
 $mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" | `
     ForEach-Object { Get-ItemProperty $_.PSPath } | `
@@ -134,12 +134,19 @@ if ($mcafee) {
 }
 
 #----------------------------------------------------------------------------------------------------
+# Update PowerShell version
+#----------------------------------------------------------------------------------------------------
+
+choco install -y "powershell-core" --package-parameters="/CleanUpPath" --install-arguments="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
+RefreshEnv
+
+#----------------------------------------------------------------------------------------------------
 # Install Windows Updates, so everything's current
 #----------------------------------------------------------------------------------------------------
 
 Install-WindowsUpdate -AcceptEula
 
-# Runs asynchronously (not blocking)
+# Update Windows Store applications (async - not blocking)
 Write-Host "Update Windows Store applications"
 (Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod()
 

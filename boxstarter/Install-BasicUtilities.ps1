@@ -28,6 +28,7 @@ Disable-UAC
 choco install -y "googlechrome"
 Remove-Item "$Env:PUBLIC\Desktop\Google Chrome.lnk"   -ErrorAction "Ignore"
 Remove-Item "$Env:OneDrive\Desktop\Google Chrome.lnk" -ErrorAction "Ignore"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Chrome.json" -OutFile "$Env:ProgramFiles\Google\Chrome\Application\master_preferences" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
 # Install utilities
@@ -41,6 +42,9 @@ choco install -y "ccleaner"
 Remove-Item "$Env:PUBLIC\Desktop\CCleaner.lnk" -ErrorAction "Ignore"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CCleaner.ini" -OutFile "$Env:ProgramFiles\CCleaner\ccleaner.ini" -UseBasicParsing
 
+# Chocolatey
+choco install -y "chocolatey"
+
 # Piriform Defraggler
 choco install -y "defraggler"
 Remove-Item "$Env:PUBLIC\Desktop\Defraggler.lnk" -ErrorAction "Ignore"
@@ -50,9 +54,6 @@ choco install -y "notepadplusplus"
 
 # SpaceSniffer
 choco install -y "spacesniffer"
-
-# Chocolatey
-choco install -y "chocolatey"
 
 #----------------------------------------------------------------------------------------------------
 # Install additional cloud storage providers

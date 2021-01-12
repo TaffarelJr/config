@@ -34,9 +34,10 @@ $searchLocations = @(
 Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
-# Configure Windows Theme
+# Configure Windows
 #----------------------------------------------------------------------------------------------------
 
+# Theme
 Write-Host "Configure Windows theme"
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
     Push-Location -Path ".\Themes\Personalize\"; & {
@@ -51,20 +52,20 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
     }; Pop-Location
 }; Pop-Location
 
-#----------------------------------------------------------------------------------------------------
-# Configure Windows Search locations
-#----------------------------------------------------------------------------------------------------
-
+# Search locations
 Write-Host "Add Windows Search locations"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile "$Env:TEMP\Microsoft.Search.Interop.dll" -UseBasicParsing
 Add-Type -Path "$Env:TEMP\Microsoft.Search.Interop.dll"
 $crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
-
 foreach ($location in $searchLocations) {
     $crawlManager.AddUserScopeRule("file:///$location", $true, $false, $null)
 }
-
 $crawlManager.SaveAll()
+
+# Power & Sleep settings
+Write-Host "Configure Windows Power & Battery settings"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
+powercfg /import "$Env:TEMP\Windows.pow"
 
 #----------------------------------------------------------------------------------------------------
 # Install personal preferred utilities
@@ -93,11 +94,6 @@ Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 #----------------------------------------------------------------------------------------------------
 # Configure applications
 #----------------------------------------------------------------------------------------------------
-
-# Windows Power & Sleep settings
-Write-Host "Configure Windows Power & Battery settings"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
-powercfg /import "$Env:TEMP\Windows.pow"
 
 # Notepad++
 Write-Host "Configure Notepad++"
