@@ -134,12 +134,19 @@ if ($mcafee) {
 }
 
 #----------------------------------------------------------------------------------------------------
+# Update PowerShell version
+#----------------------------------------------------------------------------------------------------
+
+choco install -y "powershell-core" --package-parameters="/CleanUpPath" --install-arguments="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
+RefreshEnv
+
+#----------------------------------------------------------------------------------------------------
 # Install Windows Updates, so everything's current
 #----------------------------------------------------------------------------------------------------
 
 Install-WindowsUpdate -AcceptEula
 
-# Runs asynchronously (not blocking)
+# Update Windows Store applications (async - not blocking)
 Write-Host "Update Windows Store applications"
 (Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod()
 
