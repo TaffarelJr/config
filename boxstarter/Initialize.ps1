@@ -252,6 +252,12 @@ Move-LibraryDirectory -libraryName "My Video"    -newPath "$Env:OneDrive\Videos"
 Move-LibraryDirectory -libraryName "Personal"    -newPath "$Env:OneDrive\Documents"
 
 #----------------------------------------------------------------------------------------------------
+# Clean up shortcuts
+#----------------------------------------------------------------------------------------------------
+
+Remove-Item "$Env:PUBLIC\Desktop\Microsoft Edge.lnk" -ErrorAction "Ignore"
+
+#----------------------------------------------------------------------------------------------------
 # Post
 #----------------------------------------------------------------------------------------------------
 

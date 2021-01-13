@@ -28,6 +28,57 @@ $searchLocations = @(
 )
 
 #----------------------------------------------------------------------------------------------------
+# Prompt user for theme
+#----------------------------------------------------------------------------------------------------
+
+$themes = @(
+    [PSCustomObject]@{
+        Name            = "Dracula"
+        KeyedName       = "&Dracula"
+        NotepadPlusPlus = "https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml"
+    }
+    [PSCustomObject]@{
+        Name            = "Tomorrow Night"
+        KeyedName       = "&Tomorrow Night"
+        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night.xml"
+    }
+    [PSCustomObject]@{
+        Name            = "Tomorrow Night Eighties"
+        KeyedName       = "Tomorrow Night &Eighties"
+        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_eighties.xml"
+    }
+)
+
+$options = $themes | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
+$theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 0)]
+
+#----------------------------------------------------------------------------------------------------
+# Prompt user for font
+#----------------------------------------------------------------------------------------------------
+
+$fonts = @(
+    [PSCustomObject]@{
+        Name              = "Cascadia Code PL"
+        KeyedName         = "&Cascadia Code PL"
+        ChocolateyPackage = "cascadiacodepl"
+    }
+    [PSCustomObject]@{
+        Name              = "DejaVu"
+        KeyedName         = "&DejaVu"
+        ChocolateyPackage = "dejavufonts"
+    }
+    [PSCustomObject]@{
+        Name              = "Fira Code"
+        KeyedName         = "&Fira Code"
+        ChocolateyPackage = "firacode" # Currently displays lots of errors, but succeeds anyway
+    }
+)
+
+$options = $fonts | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
+$font = $fonts[$host.ui.PromptForChoice("Choose font", "What font should be installed?", $options, 2)]
+$replaceFonts = ($fonts | Where-Object { $_ -NE $font } | Select-Object -ExpandProperty "Name") + @("Consolas")
+
+#----------------------------------------------------------------------------------------------------
 # Pre
 #----------------------------------------------------------------------------------------------------
 
@@ -36,6 +87,11 @@ Disable-UAC
 #----------------------------------------------------------------------------------------------------
 # Configure Windows
 #----------------------------------------------------------------------------------------------------
+
+# Install fonts
+$fonts | ForEach-Object {
+    choco install -y $_.ChocolateyPackage
+}
 
 # Theme
 Write-Host "Configure Windows theme"
@@ -71,35 +127,76 @@ powercfg /import "$Env:TEMP\Windows.pow"
 # Install personal preferred utilities
 #----------------------------------------------------------------------------------------------------
 
-# Attribute Changer
-choco install -y "attributechanger"
-
-# Link Shell Extension
-choco install -y "linkshellextension"
-
 # Advanced Renamer
 choco install -y "advanced-renamer"
 
-# Duplicate Cleaner
-choco install -y "duplicatecleaner"
-Remove-Item "$Env:PUBLIC\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore"
-
-# Free Download Manager
-choco install -y "freedownloadmanager"
+# Attribute Changer
+choco install -y "attributechanger"
 
 # Divvy
 choco install -y "divvy"
 Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 
+# Duplicate Cleaner
+choco install -y "duplicatecleaner"
+Remove-Item "$Env:PUBLIC\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore"
+
+# Link Shell Extension
+choco install -y "linkshellextension"
+
+# Free Download Manager
+choco install -y "freedownloadmanager"
+
 #----------------------------------------------------------------------------------------------------
-# Configure applications
+# Configure Notepad++
 #----------------------------------------------------------------------------------------------------
 
-# Notepad++
-Write-Host "Configure Notepad++"
+# Download themes
+$themes | ForEach-Object {
+    Write-Host "Download '$($_.Name)' theme for Notepad++"
+    $file = (Invoke-WebRequest -Uri $_.NotepadPlusPlus -UseBasicParsing).Content
+    $replaceFonts | ForEach-Object {
+        Write-Host "Replace ""$_.*?"" in theme file with ""$($font.Name)"""
+        [regex]::Matches($file, """$_.*?""") | ForEach-Object { $file = $file.Replace($_, """$($font.Name)""") }
+    }
+    $file | Out-File -FilePath "$Env:APPDATA\Notepad++\themes\$($_.Name).xml" -Encoding "windows-1252" -Force -NoNewline
+}
+
+# Delete any pre-existing configuration
+Write-Host "Delete existing configuration for Notepad++, if any"
+Remove-Item "$Env:APPDATA\Notepad++\config.xml" -ErrorAction "Ignore"
+
+# Download configuration
+Write-Host "Download configuration for Notepad++"
 $file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -UseBasicParsing).Content
 [regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
-$file | Out-File "$Env:APPDATA\Notepad++\config.xml"
+[regex]::Matches($file, "«theme»") | ForEach-Object { $file = $file.Replace($_, $theme.Name) }
+$file | Out-File -FilePath "$Env:APPDATA\Notepad++\config.xml" -Encoding "windows-1252" -Force -NoNewline
+
+# Download LuaScript page
+Write-Host "Scrape webpage for latest version of LuaScript plugin for Notepad++"
+$response = Invoke-WebRequest -Uri "https://github.com/dail8859/LuaScript/releases/latest" -UseBasicParsing
+$anchor = $response.Links | Where-Object { $_.href -match "LuaScript_v.*?_x64.zip" } | Select-Object -ExpandProperty "href"
+$packageUri = "https://github.com$anchor"
+Write-Host "Download LuaScript plugin for Notepad++ from $packageUri"
+$file = $packageUri.Substring($packageUri.LastIndexOf("/") + 1)
+Invoke-WebRequest -Uri $packageUri -OutFile "$Env:TEMP\$file" -UseBasicParsing
+Write-Host "Unzip LuaScript plugin for Notepad++"
+Expand-Archive -LiteralPath "$Env:TEMP\$file" -DestinationPath "$Env:ProgramFiles\Notepad++\plugins\LuaScript\"
+
+# Set startup Lua script
+Write-Host "Configure startup script for Notepad++"
+@"
+-- Startup script
+-- Changes will take effect once Notepad++ is restarted
+
+editor1.Technology = SC_TECHNOLOGY_DIRECTWRITE
+editor2.Technology = SC_TECHNOLOGY_DIRECTWRITE
+"@ | Out-File -FilePath "$Env:APPDATA\Notepad++\plugins\config\startup.lua" -Encoding "windows-1252" -Force
+
+#----------------------------------------------------------------------------------------------------
+# Configure other applications
+#----------------------------------------------------------------------------------------------------
 
 # Git
 Write-Host "Configure Git"
