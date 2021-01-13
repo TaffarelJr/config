@@ -26,7 +26,7 @@ function Install-VsixPackage() {
     $ErrorActionPreference = "Stop"
 
     $packagePage = "$marketplace/items?itemName=$packageName"
-    Write-Host "Scraping VSIX details from $packagePage"
+    Write-Host "Scrape VSIX details from $packagePage"
     $response = Invoke-WebRequest -Uri $packagePage -UseBasicParsing
     $anchor = $response.Links | Where-Object { $_.class -eq "install-button-container" } | Select-Object -ExpandProperty "href"
     if (-Not $anchor) {
@@ -103,10 +103,6 @@ Remove-Item "$Env:PUBLIC\Desktop\Sourcetree.lnk" -ErrorAction "Ignore"
 #----------------------------------------------------------------------------------------------------
 # Install Visual Studio Code
 #----------------------------------------------------------------------------------------------------
-
-# Developer fonts
-choco install -y "cascadiacodepl"
-choco install -y "firacode"
 
 # Visual Studio Code
 choco install -y "vscode" --package-parameters="/NoDesktopIcon"
