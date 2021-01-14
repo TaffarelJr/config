@@ -43,6 +43,11 @@ $themes = @(
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night.xml"
     }
     [PSCustomObject]@{
+        Name            = "Tomorrow Night Bright"
+        KeyedName       = "Tomorrow Night &Bright"
+        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_bright.xml"
+    }
+    [PSCustomObject]@{
         Name            = "Tomorrow Night Eighties"
         KeyedName       = "Tomorrow Night &Eighties"
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_eighties.xml"
@@ -50,7 +55,7 @@ $themes = @(
 )
 
 $options = $themes | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
-$theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 0)]
+$theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 2)]
 
 #----------------------------------------------------------------------------------------------------
 # Prompt user for font
