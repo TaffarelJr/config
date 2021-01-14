@@ -147,7 +147,10 @@ choco install -y "visualstudio2019-workload-universal"             --package-par
 
 # Cleanup
 Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
-RefreshEnv
+if (-Not ($Env:Path -Match "dotnet")) {
+    Restart-Computer
+}
+dotnet --info
 
 # Gather installed VS extensions (after VS is installed)
 Write-Host "Get list of Visual Studio extensions that are already installed"
