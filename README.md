@@ -8,7 +8,15 @@ Configuration files for common applications are stored in the [apps](./apps) fol
 
 ## [Boxstarter](https://boxstarter.org)
 
-The [boxstarter](./boxstarter) folder contains scripts to automatically configure a computer and install various applications on it. To run them manually:
+The [boxstarter](./boxstarter) folder contains scripts to automatically configure a computer and install various applications on it. These scripts were inspired by samples from:
+
+- [Microsoft](https://github.com/Microsoft/windows-dev-box-setup-scripts)
+- [elithrar](https://github.com/elithrar/dotfiles)
+- [ElJefeDSecurIT](https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e)
+- [jessfraz](https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f)
+- [NickCraver](https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9)
+
+To run them manually:
 
 ```powershell
 # Install Boxstarter
@@ -18,7 +26,7 @@ The [boxstarter](./boxstarter) folder contains scripts to automatically configur
 Set-ExecutionPolicy RemoteSigned
 
 # Launch Boxstarter, pointing to a URL or local path to the script to be run
-Install-BoxstarterPackage -PackageName <URL-TO-RAW-OR-GIST> -DisableReboots
+Install-BoxstarterPackage -PackageName <URL-TO-RAW-OR-GIST> [-DisableReboots]
 ```
 
 Or, a quicker way to run these scripts is to use ClickOnce:
