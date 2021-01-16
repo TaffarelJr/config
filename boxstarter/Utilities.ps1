@@ -15,6 +15,20 @@ function Write-Header {
 	Write-Host
 }
 
+function Disable-WindowsService {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline)]
+        [string]$service
+    )
+
+    process {
+        Write-Host "Disable Windows Service '$service' ... " -NoNewline
+        Set-service -Name $service -StartupType "Disabled"
+        Write-Host "Done"
+    }
+}
+
 function Remove-WindowsStoreApp {
     [CmdletBinding()]
     param(

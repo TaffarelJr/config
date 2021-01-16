@@ -34,7 +34,7 @@ $indexExtensions = @(
 )
 
 #----------------------------------------------------------------------------------------------------
-# Pre
+Write-Header "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Download & import utilities
@@ -49,25 +49,25 @@ Write-Host "Done"
 Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
-# Disable unneeded services
-#----------------------------------------------------------------------------------------------------
-
 Write-Header "Disable uneeded services"
+#----------------------------------------------------------------------------------------------------
 
 # Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
 # https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
+Write-Host "Disable SMB1Protocol due to security risk ... " -NoNewline
 Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
+Write-Host "Done"
 
-# Turn off unneeded services
-Set-service -Name "lmhosts"  -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
-Set-service -Name "SNMPTRAP" -StartupType "Disabled" # Don't need SNMP
-Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
+# Disable unneeded services
+@(
+    "lmhosts"  # Don't need NetBIOS over TCP/IP
+    "SNMPTRAP" # Don't need SNMP
+    "TapiSrv"  # Don't need Telephony API
+) | Disable-WindowsService
 
 #----------------------------------------------------------------------------------------------------
-# Prompt the user to pick a name for the computer
-#----------------------------------------------------------------------------------------------------
-
 Write-Header "Rename computer"
+#----------------------------------------------------------------------------------------------------
 
 # Prompt the user
 Write-Host "Computer name is: $Env:COMPUTERNAME"
@@ -80,12 +80,10 @@ if ($computerName.Length -gt 0) {
 }
 
 #----------------------------------------------------------------------------------------------------
-# Remove bloatware, so we don't update them
+Write-Header "Remove bloatware" # so we don't update them later
 #----------------------------------------------------------------------------------------------------
 
-Write-Header "Remove bloatware"
-
-# Windows Store Apps
+# Unwanted Windows Store Apps
 @(
     "*HiddenCity*"
     "*iHeartRadio*"
@@ -143,10 +141,8 @@ if ($mcafee) {
 }
 
 #----------------------------------------------------------------------------------------------------
-# Install Windows Updates, so everything's current
+Write-Header "Install Windows updates" # so everything's current
 #----------------------------------------------------------------------------------------------------
-
-Write-Header "Install Windows updates"
 
 Install-WindowsUpdate -AcceptEula
 
@@ -156,10 +152,8 @@ Write-Host "Update Windows Store applications ... " -NoNewline
 Write-Host "Done"
 
 #----------------------------------------------------------------------------------------------------
-# Configure Windows Explorer
-#----------------------------------------------------------------------------------------------------
-
 Write-Header "Configure Windows Explorer"
+#----------------------------------------------------------------------------------------------------
 
 # Boxstarter-provided settings
 Set-WindowsExplorerOptions `
@@ -194,10 +188,8 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\";
 Disable-BingSearch
 
 #----------------------------------------------------------------------------------------------------
-# Disable Xbox Game Bar
-#----------------------------------------------------------------------------------------------------
-
 Write-Header "Disable Xbox Game Bar"
+#----------------------------------------------------------------------------------------------------
 
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type "DWord" -Value "0"
 Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                            -Name "GameDVR_Enabled"   -Type "DWord" -Value "0"
@@ -205,10 +197,8 @@ Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                           
 Disable-GameBarTips
 
 #----------------------------------------------------------------------------------------------------
-# Configure Windows Search file extensions
-#----------------------------------------------------------------------------------------------------
-
 Write-Header "Configure Windows Search file extensions"
+#----------------------------------------------------------------------------------------------------
 
 Push-Location -Path "HKCR:\"; & {
     foreach ($extension in $indexExtensions) {
@@ -223,53 +213,57 @@ Push-Location -Path "HKCR:\"; & {
 }; Pop-Location
 
 #----------------------------------------------------------------------------------------------------
-# Unlock Group Policy settings (Windows 10 Pro only)
+Write-Header "Configure Group Policy settings (Windows 10 Pro only)"
 #----------------------------------------------------------------------------------------------------
 
 Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
     # Microsoft OneDrive
     $regPath = ".\Windows\OneDrive\"
     if (Test-Path $regPath) {
-        Write-Host "Unlock Microsoft OneDrive"
+        Write-Host "Unlock Microsoft OneDrive ... " -NoNewline
         Push-Location -Path $regPath; & {
             Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
             Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
         }; Pop-Location
+        Write-Host "Done"
     }
 
     # Windows Store
     $regPath = ".\WindowsStore\"
     if (Test-Path $regPath) {
-        Write-Host "Unlock Windows Store"
+        Write-Host "Unlock Windows Store ... " -NoNewline
         Push-Location -Path $regPath; & {
             Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
             Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
             Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
         }; Pop-Location
+        Write-Host "Done"
     }
 }; Pop-Location
 
 #----------------------------------------------------------------------------------------------------
-# Move library folders to OneDrive
+Write-Header "Move library folders to OneDrive"
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Move library directories"
 Move-LibraryDirectory -libraryName "Desktop"     -newPath "$Env:OneDrive\Desktop"
+RefreshEnv
 Move-LibraryDirectory -libraryName "Downloads"   -newPath "$Env:OneDrive\Downloads"
+RefreshEnv
 Move-LibraryDirectory -libraryName "My Music"    -newPath "$Env:OneDrive\Music"
+RefreshEnv
 Move-LibraryDirectory -libraryName "My Pictures" -newPath "$Env:OneDrive\Pictures"
+RefreshEnv
 Move-LibraryDirectory -libraryName "My Video"    -newPath "$Env:OneDrive\Videos"
+RefreshEnv
 Move-LibraryDirectory -libraryName "Personal"    -newPath "$Env:OneDrive\Documents"
+RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
-# Clean up shortcuts
+Write-Header "Clean up"
 #----------------------------------------------------------------------------------------------------
 
+# Clean up desktop shortcuts
 Remove-Item "$Env:PUBLIC\Desktop\Microsoft Edge.lnk" -ErrorAction "Ignore"
-
-#----------------------------------------------------------------------------------------------------
-# Post
-#----------------------------------------------------------------------------------------------------
 
 Enable-UAC
 Enable-MicrosoftUpdate
