@@ -131,7 +131,6 @@ Write-Header "Remove bloatware"
 ) | Remove-WindowsStoreApp
 
 # McAfee
-Write-Host "Remove McAfee Security App, if installed"
 $mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" | `
     ForEach-Object { Get-ItemProperty $_.PSPath } | `
     Where-Object { $_ -match "McAfee Security" } | `
@@ -147,17 +146,35 @@ if ($mcafee) {
 # Install Windows Updates, so everything's current
 #----------------------------------------------------------------------------------------------------
 
+Write-Header "Install Windows updates"
+
 Install-WindowsUpdate -AcceptEula
 
 # Update Windows Store applications (async - not blocking)
-Write-Host "Update Windows Store applications"
+Write-Host "Update Windows Store applications ... " -NoNewline
 (Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod()
+Write-Host "Done"
 
 #----------------------------------------------------------------------------------------------------
 # Configure Windows Explorer
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Configure Windows Explorer"
+Write-Header "Configure Windows Explorer"
+
+# Boxstarter-provided settings
+Set-WindowsExplorerOptions `
+    -DisableOpenFileExplorerToQuickAccess `
+    -EnableShowRecentFilesInQuickAccess `
+    -EnableShowFrequentFoldersInQuickAccess `
+    -EnableShowFullPathInTitleBar `
+    -EnableShowHiddenFilesFoldersDrives `
+    -EnableShowFileExtensions `
+    -DisableShowProtectedOSFiles `
+    -EnableExpandToOpenFolder `
+    -EnableShowRibbon `
+    -EnableSnapAssist
+
+# Additional custom settings
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
     Push-Location -Path ".\Advanced\"; & {
         Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
@@ -173,23 +190,14 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\";
     }; Pop-Location
 }; Pop-Location
 
-Set-WindowsExplorerOptions `
-    -DisableOpenFileExplorerToQuickAccess `
-    -EnableShowRecentFilesInQuickAccess `
-    -EnableShowFrequentFoldersInQuickAccess `
-    -EnableShowFullPathInTitleBar `
-    -EnableShowHiddenFilesFoldersDrives `
-    -EnableShowFileExtensions `
-    -DisableShowProtectedOSFiles `
-    -EnableExpandToOpenFolder `
-    -EnableShowRibbon `
-    -EnableSnapAssist
-
+# Disable Bing in Search box
 Disable-BingSearch
 
 #----------------------------------------------------------------------------------------------------
-# Disable Xbox Gamebar
+# Disable Xbox Game Bar
 #----------------------------------------------------------------------------------------------------
+
+Write-Header "Disable Xbox Game Bar"
 
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type "DWord" -Value "0"
 Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                            -Name "GameDVR_Enabled"   -Type "DWord" -Value "0"
@@ -200,7 +208,7 @@ Disable-GameBarTips
 # Configure Windows Search file extensions
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Configure Windows Search file extensions"
+Write-Header "Configure Windows Search file extensions"
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 
 Push-Location -Path "HKCR:\"; & {
