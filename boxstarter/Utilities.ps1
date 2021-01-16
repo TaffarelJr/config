@@ -6,12 +6,12 @@ function Write-Header {
 	)
 
 	$color = "Yellow"
-	$line = "─" * ($text.Length + 2)
+	$line = "–" * $text.Length
 
 	Write-Host
-	Write-Host "┌$($line)┐" -ForegroundColor $color
-	Write-Host "│ $($text) │" -ForegroundColor $color
-	Write-Host "└$($line)┘" -ForegroundColor $color
+	Write-Host "¡—$($line)—¡" -ForegroundColor $color
+	Write-Host "| $($text) |" -ForegroundColor $color
+	Write-Host "!—$($line)—!" -ForegroundColor $color
 	Write-Host
 }
 
