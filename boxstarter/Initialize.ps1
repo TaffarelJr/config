@@ -45,7 +45,6 @@ Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
 . $filePath
 Write-Host "Done"
 
-# Disable UAC
 Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
@@ -58,7 +57,7 @@ Write-Host "Disable SMB1Protocol due to security risk ... " -NoNewline
 Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
 Write-Host "Done"
 
-# Disable unneeded services
+# Unneeded services
 @(
     "lmhosts"  # Don't need NetBIOS over TCP/IP
     "SNMPTRAP" # Don't need SNMP
@@ -77,6 +76,8 @@ $computerName = Read-Host -Prompt "<press ENTER to skip>"
 # Rename the computer only if the user provided a new name
 if ($computerName.Length -gt 0) {
     Rename-Computer -NewName $computerName
+} else {
+    Write-Host "Skipping ..."
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -146,16 +147,15 @@ Write-Header "Install Windows updates" # so everything's current
 
 Install-WindowsUpdate -AcceptEula
 
-# Update Windows Store applications (async - not blocking)
-Write-Host "Update Windows Store applications ... " -NoNewline
+# async - not blocking
+Write-Host "Update Windows Store applications"
 (Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod()
-Write-Host "Done"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Windows Explorer"
 #----------------------------------------------------------------------------------------------------
 
-# Boxstarter-provided settings
+Write-Host "Standard settings ... " -NoNewline
 Set-WindowsExplorerOptions `
     -DisableOpenFileExplorerToQuickAccess `
     -EnableShowRecentFilesInQuickAccess `
@@ -167,8 +167,9 @@ Set-WindowsExplorerOptions `
     -EnableExpandToOpenFolder `
     -EnableShowRibbon `
     -EnableSnapAssist
+Write-Host "Done"
 
-# Additional custom settings
+Write-Host "Advanced settings ... " -NoNewline
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
     Push-Location -Path ".\Advanced\"; & {
         Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
@@ -183,9 +184,11 @@ Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\";
         Set-ItemProperty -Path ".\PrimaryProperties\UnindexedLocations\" -Name "SearchOnly"    -Type "DWord" -Value "0" # Always search file names and contents
     }; Pop-Location
 }; Pop-Location
+Write-Host "Done"
 
-# Disable Bing in Search box
+Write-Host "Disable Bing in Search box ... " -NoNewline
 Disable-BingSearch
+Write-Host "Done"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Disable Xbox Game Bar"
