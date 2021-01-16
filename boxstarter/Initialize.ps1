@@ -2,7 +2,7 @@
 # https://boxstarter.org/
 #
 # Install Boxstarter:
-# 	. { iwr -useb https://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
+#     . { iwr -useb https://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
 #
 # Set: Set-ExecutionPolicy RemoteSigned
 # Then: Install-BoxstarterPackage -PackageName <URL-TO-RAW-OR-GIST> -DisableReboots
