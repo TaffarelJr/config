@@ -14,25 +14,6 @@
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
-$indexExtensions = @(
-    ".accessor", ".application", ".appref-ms", ".asmx",
-    ".cake", ".cd", ".cfg", ".cmproj", ".cmpuo", ".config", ".csdproj", ".csx",
-    ".datasource", ".dbml", ".dependencies", ".disco", ".dotfuproj",
-    ".gitattributes", ".gitignore", ".gitmodules",
-    ".jshtm", ".json", ".jsx",
-    ".lock", ".log",
-    ".md", ".myapp",
-    ".nuspec",
-    ".proj", ".ps1", ".psm1",
-    ".rdl", ".references", ".resx",
-    ".settings", ".sln", ".stvproj", ".suo", ".svc",
-    ".testrunconfig", ".text", ".tf", ".tfstate", ".tfvars",
-    ".vb", ".vbdproj", ".vddproj", ".vdp", ".vdproj", ".vscontent", ".vsmdi", ".vssettings",
-    ".wsdl",
-    ".yaml", ".yml",
-    ".xaml", ".xbap", ".xproj"
-)
-
 #----------------------------------------------------------------------------------------------------
 Write-Header "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
@@ -203,17 +184,24 @@ Disable-GameBarTips
 Write-Header "Configure Windows Search file extensions"
 #----------------------------------------------------------------------------------------------------
 
-Push-Location -Path "HKCR:\"; & {
-    foreach ($extension in $indexExtensions) {
-        Write-Host "    $extension"
-        $regPath = "HKCR:\$extension\PersistentHandler\"
-        New-Item $regPath -Force | Out-Null
-        Push-Location -Path $regPath; & {
-            Set-ItemProperty -Path "." -Name "(Default)"                 -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
-            Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
-        }; Pop-Location
-    }
-}; Pop-Location
+@(
+    ".accessor", ".application", ".appref-ms", ".asmx",
+    ".cake", ".cd", ".cfg", ".cmproj", ".cmpuo", ".config", ".csdproj", ".csx",
+    ".datasource", ".dbml", ".dependencies", ".disco", ".dotfuproj",
+    ".gitattributes", ".gitignore", ".gitmodules",
+    ".jshtm", ".json", ".jsx",
+    ".lock", ".log",
+    ".md", ".myapp",
+    ".nuspec",
+    ".proj", ".ps1", ".psm1",
+    ".rdl", ".references", ".resx",
+    ".settings", ".sln", ".stvproj", ".suo", ".svc",
+    ".testrunconfig", ".text", ".tf", ".tfstate", ".tfvars",
+    ".vb", ".vbdproj", ".vddproj", ".vdp", ".vdproj", ".vscontent", ".vsmdi", ".vssettings",
+    ".wsdl",
+    ".yaml", ".yml",
+    ".xaml", ".xbap", ".xproj"
+) | Configure-WindowsSearchFileExtension
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Group Policy settings (Windows 10 Pro only)"
@@ -262,7 +250,7 @@ Move-LibraryDirectory -libraryName "Personal"    -newPath "$Env:OneDrive\Documen
 RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Clean up"
+Write-Header "Run clean-up scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Clean up desktop shortcuts

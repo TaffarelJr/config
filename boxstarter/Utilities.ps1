@@ -44,3 +44,29 @@ function Remove-WindowsStoreApp {
         Write-Host "Done"
     }
 }
+
+function Configure-WindowsSearchFileExtension {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline)]
+        [string]$extension
+    )
+
+    process {
+        Write-Host "Register extension $extension ... " -NoNewline
+        $regPath = "HKCR:\$extension\PersistentHandler\"
+
+        # Create the registry key if it doesn't already exist
+        if (-Not (Test-Path $regPath)) {
+            New-Item $regPath -Force | Out-Null
+        }
+
+        # Set the registry values in the key
+        Push-Location -Path $regPath; & {
+            Set-ItemProperty -Path "." -Name "(Default)"                 -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
+            Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
+        }; Pop-Location
+
+        Write-Host "Done"
+    }
+}
