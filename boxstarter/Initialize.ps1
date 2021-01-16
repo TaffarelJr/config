@@ -15,7 +15,7 @@
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Run startup scripts"
+Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Download & import utilities
