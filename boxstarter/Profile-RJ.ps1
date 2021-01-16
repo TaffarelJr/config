@@ -43,6 +43,11 @@ $themes = @(
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night.xml"
     }
     [PSCustomObject]@{
+        Name            = "Tomorrow Night Bright"
+        KeyedName       = "Tomorrow Night &Bright"
+        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_bright.xml"
+    }
+    [PSCustomObject]@{
         Name            = "Tomorrow Night Eighties"
         KeyedName       = "Tomorrow Night &Eighties"
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_eighties.xml"
@@ -50,7 +55,7 @@ $themes = @(
 )
 
 $options = $themes | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
-$theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 0)]
+$theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 2)]
 
 #----------------------------------------------------------------------------------------------------
 # Prompt user for font
@@ -195,7 +200,7 @@ editor2.Technology = SC_TECHNOLOGY_DIRECTWRITE
 "@ | Out-File -FilePath "$Env:APPDATA\Notepad++\plugins\config\startup.lua" -Encoding "windows-1252" -Force
 
 #----------------------------------------------------------------------------------------------------
-# Configure other applications
+# Configure source control tools
 #----------------------------------------------------------------------------------------------------
 
 # Git
@@ -218,12 +223,14 @@ Push-Location -Path "HKCU:\Software\"; & {
         Set-ItemProperty -Path "." -Name "Merge"                   -Type "String" -Value """C:\Program Files\Devart\Code Compare\CodeMerge.exe"" /SC=TortoiseGit /BF=%base /BT=%bname /TF=%theirs /TT=%tname /MF=%mine /MT=%yname /RF=%merged /RT=%mname /REMOVEFILES"
         Set-ItemProperty -Path "." -Name "MergeBlockTrustBehavior" -Type "DWord"  -Value "2"
 
+        if (-Not (Test-Path ".\Colors\")) { New-Item -Path ".\Colors\" }
         Push-Location -Path ".\Colors\"; & {
             Set-ItemProperty -Path "." -Name "NoteNode" -Type "DWord" -Value "16776960"
         }; Pop-Location
     }; Pop-Location
 
     $overlayFolder = "$Env:CommonProgramFiles\TortoiseOverlays\Icons\Win10"
+    if (-Not (Test-Path ".\TortoiseOverlays\")) { New-Item -Path ".\TortoiseOverlays\" }
     Push-Location -Path ".\TortoiseOverlays\"; & {
         Set-ItemProperty -Path "." -Name "AddedIcon"       -Type "String" -Value "$overlayFolder\AddedIcon.ico"
         Set-ItemProperty -Path "." -Name "ConflictIcon"    -Type "String" -Value "$overlayFolder\ConflictIcon.ico"
@@ -236,6 +243,10 @@ Push-Location -Path "HKCU:\Software\"; & {
         Set-ItemProperty -Path "." -Name "UnversionedIcon" -Type "String" -Value "$overlayFolder\UnversionedIcon.ico"
     }; Pop-Location
 }; Pop-Location
+
+#----------------------------------------------------------------------------------------------------
+# Configure other applications
+#----------------------------------------------------------------------------------------------------
 
 # Visual Studio 2019
 Write-Host "Configure Visual Studio 2019"

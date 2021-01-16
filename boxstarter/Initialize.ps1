@@ -14,7 +14,59 @@
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
-$unwantedApps = @(
+#----------------------------------------------------------------------------------------------------
+Write-Header "Run startup scripts"
+#----------------------------------------------------------------------------------------------------
+
+# Download & import utilities
+$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$filePath = "$Env:TEMP\Utilities.ps1"
+Write-Host "Download & import $uri ..." -NoNewline
+Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+. $filePath
+Write-Host "Done"
+
+Disable-UAC
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Disable uneeded services"
+#----------------------------------------------------------------------------------------------------
+
+# Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
+# https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
+Write-Host "Disable SMB1Protocol due to security risk ... " -NoNewline
+Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
+Write-Host "Done"
+
+# Unneeded services
+@(
+    "lmhosts"  # Don't need NetBIOS over TCP/IP
+    "SNMPTRAP" # Don't need SNMP
+    "TapiSrv"  # Don't need Telephony API
+) | Disable-WindowsService
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Rename computer"
+#----------------------------------------------------------------------------------------------------
+
+# Prompt the user
+Write-Host "Computer name is: $Env:COMPUTERNAME"
+Write-Host "What would you like to rename it to?"
+$computerName = Read-Host -Prompt "<press ENTER to skip>"
+
+# Rename the computer only if the user provided a new name
+if ($computerName.Length -gt 0) {
+    Rename-Computer -NewName $computerName
+} else {
+    Write-Host "Skipping ..."
+}
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Remove bloatware" # so we don't update them later
+#----------------------------------------------------------------------------------------------------
+
+# Unwanted Windows Store Apps
+@(
     "*HiddenCity*"
     "*iHeartRadio*"
     "*McAfee*"
@@ -56,9 +108,83 @@ $unwantedApps = @(
     "Pandora*"
     "Roblox*"
     "Spotify*"
-)
+) | Remove-WindowsStoreApp
 
-$indexExtensions = @(
+# McAfee
+$mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" | `
+    ForEach-Object { Get-ItemProperty $_.PSPath } | `
+    Where-Object { $_ -match "McAfee Security" } | `
+    Select-Object UninstallString
+if ($mcafee) {
+    $mcafee = $mcafee.UninstallString -Replace "C:\Program Files\McAfee\MSC\mcuihost.exe", ""
+    Write-Host "Uninstalling McAfee..." -NoNewline
+    start-process "C:\Program Files\McAfee\MSC\mcuihost.exe" -arg "$mcafee" -Wait
+    Write-Host "Done"
+}
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Install Windows updates" # so everything's current
+#----------------------------------------------------------------------------------------------------
+
+Install-WindowsUpdate -AcceptEula
+
+# async - not blocking
+Write-Host "Update Windows Store applications"
+(Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod()
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Configure Windows Explorer"
+#----------------------------------------------------------------------------------------------------
+
+Write-Host "Standard settings ... " -NoNewline
+Set-WindowsExplorerOptions `
+    -DisableOpenFileExplorerToQuickAccess `
+    -EnableShowRecentFilesInQuickAccess `
+    -EnableShowFrequentFoldersInQuickAccess `
+    -EnableShowFullPathInTitleBar `
+    -EnableShowHiddenFilesFoldersDrives `
+    -EnableShowFileExtensions `
+    -DisableShowProtectedOSFiles `
+    -EnableExpandToOpenFolder `
+    -EnableShowRibbon `
+    -EnableSnapAssist
+Write-Host "Done"
+
+Write-Host "Advanced settings ... " -NoNewline
+Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
+    Push-Location -Path ".\Advanced\"; & {
+        Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
+        Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value "0" # Show folder merge conflicts
+        Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value "1" # Launch folder windows in a separate process
+        Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value "1" # Restore previous folder windows at logon
+        Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
+        Set-ItemProperty -Path "." -Name "NavPaneShowAllFolders"      -Type "DWord" -Value "1" # Show all folders
+    }; Pop-Location
+    Push-Location -Path ".\Search\"; & {
+        Set-ItemProperty -Path ".\Preferences\"                          -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
+        Set-ItemProperty -Path ".\PrimaryProperties\UnindexedLocations\" -Name "SearchOnly"    -Type "DWord" -Value "0" # Always search file names and contents
+    }; Pop-Location
+}; Pop-Location
+Write-Host "Done"
+
+Write-Host "Disable Bing in Search box ... " -NoNewline
+Disable-BingSearch
+Write-Host "Done"
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Disable Xbox Game Bar"
+#----------------------------------------------------------------------------------------------------
+
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type "DWord" -Value "0"
+Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                            -Name "GameDVR_Enabled"   -Type "DWord" -Value "0"
+
+Disable-GameBarTips
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Configure Windows Search file extensions"
+#----------------------------------------------------------------------------------------------------
+
+@(
     ".accessor", ".application", ".appref-ms", ".asmx",
     ".cake", ".cd", ".cfg", ".cmproj", ".cmpuo", ".config", ".csdproj", ".csx",
     ".datasource", ".dbml", ".dependencies", ".disco", ".dotfuproj",
@@ -75,191 +201,60 @@ $indexExtensions = @(
     ".wsdl",
     ".yaml", ".yml",
     ".xaml", ".xbap", ".xproj"
-)
+) | Configure-WindowsSearchFileExtension
 
 #----------------------------------------------------------------------------------------------------
-# Pre
-#----------------------------------------------------------------------------------------------------
-
-Disable-UAC
-
-#----------------------------------------------------------------------------------------------------
-# Disable unneeded services
-#----------------------------------------------------------------------------------------------------
-
-Write-Host "Disable uneeded services"
-
-# Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
-# https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
-Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
-
-Set-service -Name "lmhosts"  -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
-Set-service -Name "SNMPTRAP" -StartupType "Disabled" # Don't need SNMP
-Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
-
-#----------------------------------------------------------------------------------------------------
-# Prompt the user to pick a name for the computer
-#----------------------------------------------------------------------------------------------------
-
-Write-Host "Computer name is: $Env:COMPUTERNAME"
-Write-Host "What would you like to rename it to?"
-$computerName = Read-Host -Prompt "<press ENTER to skip>"
-if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
-
-#----------------------------------------------------------------------------------------------------
-# Remove bloatware, so we don't update them
-#----------------------------------------------------------------------------------------------------
-
-# Windows Store Apps
-Write-Host "Remove Windows Bloatware"
-$ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
-foreach ($app in $unwantedApps) {
-    Write-Host "    $app"
-    Get-AppxPackage $app -AllUsers | Remove-AppxPackage
-    Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $app | Remove-AppxProvisionedPackage -Online
-    Remove-Item "$Env:LOCALAPPDATA\Packages\$app" -Recurse -Force -ErrorAction 0
-}
-$ProgressPreference = "Continue"
-
-# McAfee
-Write-Host "Remove McAfee Security App, if installed"
-$mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" | `
-    ForEach-Object { Get-ItemProperty $_.PSPath } | `
-    Where-Object { $_ -match "McAfee Security" } | `
-    Select-Object UninstallString
-if ($mcafee) {
-    $mcafee = $mcafee.UninstallString -Replace "C:\Program Files\McAfee\MSC\mcuihost.exe", ""
-    Write-Output "Uninstalling McAfee..."
-    start-process "C:\Program Files\McAfee\MSC\mcuihost.exe" -arg "$mcafee" -Wait
-}
-
-#----------------------------------------------------------------------------------------------------
-# Update PowerShell version
-#----------------------------------------------------------------------------------------------------
-
-choco install -y "powershell-core" --package-parameters="/CleanUpPath" --install-arguments="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
-RefreshEnv
-
-#----------------------------------------------------------------------------------------------------
-# Install Windows Updates, so everything's current
-#----------------------------------------------------------------------------------------------------
-
-Install-WindowsUpdate -AcceptEula
-
-# Update Windows Store applications (async - not blocking)
-Write-Host "Update Windows Store applications"
-(Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod()
-
-#----------------------------------------------------------------------------------------------------
-# Configure Windows Explorer
-#----------------------------------------------------------------------------------------------------
-
-Write-Host "Configure Windows Explorer"
-Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
-    Push-Location -Path ".\Advanced\"; & {
-        Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
-        Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value "0" # Show folder merge conflicts
-        Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value "1" # Launch folder windows in a separate process
-        Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value "1" # Restore previous folder windows at logon
-        Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
-        Set-ItemProperty -Path "." -Name "NavPaneShowAllFolders"      -Type "DWord" -Value "1" # Show all folders
-    }; Pop-Location
-    Push-Location -Path ".\Search\"; & {
-        Set-ItemProperty -Path ".\Preferences\"                          -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
-        Set-ItemProperty -Path ".\PrimaryProperties\UnindexedLocations\" -Name "SearchOnly"    -Type "DWord" -Value "0" # Always search file names and contents
-    }; Pop-Location
-}; Pop-Location
-
-Set-WindowsExplorerOptions `
-    -DisableOpenFileExplorerToQuickAccess `
-    -EnableShowRecentFilesInQuickAccess `
-    -EnableShowFrequentFoldersInQuickAccess `
-    -EnableShowFullPathInTitleBar `
-    -EnableShowHiddenFilesFoldersDrives `
-    -EnableShowFileExtensions `
-    -DisableShowProtectedOSFiles `
-    -EnableExpandToOpenFolder `
-    -EnableShowRibbon `
-    -EnableSnapAssist
-
-Disable-BingSearch
-
-#----------------------------------------------------------------------------------------------------
-# Disable Xbox Gamebar
-#----------------------------------------------------------------------------------------------------
-
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type "DWord" -Value "0"
-Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                            -Name "GameDVR_Enabled"   -Type "DWord" -Value "0"
-
-Disable-GameBarTips
-
-#----------------------------------------------------------------------------------------------------
-# Configure Windows Search file extensions
-#----------------------------------------------------------------------------------------------------
-
-Write-Host "Configure Windows Search file extensions"
-New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
-
-Push-Location -Path "HKCR:\"; & {
-    foreach ($extension in $indexExtensions) {
-        Write-Host "    $extension"
-        $regPath = "HKCR:\$extension\PersistentHandler\"
-        New-Item $regPath -Force | Out-Null
-        Push-Location -Path $regPath; & {
-            Set-ItemProperty -Path "." -Name "(Default)"                 -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
-            Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
-        }; Pop-Location
-    }
-}; Pop-Location
-
-#----------------------------------------------------------------------------------------------------
-# Unlock Group Policy settings (Windows 10 Pro only)
+Write-Header "Configure Group Policy settings (Windows 10 Pro only)"
 #----------------------------------------------------------------------------------------------------
 
 Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
     # Microsoft OneDrive
     $regPath = ".\Windows\OneDrive\"
     if (Test-Path $regPath) {
-        Write-Host "Unlock Microsoft OneDrive"
+        Write-Host "Unlock Microsoft OneDrive ... " -NoNewline
         Push-Location -Path $regPath; & {
             Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
             Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
         }; Pop-Location
+        Write-Host "Done"
     }
 
     # Windows Store
     $regPath = ".\WindowsStore\"
     if (Test-Path $regPath) {
-        Write-Host "Unlock Windows Store"
+        Write-Host "Unlock Windows Store ... " -NoNewline
         Push-Location -Path $regPath; & {
             Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
             Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
             Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
         }; Pop-Location
+        Write-Host "Done"
     }
 }; Pop-Location
 
 #----------------------------------------------------------------------------------------------------
-# Move library folders to OneDrive
+Write-Header "Move library folders to OneDrive"
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Move library directories"
 Move-LibraryDirectory -libraryName "Desktop"     -newPath "$Env:OneDrive\Desktop"
+RefreshEnv
 Move-LibraryDirectory -libraryName "Downloads"   -newPath "$Env:OneDrive\Downloads"
+RefreshEnv
 Move-LibraryDirectory -libraryName "My Music"    -newPath "$Env:OneDrive\Music"
+RefreshEnv
 Move-LibraryDirectory -libraryName "My Pictures" -newPath "$Env:OneDrive\Pictures"
+RefreshEnv
 Move-LibraryDirectory -libraryName "My Video"    -newPath "$Env:OneDrive\Videos"
+RefreshEnv
 Move-LibraryDirectory -libraryName "Personal"    -newPath "$Env:OneDrive\Documents"
+RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
-# Clean up shortcuts
+Write-Header "Run clean-up scripts"
 #----------------------------------------------------------------------------------------------------
 
+# Clean up desktop shortcuts
 Remove-Item "$Env:PUBLIC\Desktop\Microsoft Edge.lnk" -ErrorAction "Ignore"
-
-#----------------------------------------------------------------------------------------------------
-# Post
-#----------------------------------------------------------------------------------------------------
 
 Enable-UAC
 Enable-MicrosoftUpdate
