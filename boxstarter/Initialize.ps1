@@ -14,7 +14,75 @@
 # - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
 # - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
 
-$unwantedApps = @(
+$indexExtensions = @(
+    ".accessor", ".application", ".appref-ms", ".asmx",
+    ".cake", ".cd", ".cfg", ".cmproj", ".cmpuo", ".config", ".csdproj", ".csx",
+    ".datasource", ".dbml", ".dependencies", ".disco", ".dotfuproj",
+    ".gitattributes", ".gitignore", ".gitmodules",
+    ".jshtm", ".json", ".jsx",
+    ".lock", ".log",
+    ".md", ".myapp",
+    ".nuspec",
+    ".proj", ".ps1", ".psm1",
+    ".rdl", ".references", ".resx",
+    ".settings", ".sln", ".stvproj", ".suo", ".svc",
+    ".testrunconfig", ".text", ".tf", ".tfstate", ".tfvars",
+    ".vb", ".vbdproj", ".vddproj", ".vdp", ".vdproj", ".vscontent", ".vsmdi", ".vssettings",
+    ".wsdl",
+    ".yaml", ".yml",
+    ".xaml", ".xbap", ".xproj"
+)
+
+#----------------------------------------------------------------------------------------------------
+# Pre
+#----------------------------------------------------------------------------------------------------
+
+# Download & import utilities
+$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$filePath = "$Env:TEMP\Utilities.ps1"
+Write-Host "Download & import $uri ..." -NoNewline
+Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+. $filePath
+Write-Host "Done"
+
+# Disable UAC
+Disable-UAC
+
+#----------------------------------------------------------------------------------------------------
+# Disable unneeded services
+#----------------------------------------------------------------------------------------------------
+
+Write-Host "Disable uneeded services"
+
+# Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
+# https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
+Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
+
+# Turn off unneeded services
+Set-service -Name "lmhosts"  -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
+Set-service -Name "SNMPTRAP" -StartupType "Disabled" # Don't need SNMP
+Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
+
+#----------------------------------------------------------------------------------------------------
+# Prompt the user to pick a name for the computer
+#----------------------------------------------------------------------------------------------------
+
+# Prompt the user
+Write-Host "Computer name is: $Env:COMPUTERNAME"
+Write-Host "What would you like to rename it to?"
+$computerName = Read-Host -Prompt "<press ENTER to skip>"
+
+# Rename the computer only if the user provided a new name
+if ($computerName.Length -gt 0) {
+    Rename-Computer -NewName $computerName
+}
+
+#----------------------------------------------------------------------------------------------------
+# Remove bloatware, so we don't update them
+#----------------------------------------------------------------------------------------------------
+
+# Windows Store Apps
+@(
     "*HiddenCity*"
     "*iHeartRadio*"
     "*McAfee*"
@@ -56,70 +124,7 @@ $unwantedApps = @(
     "Pandora*"
     "Roblox*"
     "Spotify*"
-)
-
-$indexExtensions = @(
-    ".accessor", ".application", ".appref-ms", ".asmx",
-    ".cake", ".cd", ".cfg", ".cmproj", ".cmpuo", ".config", ".csdproj", ".csx",
-    ".datasource", ".dbml", ".dependencies", ".disco", ".dotfuproj",
-    ".gitattributes", ".gitignore", ".gitmodules",
-    ".jshtm", ".json", ".jsx",
-    ".lock", ".log",
-    ".md", ".myapp",
-    ".nuspec",
-    ".proj", ".ps1", ".psm1",
-    ".rdl", ".references", ".resx",
-    ".settings", ".sln", ".stvproj", ".suo", ".svc",
-    ".testrunconfig", ".text", ".tf", ".tfstate", ".tfvars",
-    ".vb", ".vbdproj", ".vddproj", ".vdp", ".vdproj", ".vscontent", ".vsmdi", ".vssettings",
-    ".wsdl",
-    ".yaml", ".yml",
-    ".xaml", ".xbap", ".xproj"
-)
-
-#----------------------------------------------------------------------------------------------------
-# Pre
-#----------------------------------------------------------------------------------------------------
-
-Disable-UAC
-
-#----------------------------------------------------------------------------------------------------
-# Disable unneeded services
-#----------------------------------------------------------------------------------------------------
-
-Write-Host "Disable uneeded services"
-
-# Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
-# https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
-Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
-
-Set-service -Name "lmhosts"  -StartupType "Disabled" # Don't need NetBIOS over TCP/IP
-Set-service -Name "SNMPTRAP" -StartupType "Disabled" # Don't need SNMP
-Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
-
-#----------------------------------------------------------------------------------------------------
-# Prompt the user to pick a name for the computer
-#----------------------------------------------------------------------------------------------------
-
-Write-Host "Computer name is: $Env:COMPUTERNAME"
-Write-Host "What would you like to rename it to?"
-$computerName = Read-Host -Prompt "<press ENTER to skip>"
-if ($computerName.Length -gt 0) { Rename-Computer -NewName $computerName }
-
-#----------------------------------------------------------------------------------------------------
-# Remove bloatware, so we don't update them
-#----------------------------------------------------------------------------------------------------
-
-# Windows Store Apps
-Write-Host "Remove Windows Bloatware"
-$ProgressPreference = "SilentlyContinue" # Need to hide the progress bar as otherwise it remains on the screen
-foreach ($app in $unwantedApps) {
-    Write-Host "    $app"
-    Get-AppxPackage $app -AllUsers | Remove-AppxPackage
-    Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $app | Remove-AppxProvisionedPackage -Online
-    Remove-Item "$Env:LOCALAPPDATA\Packages\$app" -Recurse -Force -ErrorAction 0
-}
-$ProgressPreference = "Continue"
+) | Remove-WindowsStoreApp
 
 # McAfee
 Write-Host "Remove McAfee Security App, if installed"
