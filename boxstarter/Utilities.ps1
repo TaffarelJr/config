@@ -1,18 +1,18 @@
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 
 function Write-Header {
-	Param (
-		[string]$text
-	)
+    Param (
+        [string]$text
+    )
 
-	$color = "Yellow"
-	$line = "–" * $text.Length
+    $color = "Yellow"
+    $line = "-" * $text.Length
 
-	Write-Host
-	Write-Host "¡—$($line)—¡" -ForegroundColor $color
-	Write-Host "| $($text) |" -ForegroundColor $color
-	Write-Host "!—$($line)—!" -ForegroundColor $color
-	Write-Host
+    Write-Host
+    Write-Host "+-$($line)-+" -ForegroundColor $color
+    Write-Host "| $($text) |" -ForegroundColor $color
+    Write-Host "+-$($line)-+" -ForegroundColor $color
+    Write-Host
 }
 
 function Disable-WindowsService {
