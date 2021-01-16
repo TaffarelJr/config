@@ -209,7 +209,6 @@ Disable-GameBarTips
 #----------------------------------------------------------------------------------------------------
 
 Write-Header "Configure Windows Search file extensions"
-New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 
 Push-Location -Path "HKCR:\"; & {
     foreach ($extension in $indexExtensions) {

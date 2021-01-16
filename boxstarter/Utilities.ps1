@@ -1,3 +1,5 @@
+New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
+
 function Write-Header {
 	Param (
 		[string]$text
