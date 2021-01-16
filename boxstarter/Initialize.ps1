@@ -52,7 +52,7 @@ Disable-UAC
 # Disable unneeded services
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Disable uneeded services"
+Write-Header "Disable uneeded services"
 
 # Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
 # https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
@@ -67,6 +67,8 @@ Set-service -Name "TapiSrv"  -StartupType "Disabled" # Don't need Telephony API
 # Prompt the user to pick a name for the computer
 #----------------------------------------------------------------------------------------------------
 
+Write-Header "Rename computer"
+
 # Prompt the user
 Write-Host "Computer name is: $Env:COMPUTERNAME"
 Write-Host "What would you like to rename it to?"
@@ -80,6 +82,8 @@ if ($computerName.Length -gt 0) {
 #----------------------------------------------------------------------------------------------------
 # Remove bloatware, so we don't update them
 #----------------------------------------------------------------------------------------------------
+
+Write-Header "Remove bloatware"
 
 # Windows Store Apps
 @(
@@ -134,8 +138,9 @@ $mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVer
     Select-Object UninstallString
 if ($mcafee) {
     $mcafee = $mcafee.UninstallString -Replace "C:\Program Files\McAfee\MSC\mcuihost.exe", ""
-    Write-Output "Uninstalling McAfee..."
+    Write-Host "Uninstalling McAfee..." -NoNewline
     start-process "C:\Program Files\McAfee\MSC\mcuihost.exe" -arg "$mcafee" -Wait
+    Write-Host "Done"
 }
 
 #----------------------------------------------------------------------------------------------------

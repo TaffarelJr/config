@@ -1,8 +1,23 @@
+function Write-Header {
+	Param (
+		[string]$text
+	)
+
+	$color = "Yellow"
+	$line = "─" * ($text.Length + 2)
+
+	Write-Host
+	Write-Host "┌$($line)┐" -ForegroundColor $color
+	Write-Host "│ $($text) │" -ForegroundColor $color
+	Write-Host "└$($line)┘" -ForegroundColor $color
+	Write-Host
+}
+
 function Remove-WindowsStoreApp {
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline)]
-        [string] $app
+        [string]$app
     )
 
     process {
