@@ -189,6 +189,7 @@ dotnet dev-certs https --trust
 
 # Azure CLI
 choco install -y "azure-cli"
+RefreshEnv
 
 # Devart Code Compare
 # https://docs.devart.com/code-compare/
@@ -203,6 +204,7 @@ if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
 
 # Fiddler
 choco install -y "fiddler"
+RefreshEnv
 
 # GNU Make
 choco install -y "make"
@@ -210,9 +212,11 @@ choco install -y "make"
 # LINQPad
 choco install -y "linqpad"
 Remove-Item "$Env:OneDrive\Desktop\LINQPad 6 (x64).lnk" -ErrorAction "Ignore"
+RefreshEnv
 
 # Node.js
 choco install -y "nodejs"
+RefreshEnv
 
 # NuGet CLI
 Write-Host "Download NuGet CLI"
@@ -221,6 +225,10 @@ Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.
 # Postman
 choco install -y "postman"
 Remove-Item "$Env:OneDrive\Desktop\Postman.lnk" -ErrorAction "Ignore"
+
+# PowerShell Core
+choco install -y "powershell-core" --package-parameters="/CleanUpPath" --install-arguments="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
+RefreshEnv
 
 # PuTTY
 choco install -y "putty"
