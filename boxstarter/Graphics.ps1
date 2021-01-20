@@ -5,12 +5,9 @@ Write-Host "Run startup scripts"
 # Download & import utilities
 $uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
 $filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $uri ..." -NoNewline
+Write-Host "Download & import $uri"
 Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
 . $filePath
-Write-Host "Done"
-
-Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install advanced graphics tools"

@@ -1,5 +1,10 @@
+# Register HKEY_CLASSES_ROOT as an accessible drive
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
 
+# Have Boxstarter disable UAC
+Disable-UAC
+
+# Draw a pretty header to identify different sections of output
 function Write-Header {
     Param (
         [string]$text
@@ -15,6 +20,7 @@ function Write-Header {
     Write-Host
 }
 
+# Disable specified Windows Services
 function Disable-WindowsService {
     [CmdletBinding()]
     param(
@@ -29,6 +35,7 @@ function Disable-WindowsService {
     }
 }
 
+# Uninstall specified Windows Store applications
 function Remove-WindowsStoreApp {
     [CmdletBinding()]
     param(
@@ -45,6 +52,7 @@ function Remove-WindowsStoreApp {
     }
 }
 
+# Configure Windows Search to search the contents of the specified file extensions
 function Configure-WindowsSearchFileExtension {
     [CmdletBinding()]
     param(
