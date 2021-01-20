@@ -1,9 +1,9 @@
 # Set PowerShell preference variables
 $ErrorActionPreference = "Stop"
 
-# Set custom variables
-$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
-$vsMarketplace = "https://vsMarketplace.visualstudio.com"
+# Set custom constants
+Set-Variable VsInstallDir  -Option Constant -Value "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
+Set-Variable VsMarketplace -Option Constant -Value "https://marketplace.visualstudio.com"
 
 # Register HKEY_CLASSES_ROOT as an accessible drive
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
@@ -86,38 +86,62 @@ function Set-WindowsSearchFileExtension {
     }
 }
 
-# Download & install specified Visual Studio extensions
-# Modified from https://gist.github.com/ScottHutchinson/b22339c3d3688da5c9b477281e258400
-function Install-VsixPackage() {
+# Gather list of installed VS extensions
+# (only works after VS is installed)
+function Get-InstalledVsix() {
+    Write-Host "Getting list of Visual Studio extensions that are already installed ..."
+    Get-ChildItem -Path "$VsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
+        Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
+        ForEach-Object { $_.Matches.Groups[1].Value } | `
+        Sort-Object
+}
+
+# Scrapes the VS Marketplace web page to get the VSIX ID and download URI of the specified packages
+function Get-VsixPackageInfo() {
     param (
-        [string]$packageName = $(throw "Please specify a Visual Studio Extension" )
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string]$PackageName
     )
 
-    # Scrape the VS Marketplace web page, to get the download path and VSIX ID
-    $packagePage = "$vsMarketplace/items?itemName=$packageName"
-    Write-Host "Scrape VSIX details from $packagePage"
-    $response = Invoke-WebRequest -Uri $packagePage -UseBasicParsing
-    $anchor = $response.Links | Where-Object { $_.class -eq "install-button-container" } | Select-Object -ExpandProperty "href"
-    if (-Not $anchor) {
-        Write-Error "Could not find download anchor tag on the Visual Studio Extensions page"
-        exit 1
-    }
-    $vsixId = $response.Content | Select-String -List -Pattern '"VsixId":"(.+?)"' | ForEach-Object { $_.Matches.Groups[1].Value }
-    if (-Not $vsixId) {
-        Write-Error "Could not find VSIX ID on the Visual Studio Extensions page"
-        exit 1
-    }
+    process {
+        # Format the URL to the VSIX web page in the Marketplace
+        $packagePage = "$VsMarketplace/items?itemName=$PackageName"
 
-    # Check to see if the extension is already installed
-    if ($installedVsExtensions -Contains $vsixId) {
-        Write-Host "Already installed. Skipping"
+        # Download the VSIX web page
+        Write-Host "Scraping VSIX details from $packagePage ..."
+        $response = Invoke-WebRequest -Uri $packagePage -UseBasicParsing
+
+        # Get the unique ID of the VSIX package
+        $vsixId = $response.Content | Select-String -List -Pattern '"VsixId":"(.+?)"' | ForEach-Object { $_.Matches.Groups[1].Value }
+        if (-Not $vsixId) { throw [System.IO.InvalidOperationException] "Could not find VSIX ID on $packagePage" }
+
+        # Get the relative path to the VSIX download
+        $anchor = $response.Links | Where-Object { $_.class -eq "install-button-container" } | Select-Object -ExpandProperty "href"
+        if (-Not $anchor) { throw [System.IO.InvalidOperationException] "Could not find download anchor tag on $packagePage" }
+
+        # Return new custom data structure
+        [PSCustomObject]@{
+            Id          = $vsixId
+            PackageName = $PackageName
+            Uri         = "$VsMarketplace$anchor"
+        }
     }
-    else {
-        # If not, then download it
-        $packageUri = "$vsMarketplace$anchor"
-        $vsixFileName = "$Env:TEMP\$packageName.vsix"
-        Write-Host "Attempting to download $packageUri ..."
-        Invoke-WebRequest -Uri $packageUri -OutFile $vsixFileName -UseBasicParsing -Headers @{
+}
+
+# Downloads the specified VSIX packages.
+function Get-VsixPackage() {
+    param (
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [PSCustomObject]$Vsix
+    )
+
+    process {
+        # Create download file name
+        $vsixFileName = "$Env:TEMP\$($Vsix.PackageName).vsix"
+
+        # Download VSIX
+        Write-Host "Attempting to download $($Vsix.Uri) ..."
+        Invoke-WebRequest -Uri $Vsix.Uri -OutFile $vsixFileName -UseBasicParsing -Headers @{
             "accept"                    = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
             "accept-encoding"           = "gzip, deflate, br"
             "accept-language"           = "en-US,en;q=0.9"
@@ -129,16 +153,29 @@ function Install-VsixPackage() {
             "upgrade-insecure-requests" = "1"
             "user-agent"                = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"
         }
-        if (-Not (Test-Path $vsixFileName)) {
-            Write-Error "Downloaded VSIX file could not be located"
-            exit 1
-        }
 
+        if (Test-Path $vsixFileName) {
+            return $vsixFileName
+        }
+        else {
+            throw [System.IO.InvalidOperationException] "Could not download VSIX from $($Vsix.Uri)"
+        }
+    }
+}
+
+# Installs the specified VSIX extensions
+function Install-VsixPackage() {
+    param (
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string]$VsixFile
+    )
+
+    process {
         # Install the extension
-        Write-Host "Installing $vsixFileName ..."
-        Start-Process -Filepath "$vsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$vsixFileName'" -Wait
-        Remove-Item $vsixFileName
-        Write-Host "Installation of $packageName complete!"
+        Write-Host "Installing $VsixFile ..."
+        Start-Process -Filepath "$VsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$VsixFile'" -Wait
+        Remove-Item $VsixFile -ErrorAction "Ignore"
+        Write-Host "$VsixFile installed successfully"
     }
 }
 

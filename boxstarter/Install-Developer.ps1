@@ -85,33 +85,28 @@ if (-Not ($Env:Path -Match "dotnet")) {
 }
 dotnet --info
 
-# Gather installed VS extensions (after VS is installed)
-Write-Host "Get list of Visual Studio extensions that are already installed"
-$installedVsExtensions = Get-ChildItem -Path "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
-    Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
-    ForEach-Object { $_.Matches.Groups[1].Value } | `
-    Sort-Object
-
-# Install extensions from Microsoft
-Install-VsixPackage "Diagnostics.DiagnosticsConcurrencyVisualizer2019"   # Concurrency Visualizer for Visual Studio 2019
-Install-VsixPackage "VisualStudioPlatformTeam.ProductivityPowerPack2017" # Productivity Power Tools 2017/2019
-Install-VsixPackage "VisualStudioProductTeam.ProjectSystemTools"         # Project System Tools
-Install-VsixPackage "azsdktm.SecurityIntelliSense-Preview"               # Security IntelliSense
-
-# Install extensions from Mads Kristensen
-Install-VsixPackage "MadsKristensen.ignore"                        # .ignore
-Install-VsixPackage "MadsKristensen.BrowserLinkInspector2019"      # Browser Link Inspector 2019
-Install-VsixPackage "MadsKristensen.DummyTextGenerator"            # Dummy Text Generator
-Install-VsixPackage "MadsKristensen.NPMTaskRunner"                 # NPM Task Runner
-Install-VsixPackage "MadsKristensen.OpeninVisualStudioCode"        # Open in Visual Studio Code
-Install-VsixPackage "MadsKristensen.TrailingWhitespaceVisualizer"  # Trailing Whitespace Visualizer
-Install-VsixPackage "MadsKristensen.TypeScriptDefinitionGenerator" # TypeScript Definition Generator
-Install-VsixPackage "MadsKristensen.WebEssentials2019"             # Web Essentials 2019
-
-# Install extensions from other providers
-Install-VsixPackage "DevartSoftware.DevartT4EditorforVisualStudio"     # Devart T4 Editor for Visual Studio
-Install-VsixPackage "GitHub.GitHubExtensionforVisualStudio"            # GitHub Extension for Visual Studio
-Install-VsixPackage "EWoodruff.VisualStudioSpellCheckerVS2017andLater" # Visual Studio Spell Checker (VS2017 and Later)
+# Install VS Extensions
+$installed = Get-InstalledVsix
+@(
+    # Install extensions from Microsoft
+    "Diagnostics.DiagnosticsConcurrencyVisualizer2019"   # Concurrency Visualizer for Visual Studio 2019
+    "VisualStudioPlatformTeam.ProductivityPowerPack2017" # Productivity Power Tools 2017/2019
+    "VisualStudioProductTeam.ProjectSystemTools"         # Project System Tools
+    "azsdktm.SecurityIntelliSense-Preview"               # Security IntelliSense
+    # Install extensions from Mads Kristensen
+    "MadsKristensen.ignore"                              # .ignore
+    "MadsKristensen.BrowserLinkInspector2019"            # Browser Link Inspector 2019
+    "MadsKristensen.DummyTextGenerator"                  # Dummy Text Generator
+    "MadsKristensen.NPMTaskRunner"                       # NPM Task Runner
+    "MadsKristensen.OpeninVisualStudioCode"              # Open in Visual Studio Code
+    "MadsKristensen.TrailingWhitespaceVisualizer"        # Trailing Whitespace Visualizer
+    "MadsKristensen.TypeScriptDefinitionGenerator"       # TypeScript Definition Generator
+    "MadsKristensen.WebEssentials2019"                   # Web Essentials 2019
+    # Install extensions from other providers
+    "DevartSoftware.DevartT4EditorforVisualStudio"       # Devart T4 Editor for Visual Studio
+    "GitHub.GitHubExtensionforVisualStudio"              # GitHub Extension for Visual Studio
+    "EWoodruff.VisualStudioSpellCheckerVS2017andLater"   # Visual Studio Spell Checker (VS2017 and Later)
+) | Get-VsixPackageInfo | Where-Object { $installed -NotContains $_.Id } | Get-VsixPackage | Install-VsixPackage
 
 # Trust development certificates
 dotnet dev-certs https --trust
