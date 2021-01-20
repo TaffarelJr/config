@@ -130,20 +130,20 @@ Set-WindowsExplorerOptions `
     -EnableSnapAssist
 
 Write-Host "Configure advanced settings ... " -NoNewline
-Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
-    Push-Location -Path ".\Advanced\"; & {
+Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\" {
+    Enter-Location -Path ".\Advanced\" {
         Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
         Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value "0" # Show folder merge conflicts
         Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value "1" # Launch folder windows in a separate process
         Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value "1" # Restore previous folder windows at logon
         Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
         Set-ItemProperty -Path "." -Name "NavPaneShowAllFolders"      -Type "DWord" -Value "1" # Show all folders
-    }; Pop-Location
-    Push-Location -Path ".\Search\"; & {
+    }
+    Enter-Location -Path ".\Search\" {
         Set-ItemProperty -Path ".\Preferences\"                          -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
         Set-ItemProperty -Path ".\PrimaryProperties\UnindexedLocations\" -Name "SearchOnly"    -Type "DWord" -Value "0" # Always search file names and contents
-    }; Pop-Location
-}; Pop-Location
+    }
+}
 Write-Host "Done"
 
 Write-Host "Disable Bing in Search box ... " -NoNewline
@@ -186,15 +186,15 @@ Write-Header "Configure Windows Search file extensions"
 Write-Header "Configure Group Policy settings (Windows 10 Pro only)"
 #----------------------------------------------------------------------------------------------------
 
-Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
+Enter-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\" {
     # Microsoft OneDrive
     $regPath = ".\Windows\OneDrive\"
     if (Test-Path $regPath) {
         Write-Host "Unlock Microsoft OneDrive ... " -NoNewline
-        Push-Location -Path $regPath; & {
+        Enter-Location -Path $regPath {
             Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
             Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
-        }; Pop-Location
+        }
         Write-Host "Done"
     }
 
@@ -202,14 +202,14 @@ Push-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\"; & {
     $regPath = ".\WindowsStore\"
     if (Test-Path $regPath) {
         Write-Host "Unlock Windows Store ... " -NoNewline
-        Push-Location -Path $regPath; & {
+        Enter-Location -Path $regPath {
             Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
             Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
             Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
-        }; Pop-Location
+        }
         Write-Host "Done"
     }
-}; Pop-Location
+}
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Move library folders to OneDrive"

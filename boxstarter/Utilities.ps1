@@ -28,6 +28,32 @@ function Write-Header {
     Write-Host
 }
 
+# Create the specified location if it doesn't exist, push to it,
+# execute the given Script Block, then pop back to the previous location
+function Enter-Location {
+    param (
+        [Parameter(Mandatory)]
+        [string]$Path,
+
+        [Parameter(Mandatory)]
+        [object]$ScriptBlock
+    )
+
+    # Create the location, if necessary
+    if (-Not (Test-Path $Path)) {
+        New-Item -Path $Path
+    }
+
+    # Push to the location
+    Push-Location -Path $Path
+    {
+        # Execute the script block
+        & $ScriptBlock
+    }
+    # Pop back to the previous location
+    Pop-Location
+}
+
 # Disable specified Windows Services
 function Disable-WindowsService {
     param(
@@ -74,10 +100,10 @@ function Set-WindowsSearchFileExtension {
         }
 
         # Set the registry values in the key
-        Push-Location -Path $regPath; & {
+        Enter-Location -Path $regPath {
             Set-ItemProperty -Path "." -Name "(Default)"                 -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
             Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
-        }; Pop-Location
+        }
 
         Write-Host "Done"
     }

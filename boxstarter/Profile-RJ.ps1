@@ -89,18 +89,18 @@ $fonts | ForEach-Object {
 
 # Theme
 Write-Host "Configure Windows theme"
-Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
-    Push-Location -Path ".\Themes\Personalize\"; & {
+Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
+    Enter-Location -Path ".\Themes\Personalize\" {
         Set-ItemProperty -Path "." -Name "AppsUseLightTheme"    -Type "DWord" -Value "0"
         Set-ItemProperty -Path "." -Name "SystemUsesLightTheme" -Type "DWord" -Value "0"
-    }; Pop-Location
+    }
 
-    Push-Location -Path ".\Explorer\Accent\"; & {
+    Enter-Location -Path ".\Explorer\Accent\" {
         Set-ItemProperty -Path "." -Name "AccentColorMenu" -Type "DWord"  -Value $purpleShadowDark_AccentColorMenu
         Set-ItemProperty -Path "." -Name "AccentPalette"   -Type "Binary" -Value $purpleShadowDark_accentPalette
         Set-ItemProperty -Path "." -Name "StartColorMenu"  -Type "DWord"  -Value $purpleShadowDark_StartColorMenu
-    }; Pop-Location
-}; Pop-Location
+    }
+}
 
 # Search locations
 Write-Host "Add Windows Search locations"
@@ -205,23 +205,23 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main
 
 # TortoiseGit
 Write-Host "Configure TortoiseGit"
-Push-Location -Path "HKCU:\Software\"; & {
+Enter-Location -Path "HKCU:\SOFTWARE\" {
     if (Test-Path ".\TortoiseGit\") {
-        Push-Location -Path ".\TortoiseGit\"; & {
+        Enter-Location -Path ".\TortoiseGit\" {
             Set-ItemProperty -Path "." -Name "DarkTheme"               -Type "DWord"  -Value "1"
             Set-ItemProperty -Path "." -Name "Diff"                    -Type "String" -Value """C:\Program Files\Devart\Code Compare\CodeCompare.exe"" /SC=TortoiseGit /T1=%bname /T2=%yname %base %mine"
             Set-ItemProperty -Path "." -Name "Merge"                   -Type "String" -Value """C:\Program Files\Devart\Code Compare\CodeMerge.exe"" /SC=TortoiseGit /BF=%base /BT=%bname /TF=%theirs /TT=%tname /MF=%mine /MT=%yname /RF=%merged /RT=%mname /REMOVEFILES"
             Set-ItemProperty -Path "." -Name "MergeBlockTrustBehavior" -Type "DWord"  -Value "2"
 
             if (-Not (Test-Path ".\Colors\")) { New-Item -Path ".\Colors\" }
-            Push-Location -Path ".\Colors\"; & {
+            Enter-Location -Path ".\Colors\" {
                 Set-ItemProperty -Path "." -Name "NoteNode" -Type "DWord" -Value "16776960"
-            }; Pop-Location
-        }; Pop-Location
+            }
+        }
 
         $overlayFolder = "$Env:CommonProgramFiles\TortoiseOverlays\Icons\Win10"
         if (-Not (Test-Path ".\TortoiseOverlays\")) { New-Item -Path ".\TortoiseOverlays\" }
-        Push-Location -Path ".\TortoiseOverlays\"; & {
+        Enter-Location -Path ".\TortoiseOverlays\" {
             Set-ItemProperty -Path "." -Name "AddedIcon"       -Type "String" -Value "$overlayFolder\AddedIcon.ico"
             Set-ItemProperty -Path "." -Name "ConflictIcon"    -Type "String" -Value "$overlayFolder\ConflictIcon.ico"
             Set-ItemProperty -Path "." -Name "DeletedIcon"     -Type "String" -Value "$overlayFolder\DeletedIcon.ico"
@@ -231,9 +231,9 @@ Push-Location -Path "HKCU:\Software\"; & {
             Set-ItemProperty -Path "." -Name "NormalIcon"      -Type "String" -Value "$overlayFolder\NormalIcon.ico"
             Set-ItemProperty -Path "." -Name "ReadOnlyIcon"    -Type "String" -Value "$overlayFolder\ReadOnlyIcon.ico"
             Set-ItemProperty -Path "." -Name "UnversionedIcon" -Type "String" -Value "$overlayFolder\UnversionedIcon.ico"
-        }; Pop-Location
+        }
     }
-}; Pop-Location
+}
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Visual Studio 2019"
