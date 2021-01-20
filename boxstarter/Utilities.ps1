@@ -78,3 +78,11 @@ function Configure-WindowsSearchFileExtension {
         Write-Host "Done"
     }
 }
+
+function Invoke-CleanupScripts() {
+    Write-Header "Run clean-up scripts"
+
+    Enable-UAC
+    Enable-MicrosoftUpdate
+    Install-WindowsUpdate -acceptEula
+}

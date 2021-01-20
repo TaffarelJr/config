@@ -231,12 +231,12 @@ Move-LibraryDirectory -libraryName "Personal"    -newPath "$Env:OneDrive\Documen
 RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Run clean-up scripts"
+Write-Header "Clean up default desktop shortcuts"
 #----------------------------------------------------------------------------------------------------
 
-# Clean up default desktop shortcuts
+Write-Host "Microsoft Edge"
 Remove-Item "$Env:PUBLIC\Desktop\Microsoft Edge.lnk" -ErrorAction "Ignore"
 
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula
+#----------------------------------------------------------------------------------------------------
+Invoke-CleanupScripts
+#----------------------------------------------------------------------------------------------------

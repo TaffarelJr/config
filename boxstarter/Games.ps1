@@ -24,9 +24,5 @@ Write-Header "Install individual games"
 choco install -y "minecraft-launcher"
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Run clean-up scripts"
+Invoke-CleanupScripts
 #----------------------------------------------------------------------------------------------------
-
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula

@@ -250,9 +250,5 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Run clean-up scripts"
+Invoke-CleanupScripts
 #----------------------------------------------------------------------------------------------------
-
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula

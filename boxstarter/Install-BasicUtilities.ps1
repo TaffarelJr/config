@@ -76,9 +76,5 @@ choco install -y "paint.net"
 Remove-Item "$Env:PUBLIC\Desktop\paint.net.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Run clean-up scripts"
+Invoke-CleanupScripts
 #----------------------------------------------------------------------------------------------------
-
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula

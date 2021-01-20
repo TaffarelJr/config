@@ -264,9 +264,5 @@ choco install -y "sql-server-2019"
 choco install -y "sql-server-management-studio"
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Run clean-up scripts"
+Invoke-CleanupScripts
 #----------------------------------------------------------------------------------------------------
-
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula

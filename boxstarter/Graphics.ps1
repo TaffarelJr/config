@@ -20,9 +20,5 @@ choco install -y "inkscape"
 choco install -y "shotcut"
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Run clean-up scripts"
+Invoke-CleanupScripts
 #----------------------------------------------------------------------------------------------------
-
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula
