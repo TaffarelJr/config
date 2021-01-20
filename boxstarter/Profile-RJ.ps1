@@ -12,7 +12,21 @@ $searchLocations = @(
 )
 
 #----------------------------------------------------------------------------------------------------
-# Prompt user for theme
+Write-Host "Run startup scripts"
+#----------------------------------------------------------------------------------------------------
+
+# Download & import utilities
+$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$filePath = "$Env:TEMP\Utilities.ps1"
+Write-Host "Download & import $uri ..." -NoNewline
+Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+. $filePath
+Write-Host "Done"
+
+Disable-UAC
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Choose theme"
 #----------------------------------------------------------------------------------------------------
 
 $themes = @(
@@ -42,7 +56,7 @@ $options = $themes | ForEach-Object { New-Object System.Management.Automation.Ho
 $theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 2)]
 
 #----------------------------------------------------------------------------------------------------
-# Prompt user for font
+Write-Header "Choose developer font"
 #----------------------------------------------------------------------------------------------------
 
 $fonts = @(
@@ -66,20 +80,6 @@ $fonts = @(
 $options = $fonts | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
 $font = $fonts[$host.ui.PromptForChoice("Choose font", "What font should be installed?", $options, 2)]
 $replaceFonts = ($fonts | Where-Object { $_ -NE $font } | Select-Object -ExpandProperty "Name") + @("Consolas")
-
-#----------------------------------------------------------------------------------------------------
-Write-Host "Run startup scripts"
-#----------------------------------------------------------------------------------------------------
-
-# Download & import utilities
-$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
-$filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $uri ..." -NoNewline
-Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
-. $filePath
-Write-Host "Done"
-
-Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
 # Configure Windows

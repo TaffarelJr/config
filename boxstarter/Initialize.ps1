@@ -13,6 +13,22 @@ Write-Host "Done"
 Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
+Write-Header "Rename computer"
+#----------------------------------------------------------------------------------------------------
+
+# Prompt the user
+Write-Host "Computer name is: $Env:COMPUTERNAME"
+Write-Host "What would you like to rename it to?"
+$computerName = Read-Host -Prompt "<press ENTER to skip>"
+
+# Rename the computer only if the user provided a new name
+if ($computerName.Length -gt 0) {
+    Rename-Computer -NewName $computerName
+} else {
+    Write-Host "Skipping ..."
+}
+
+#----------------------------------------------------------------------------------------------------
 Write-Header "Disable uneeded services"
 #----------------------------------------------------------------------------------------------------
 
@@ -28,22 +44,6 @@ Write-Host "Done"
     "SNMPTRAP" # Don't need SNMP
     "TapiSrv"  # Don't need Telephony API
 ) | Disable-WindowsService
-
-#----------------------------------------------------------------------------------------------------
-Write-Header "Rename computer"
-#----------------------------------------------------------------------------------------------------
-
-# Prompt the user
-Write-Host "Computer name is: $Env:COMPUTERNAME"
-Write-Host "What would you like to rename it to?"
-$computerName = Read-Host -Prompt "<press ENTER to skip>"
-
-# Rename the computer only if the user provided a new name
-if ($computerName.Length -gt 0) {
-    Rename-Computer -NewName $computerName
-} else {
-    Write-Host "Skipping ..."
-}
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Remove bloatware" # so we don't update them later
