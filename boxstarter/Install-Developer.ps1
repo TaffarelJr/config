@@ -1,19 +1,3 @@
-# Boxstarter Script to install developer tools, frameworks, and applications.
-# https://boxstarter.org/
-#
-# Install Boxstarter:
-# 	. { iwr -useb https://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
-#
-# Set: Set-ExecutionPolicy RemoteSigned
-# Then: Install-BoxstarterPackage -PackageName <URL-TO-RAW-OR-GIST> -DisableReboots
-#
-# Pulled from samples by:
-# - Microsoft https://github.com/Microsoft/windows-dev-box-setup-scripts
-# - elithrar https://github.com/elithrar/dotfiles
-# - ElJefeDSecurIT https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e
-# - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
-# - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
-
 $vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
 $marketplace = "https://marketplace.visualstudio.com"
 
@@ -47,16 +31,16 @@ function Install-VsixPackage() {
         $vsixFileName = "$Env:TEMP\$packageName.vsix"
         Write-Host "Attempting to download $packageUri ..."
         Invoke-WebRequest -Uri $packageUri -OutFile $vsixFileName -UseBasicParsing -Headers @{
-            "accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
-            "accept-encoding" = "gzip, deflate, br"
-            "accept-language" = "en-US,en;q=0.9"
-            "dnt" = "1"
-            "sec-fetch-dest" = "document"
-            "sec-fetch-mode" = "navigate"
-            "sec-fetch-site" = "same-origin"
-            "sec-fetch-user" = "?1"
+            "accept"                    = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+            "accept-encoding"           = "gzip, deflate, br"
+            "accept-language"           = "en-US,en;q=0.9"
+            "dnt"                       = "1"
+            "sec-fetch-dest"            = "document"
+            "sec-fetch-mode"            = "navigate"
+            "sec-fetch-site"            = "same-origin"
+            "sec-fetch-user"            = "?1"
             "upgrade-insecure-requests" = "1"
-            "user-agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"
+            "user-agent"                = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"
         }
         if (-Not (Test-Path $vsixFileName)) {
             Write-Error "Downloaded VSIX file could not be located"
@@ -71,8 +55,16 @@ function Install-VsixPackage() {
 }
 
 #----------------------------------------------------------------------------------------------------
-# Pre
+Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
+
+# Download & import utilities
+$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$filePath = "$Env:TEMP\Utilities.ps1"
+Write-Host "Download & import $uri ..." -NoNewline
+Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+. $filePath
+Write-Host "Done"
 
 Disable-UAC
 
