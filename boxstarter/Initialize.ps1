@@ -31,9 +31,8 @@ Write-Header "Disable uneeded services"
 
 # Security risk; Microsoft recommends removing immediately, to avoid ransomware attacks
 # https://www.tenforums.com/tutorials/107605-enable-disable-smb1-file-sharing-protocol-windows.html
-Write-Host "Disable SMB1Protocol due to security risk ... " -NoNewline
-Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart
-Write-Host "Done"
+Write-Host "Disable SMB1Protocol due to security risk"
+Disable-WindowsOptionalFeature -Online -FeatureName "SMB1Protocol" -NoRestart | Format-List | Out-String | Write-Host
 
 # Unneeded services
 @(
@@ -98,9 +97,8 @@ $mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVer
     Select-Object UninstallString
 if ($mcafee) {
     $mcafee = $mcafee.UninstallString -Replace "C:\Program Files\McAfee\MSC\mcuihost.exe", ""
-    Write-Host "Uninstalling McAfee..." -NoNewline
+    Write-Host "Uninstall McAfee"
     start-process "C:\Program Files\McAfee\MSC\mcuihost.exe" -arg "$mcafee" -Wait
-    Write-Host "Done"
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -117,7 +115,6 @@ Write-Host "Update Windows Store applications"
 Write-Header "Configure Windows Explorer"
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Standard settings ... " -NoNewline
 Set-WindowsExplorerOptions `
     -DisableOpenFileExplorerToQuickAccess `
     -EnableShowRecentFilesInQuickAccess `
@@ -129,9 +126,8 @@ Set-WindowsExplorerOptions `
     -EnableExpandToOpenFolder `
     -EnableShowRibbon `
     -EnableSnapAssist
-Write-Host "Done"
 
-Write-Host "Advanced settings ... " -NoNewline
+Write-Host "Configure advanced settings ... " -NoNewline
 Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\"; & {
     Push-Location -Path ".\Advanced\"; & {
         Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
