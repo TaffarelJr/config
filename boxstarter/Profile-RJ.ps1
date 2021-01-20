@@ -236,13 +236,27 @@ Push-Location -Path "HKCU:\Software\"; & {
 }; Pop-Location
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Configure other applications"
+Write-Header "Configure Visual Studio 2019"
 #----------------------------------------------------------------------------------------------------
 
-# Visual Studio 2019
-Write-Host "Configure Visual Studio 2019"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.xml" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
-devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
+# Check if Visual Studio is installed
+$devShell = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+if (Test-Path $devShell) {
+    # Load the Visual Studio Developer Console commands
+    Import-Module $devShell
+    Enter-VsDevShell "ccbcf63a"
+
+    # Download configuration settings
+    Write-Host "Configure Visual Studio 2019"
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.xml" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
+
+    # Import configuration settings
+    devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
+}
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Configure other applications"
+#----------------------------------------------------------------------------------------------------
 
 # TODO: Figure out how to import the '..\apps\CodeCompare.xml' file into Code Compare via command line
 Write-Host "Configure Code Compare"
