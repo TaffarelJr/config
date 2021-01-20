@@ -239,12 +239,12 @@ Write-Header "Configure other applications"
 
 # Visual Studio 2019
 Write-Host "Configure Visual Studio 2019"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.xml" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
 devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
 
-# TODO: Figure out how to import the '..\apps\CodeCompare.settings' file into Code Compare via command line
+# TODO: Figure out how to import the '..\apps\CodeCompare.xml' file into Code Compare via command line
 Write-Host "Configure Code Compare"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.settings" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.xml" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
 
 # LINQPad
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
