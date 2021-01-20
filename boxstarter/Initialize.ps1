@@ -21,7 +21,8 @@ $computerName = Read-Host -Prompt "<press ENTER to skip>"
 # Rename the computer only if the user provided a new name
 if ($computerName.Length -gt 0) {
     Rename-Computer -NewName $computerName
-} else {
+}
+else {
     Write-Host "Skipping ..."
 }
 
@@ -109,7 +110,8 @@ Install-WindowsUpdate -AcceptEula
 
 # async - not blocking
 Write-Host "Update Windows Store applications"
-(Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod()
+(Get-WmiObject -Namespace "root\cimv2\mdm\dmmap" -Class "MDM_EnterpriseModernAppManagement_AppManagement01").UpdateScanMethod() | `
+    Format-List | Out-String | Write-Host
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Windows Explorer"

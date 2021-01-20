@@ -50,11 +50,10 @@ function Remove-WindowsStoreApp {
     )
 
     process {
-        Write-Host "Uninstalling $AppNamePattern ... " -NoNewline
+        Write-Host "Uninstall Windows Store apps like '$AppNamePattern'"
         Get-AppxPackage $AppNamePattern -AllUsers | Remove-AppxPackage
-        Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $AppNamePattern | Remove-AppxProvisionedPackage -Online
+        Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $AppNamePattern | Remove-AppxProvisionedPackage -Online | Format-List | Out-String | Write-Host
         Remove-Item "$Env:LOCALAPPDATA\Packages\$AppNamePattern" -Recurse -Force -ErrorAction 0
-        Write-Host "Done"
     }
 }
 
