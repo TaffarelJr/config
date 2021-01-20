@@ -182,7 +182,7 @@ Write-Header "Configure Windows Search file extensions"
     ".wsdl",
     ".yaml", ".yml",
     ".xaml", ".xbap", ".xproj"
-) | Configure-WindowsSearchFileExtension
+) | Set-WindowsSearchFileExtension
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Group Policy settings (Windows 10 Pro only)"

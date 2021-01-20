@@ -53,7 +53,7 @@ function Remove-WindowsStoreApp {
 }
 
 # Configure Windows Search to search the contents of the specified file extensions
-function Configure-WindowsSearchFileExtension {
+function Set-WindowsSearchFileExtension {
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline)]
