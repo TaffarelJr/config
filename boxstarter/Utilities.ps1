@@ -14,62 +14,60 @@ Disable-UAC
 # Draw a pretty header to identify different sections of output
 function Write-Header {
     Param (
-        [string]$text
+        [Parameter(Mandatory)]
+        [string]$Text
     )
 
     $color = "Yellow"
-    $line = "-" * $text.Length
+    $line = "-" * $Text.Length
 
     Write-Host
     Write-Host "+-$($line)-+" -ForegroundColor $color
-    Write-Host "| $($text) |" -ForegroundColor $color
+    Write-Host "| $($Text) |" -ForegroundColor $color
     Write-Host "+-$($line)-+" -ForegroundColor $color
     Write-Host
 }
 
 # Disable specified Windows Services
 function Disable-WindowsService {
-    [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline)]
-        [string]$service
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string]$Service
     )
 
     process {
-        Write-Host "Disable Windows Service '$service' ... " -NoNewline
-        Set-service -Name $service -StartupType "Disabled"
+        Write-Host "Disable Windows Service '$Service' ... " -NoNewline
+        Set-Service -Name $Service -StartupType "Disabled"
         Write-Host "Done"
     }
 }
 
 # Uninstall specified Windows Store applications
 function Remove-WindowsStoreApp {
-    [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline)]
-        [string]$app
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string]$AppNamePattern
     )
 
     process {
-        Write-Host "Uninstalling $app ... " -NoNewline
-        Get-AppxPackage $app -AllUsers | Remove-AppxPackage
-        Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $app | Remove-AppxProvisionedPackage -Online
-        Remove-Item "$Env:LOCALAPPDATA\Packages\$app" -Recurse -Force -ErrorAction 0
+        Write-Host "Uninstalling $AppNamePattern ... " -NoNewline
+        Get-AppxPackage $AppNamePattern -AllUsers | Remove-AppxPackage
+        Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $AppNamePattern | Remove-AppxProvisionedPackage -Online
+        Remove-Item "$Env:LOCALAPPDATA\Packages\$AppNamePattern" -Recurse -Force -ErrorAction 0
         Write-Host "Done"
     }
 }
 
 # Configure Windows Search to search the contents of the specified file extensions
 function Set-WindowsSearchFileExtension {
-    [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline)]
-        [string]$extension
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string]$Extension
     )
 
     process {
-        Write-Host "Register extension $extension ... " -NoNewline
-        $regPath = "HKCR:\$extension\PersistentHandler\"
+        Write-Host "Register extension $Extension ... " -NoNewline
+        $regPath = "HKCR:\$Extension\PersistentHandler\"
 
         # Create the registry key if it doesn't already exist
         if (-Not (Test-Path $regPath)) {
@@ -88,7 +86,7 @@ function Set-WindowsSearchFileExtension {
 
 # Gather list of installed VS extensions
 # (only works after VS is installed)
-function Get-InstalledVsix() {
+function Get-InstalledVsix {
     Write-Host "Getting list of Visual Studio extensions that are already installed ..."
     Get-ChildItem -Path "$VsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
         Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
@@ -97,7 +95,7 @@ function Get-InstalledVsix() {
 }
 
 # Scrapes the VS Marketplace web page to get the VSIX ID and download URI of the specified packages
-function Get-VsixPackageInfo() {
+function Get-VsixPackageInfo {
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string]$PackageName
@@ -129,7 +127,7 @@ function Get-VsixPackageInfo() {
 }
 
 # Downloads the specified VSIX packages.
-function Get-VsixPackage() {
+function Get-VsixPackage {
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [PSCustomObject]$Vsix
@@ -164,7 +162,7 @@ function Get-VsixPackage() {
 }
 
 # Installs the specified VSIX extensions
-function Install-VsixPackage() {
+function Install-VsixPackage {
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string]$VsixFile
@@ -179,7 +177,7 @@ function Install-VsixPackage() {
     }
 }
 
-function Invoke-CleanupScripts() {
+function Invoke-CleanupScripts {
     Write-Header "Run clean-up scripts"
 
     Enable-UAC
