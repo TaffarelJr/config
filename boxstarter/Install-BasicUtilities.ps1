@@ -13,7 +13,7 @@ Write-Host "Done"
 Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
-# Install browsers
+Write-Header "Install browsers"
 #----------------------------------------------------------------------------------------------------
 
 # Google Chrome
@@ -23,7 +23,7 @@ Remove-Item "$Env:OneDrive\Desktop\Google Chrome.lnk" -ErrorAction "Ignore"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Chrome.json" -OutFile "$Env:ProgramFiles\Google\Chrome\Application\master_preferences" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
-# Install utilities
+Write-Header "Install utilities"
 #----------------------------------------------------------------------------------------------------
 
 # 7-Zip
@@ -48,7 +48,7 @@ choco install -y "notepadplusplus"
 choco install -y "spacesniffer"
 
 #----------------------------------------------------------------------------------------------------
-# Install additional cloud storage providers
+Write-Header "Install cloud storage providers"
 #----------------------------------------------------------------------------------------------------
 
 # Dropbox
@@ -61,7 +61,7 @@ Remove-Item "$Env:PUBLIC\Desktop\Google Sheets.lnk" -ErrorAction "Ignore"
 Remove-Item "$Env:PUBLIC\Desktop\Google Slides.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Install communications tools
+Write-Header "Install communications tools"
 #----------------------------------------------------------------------------------------------------
 
 # Slack
@@ -71,7 +71,7 @@ choco install -y "slack"
 choco install -y "zoom" --install-arguments="ZNoDesktopShortCut=true ZRecommend=""DisableVideo=1;MuteVoipWhenJoin=1;AutoJoinVOIP=1"""
 
 #----------------------------------------------------------------------------------------------------
-# Install basic graphics tools
+Write-Header "Install basic graphics tools"
 #----------------------------------------------------------------------------------------------------
 
 # Paint.net
@@ -79,7 +79,7 @@ choco install -y "paint.net"
 Remove-Item "$Env:PUBLIC\Desktop\paint.net.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Post
+Write-Header "Run clean-up scripts"
 #----------------------------------------------------------------------------------------------------
 
 Enable-UAC

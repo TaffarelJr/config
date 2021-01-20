@@ -69,21 +69,21 @@ Write-Host "Done"
 Disable-UAC
 
 #----------------------------------------------------------------------------------------------------
-# Enable Windows Developer Mode
+Write-Header "Enable Windows Developer Mode"
 #----------------------------------------------------------------------------------------------------
 
 Write-Host "Enable Windows Developer Mode"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\" -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value "1"
 
 #----------------------------------------------------------------------------------------------------
-# Install additional browsers
+Write-Header "Install additional browsers"
 #----------------------------------------------------------------------------------------------------
 
 # Firefox
 choco install -y "firefox" --package-parameters="/NoDesktopShortcut"
 
 #----------------------------------------------------------------------------------------------------
-# Install source control tools
+Write-Header "Install source control tools"
 #----------------------------------------------------------------------------------------------------
 
 # Git for Windows
@@ -104,7 +104,7 @@ choco install -y "sourcetree"
 Remove-Item "$Env:PUBLIC\Desktop\Sourcetree.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Install Visual Studio Code
+Write-Header "Install Visual Studio Code"
 #----------------------------------------------------------------------------------------------------
 
 # Visual Studio Code
@@ -112,7 +112,7 @@ choco install -y "vscode" --package-parameters="/NoDesktopIcon"
 choco install -y "vscode-settingssync"
 
 #----------------------------------------------------------------------------------------------------
-# Install Visual Studio 2019
+Write-Header "Install Visual Studio 2019"
 #----------------------------------------------------------------------------------------------------
 
 # Install Visual Studio 2019 Core
@@ -176,7 +176,7 @@ Install-VsixPackage "EWoodruff.VisualStudioSpellCheckerVS2017andLater" # Visual 
 dotnet dev-certs https --trust
 
 #----------------------------------------------------------------------------------------------------
-# Install developer utilities
+Write-Header "Install developer utilities"
 #----------------------------------------------------------------------------------------------------
 
 # Azure CLI
@@ -242,21 +242,21 @@ Remove-Item "$Env:PUBLIC\Desktop\WinSCP.lnk" -ErrorAction "Ignore"
 choco install -y "wireshark"
 
 #----------------------------------------------------------------------------------------------------
-# Install IDEs
+Write-Header "Install JetBrains ReSharper"
 #----------------------------------------------------------------------------------------------------
 
 # JetBrains ReSharper Ultimate
 choco install -y "resharper"
 
 #----------------------------------------------------------------------------------------------------
-# Install additional frameworks & SDKs
+Write-Header "Install additional frameworks & SDKs"
 #----------------------------------------------------------------------------------------------------
 
 choco install -y "netfx-4.8-devpack"
 choco install -y "dotnet-5.0-sdk"
 
 #----------------------------------------------------------------------------------------------------
-# Install database tools
+Write-Header "Install database tools"
 #----------------------------------------------------------------------------------------------------
 
 choco install -y "azure-data-studio"
@@ -267,7 +267,7 @@ choco install -y "sql-server-2019"
 choco install -y "sql-server-management-studio"
 
 #----------------------------------------------------------------------------------------------------
-# Post
+Write-Header "Run clean-up scripts"
 #----------------------------------------------------------------------------------------------------
 
 Enable-UAC

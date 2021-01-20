@@ -237,7 +237,7 @@ RefreshEnv
 Write-Header "Run clean-up scripts"
 #----------------------------------------------------------------------------------------------------
 
-# Clean up desktop shortcuts
+# Clean up default desktop shortcuts
 Remove-Item "$Env:PUBLIC\Desktop\Microsoft Edge.lnk" -ErrorAction "Ignore"
 
 Enable-UAC

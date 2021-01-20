@@ -82,7 +82,7 @@ $font = $fonts[$host.ui.PromptForChoice("Choose font", "What font should be inst
 $replaceFonts = ($fonts | Where-Object { $_ -NE $font } | Select-Object -ExpandProperty "Name") + @("Consolas")
 
 #----------------------------------------------------------------------------------------------------
-# Configure Windows
+Write-Header "Configure Windows"
 #----------------------------------------------------------------------------------------------------
 
 # Install fonts
@@ -121,7 +121,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main
 powercfg /import "$Env:TEMP\Windows.pow"
 
 #----------------------------------------------------------------------------------------------------
-# Install personal preferred utilities
+Write-Header "Install personal utilities"
 #----------------------------------------------------------------------------------------------------
 
 # Advanced Renamer
@@ -145,7 +145,7 @@ choco install -y "linkshellextension"
 choco install -y "freedownloadmanager"
 
 #----------------------------------------------------------------------------------------------------
-# Configure Notepad++
+Write-Header "Configure Notepad++"
 #----------------------------------------------------------------------------------------------------
 
 # Download themes
@@ -192,7 +192,7 @@ editor2.Technology = SC_TECHNOLOGY_DIRECTWRITE
 "@ | Out-File -FilePath "$Env:APPDATA\Notepad++\plugins\config\startup.lua" -Encoding "windows-1252" -Force
 
 #----------------------------------------------------------------------------------------------------
-# Configure source control tools
+Write-Header "Configure source control tools"
 #----------------------------------------------------------------------------------------------------
 
 # Git
@@ -237,7 +237,7 @@ Push-Location -Path "HKCU:\Software\"; & {
 }; Pop-Location
 
 #----------------------------------------------------------------------------------------------------
-# Configure other applications
+Write-Header "Configure other applications"
 #----------------------------------------------------------------------------------------------------
 
 # Visual Studio 2019
@@ -253,7 +253,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
-# Post
+Write-Header "Run clean-up scripts"
 #----------------------------------------------------------------------------------------------------
 
 Enable-UAC
