@@ -1,19 +1,3 @@
-# Boxstarter Script to apply RJ's personal user profile configuration and install preferred applications.
-# https://boxstarter.org/
-#
-# Install Boxstarter:
-# 	. { iwr -useb https://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
-#
-# Set: Set-ExecutionPolicy RemoteSigned
-# Then: Install-BoxstarterPackage -PackageName <URL-TO-RAW-OR-GIST> -DisableReboots
-#
-# Pulled from samples by:
-# - Microsoft https://github.com/Microsoft/windows-dev-box-setup-scripts
-# - elithrar https://github.com/elithrar/dotfiles
-# - ElJefeDSecurIT https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e
-# - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
-# - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
-
 $purpleShadowDark_AccentColorMenu = "0xffd6696b"
 $purpleShadowDark_StartColorMenu = "0xff9e4d4f"
 $purpleShadowDark_accentPalette = [byte[]]@(`
@@ -28,7 +12,18 @@ $searchLocations = @(
 )
 
 #----------------------------------------------------------------------------------------------------
-# Prompt user for theme
+Write-Host "Run startup scripts"
+#----------------------------------------------------------------------------------------------------
+
+# Download & import utilities
+$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$filePath = "$Env:TEMP\Utilities.ps1"
+Write-Host "Download & import $uri"
+Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+. $filePath
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Choose theme"
 #----------------------------------------------------------------------------------------------------
 
 $themes = @(
@@ -58,7 +53,7 @@ $options = $themes | ForEach-Object { New-Object System.Management.Automation.Ho
 $theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 2)]
 
 #----------------------------------------------------------------------------------------------------
-# Prompt user for font
+Write-Header "Choose developer font"
 #----------------------------------------------------------------------------------------------------
 
 $fonts = @(
@@ -84,13 +79,7 @@ $font = $fonts[$host.ui.PromptForChoice("Choose font", "What font should be inst
 $replaceFonts = ($fonts | Where-Object { $_ -NE $font } | Select-Object -ExpandProperty "Name") + @("Consolas")
 
 #----------------------------------------------------------------------------------------------------
-# Pre
-#----------------------------------------------------------------------------------------------------
-
-Disable-UAC
-
-#----------------------------------------------------------------------------------------------------
-# Configure Windows
+Write-Header "Configure Windows"
 #----------------------------------------------------------------------------------------------------
 
 # Install fonts
@@ -100,18 +89,18 @@ $fonts | ForEach-Object {
 
 # Theme
 Write-Host "Configure Windows theme"
-Push-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\"; & {
-    Push-Location -Path ".\Themes\Personalize\"; & {
+Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
+    Enter-Location -Path ".\Themes\Personalize\" {
         Set-ItemProperty -Path "." -Name "AppsUseLightTheme"    -Type "DWord" -Value "0"
         Set-ItemProperty -Path "." -Name "SystemUsesLightTheme" -Type "DWord" -Value "0"
-    }; Pop-Location
+    }
 
-    Push-Location -Path ".\Explorer\Accent\"; & {
+    Enter-Location -Path ".\Explorer\Accent\" {
         Set-ItemProperty -Path "." -Name "AccentColorMenu" -Type "DWord"  -Value $purpleShadowDark_AccentColorMenu
         Set-ItemProperty -Path "." -Name "AccentPalette"   -Type "Binary" -Value $purpleShadowDark_accentPalette
         Set-ItemProperty -Path "." -Name "StartColorMenu"  -Type "DWord"  -Value $purpleShadowDark_StartColorMenu
-    }; Pop-Location
-}; Pop-Location
+    }
+}
 
 # Search locations
 Write-Host "Add Windows Search locations"
@@ -129,7 +118,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main
 powercfg /import "$Env:TEMP\Windows.pow"
 
 #----------------------------------------------------------------------------------------------------
-# Install personal preferred utilities
+Write-Header "Install personal utilities"
 #----------------------------------------------------------------------------------------------------
 
 # Advanced Renamer
@@ -153,7 +142,7 @@ choco install -y "linkshellextension"
 choco install -y "freedownloadmanager"
 
 #----------------------------------------------------------------------------------------------------
-# Configure Notepad++
+Write-Header "Configure Notepad++"
 #----------------------------------------------------------------------------------------------------
 
 # Download themes
@@ -200,7 +189,7 @@ editor2.Technology = SC_TECHNOLOGY_DIRECTWRITE
 "@ | Out-File -FilePath "$Env:APPDATA\Notepad++\plugins\config\startup.lua" -Encoding "windows-1252" -Force
 
 #----------------------------------------------------------------------------------------------------
-# Configure source control tools
+Write-Header "Configure source control tools"
 #----------------------------------------------------------------------------------------------------
 
 # Git
@@ -216,54 +205,66 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main
 
 # TortoiseGit
 Write-Host "Configure TortoiseGit"
-Push-Location -Path "HKCU:\Software\"; & {
-    Push-Location -Path ".\TortoiseGit\"; & {
-        Set-ItemProperty -Path "." -Name "DarkTheme"               -Type "DWord"  -Value "1"
-        Set-ItemProperty -Path "." -Name "Diff"                    -Type "String" -Value """C:\Program Files\Devart\Code Compare\CodeCompare.exe"" /SC=TortoiseGit /T1=%bname /T2=%yname %base %mine"
-        Set-ItemProperty -Path "." -Name "Merge"                   -Type "String" -Value """C:\Program Files\Devart\Code Compare\CodeMerge.exe"" /SC=TortoiseGit /BF=%base /BT=%bname /TF=%theirs /TT=%tname /MF=%mine /MT=%yname /RF=%merged /RT=%mname /REMOVEFILES"
-        Set-ItemProperty -Path "." -Name "MergeBlockTrustBehavior" -Type "DWord"  -Value "2"
+Enter-Location -Path "HKCU:\SOFTWARE\" {
+    if (Test-Path ".\TortoiseGit\") {
+        Enter-Location -Path ".\TortoiseGit\" {
+            Set-ItemProperty -Path "." -Name "DarkTheme"               -Type "DWord"  -Value "1"
+            Set-ItemProperty -Path "." -Name "Diff"                    -Type "String" -Value """C:\Program Files\Devart\Code Compare\CodeCompare.exe"" /SC=TortoiseGit /T1=%bname /T2=%yname %base %mine"
+            Set-ItemProperty -Path "." -Name "Merge"                   -Type "String" -Value """C:\Program Files\Devart\Code Compare\CodeMerge.exe"" /SC=TortoiseGit /BF=%base /BT=%bname /TF=%theirs /TT=%tname /MF=%mine /MT=%yname /RF=%merged /RT=%mname /REMOVEFILES"
+            Set-ItemProperty -Path "." -Name "MergeBlockTrustBehavior" -Type "DWord"  -Value "2"
 
-        if (-Not (Test-Path ".\Colors\")) { New-Item -Path ".\Colors\" }
-        Push-Location -Path ".\Colors\"; & {
-            Set-ItemProperty -Path "." -Name "NoteNode" -Type "DWord" -Value "16776960"
-        }; Pop-Location
-    }; Pop-Location
+            if (-Not (Test-Path ".\Colors\")) { New-Item -Path ".\Colors\" }
+            Enter-Location -Path ".\Colors\" {
+                Set-ItemProperty -Path "." -Name "NoteNode" -Type "DWord" -Value "16776960"
+            }
+        }
 
-    $overlayFolder = "$Env:CommonProgramFiles\TortoiseOverlays\Icons\Win10"
-    if (-Not (Test-Path ".\TortoiseOverlays\")) { New-Item -Path ".\TortoiseOverlays\" }
-    Push-Location -Path ".\TortoiseOverlays\"; & {
-        Set-ItemProperty -Path "." -Name "AddedIcon"       -Type "String" -Value "$overlayFolder\AddedIcon.ico"
-        Set-ItemProperty -Path "." -Name "ConflictIcon"    -Type "String" -Value "$overlayFolder\ConflictIcon.ico"
-        Set-ItemProperty -Path "." -Name "DeletedIcon"     -Type "String" -Value "$overlayFolder\DeletedIcon.ico"
-        Set-ItemProperty -Path "." -Name "IgnoredIcon"     -Type "String" -Value "$overlayFolder\IgnoredIcon.ico"
-        Set-ItemProperty -Path "." -Name "LockedIcon"      -Type "String" -Value "$overlayFolder\LockedIcon.ico"
-        Set-ItemProperty -Path "." -Name "ModifiedIcon"    -Type "String" -Value "$overlayFolder\ModifiedIcon.ico"
-        Set-ItemProperty -Path "." -Name "NormalIcon"      -Type "String" -Value "$overlayFolder\NormalIcon.ico"
-        Set-ItemProperty -Path "." -Name "ReadOnlyIcon"    -Type "String" -Value "$overlayFolder\ReadOnlyIcon.ico"
-        Set-ItemProperty -Path "." -Name "UnversionedIcon" -Type "String" -Value "$overlayFolder\UnversionedIcon.ico"
-    }; Pop-Location
-}; Pop-Location
+        $overlayFolder = "$Env:CommonProgramFiles\TortoiseOverlays\Icons\Win10"
+        if (-Not (Test-Path ".\TortoiseOverlays\")) { New-Item -Path ".\TortoiseOverlays\" }
+        Enter-Location -Path ".\TortoiseOverlays\" {
+            Set-ItemProperty -Path "." -Name "AddedIcon"       -Type "String" -Value "$overlayFolder\AddedIcon.ico"
+            Set-ItemProperty -Path "." -Name "ConflictIcon"    -Type "String" -Value "$overlayFolder\ConflictIcon.ico"
+            Set-ItemProperty -Path "." -Name "DeletedIcon"     -Type "String" -Value "$overlayFolder\DeletedIcon.ico"
+            Set-ItemProperty -Path "." -Name "IgnoredIcon"     -Type "String" -Value "$overlayFolder\IgnoredIcon.ico"
+            Set-ItemProperty -Path "." -Name "LockedIcon"      -Type "String" -Value "$overlayFolder\LockedIcon.ico"
+            Set-ItemProperty -Path "." -Name "ModifiedIcon"    -Type "String" -Value "$overlayFolder\ModifiedIcon.ico"
+            Set-ItemProperty -Path "." -Name "NormalIcon"      -Type "String" -Value "$overlayFolder\NormalIcon.ico"
+            Set-ItemProperty -Path "." -Name "ReadOnlyIcon"    -Type "String" -Value "$overlayFolder\ReadOnlyIcon.ico"
+            Set-ItemProperty -Path "." -Name "UnversionedIcon" -Type "String" -Value "$overlayFolder\UnversionedIcon.ico"
+        }
+    }
+}
 
 #----------------------------------------------------------------------------------------------------
-# Configure other applications
+Write-Header "Configure Visual Studio 2019"
 #----------------------------------------------------------------------------------------------------
 
-# Visual Studio 2019
-Write-Host "Configure Visual Studio 2019"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.vssettings" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
-devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
+# Check if Visual Studio is installed
+$devShell = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+if (Test-Path $devShell) {
+    # Load the Visual Studio Developer Console commands
+    Import-Module $devShell
+    Enter-VsDevShell "ccbcf63a"
 
-# TODO: Figure out how to import the '..\apps\CodeCompare.settings' file into Code Compare via command line
+    # Download configuration settings
+    Write-Host "Configure Visual Studio 2019"
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.xml" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
+
+    # Import configuration settings
+    devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
+}
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Configure other applications"
+#----------------------------------------------------------------------------------------------------
+
+# TODO: Figure out how to import the '..\apps\CodeCompare.xml' file into Code Compare via command line
 Write-Host "Configure Code Compare"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.settings" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.xml" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
 
 # LINQPad
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
-# Post
+Invoke-CleanupScripts
 #----------------------------------------------------------------------------------------------------
-
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula

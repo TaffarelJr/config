@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <UserSettings>
     <ApplicationIdentity version="16.0"/>
     <ToolsOptions>
         <ToolsOptionsCategory name="Environment" RegisteredName="Environment">
             <ToolsOptionsSubCategory name="ProjectsAndSolution" RegisteredName="ProjectsAndSolution" PackageName="Visual Studio Environment Package">
-                <PropertyValue name="MSBuildOutputVerbosity">2</PropertyValue><!--2=Normal, 3=Detailed-->
+                <PropertyValue name="MSBuildOutputVerbosity">2</PropertyValue>                <!--2=Normal, 3=Detailed-->
             </ToolsOptionsSubCategory>
         </ToolsOptionsCategory>
         <ToolsOptionsCategory name="Projects" RegisteredName="Projects">

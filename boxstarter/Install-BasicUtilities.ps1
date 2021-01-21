@@ -1,27 +1,16 @@
-# Boxstarter Script to apply standard configuration and install common applications.
-# https://boxstarter.org/
-#
-# Install Boxstarter:
-# 	. { iwr -useb https://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
-#
-# Set: Set-ExecutionPolicy RemoteSigned
-# Then: Install-BoxstarterPackage -PackageName <URL-TO-RAW-OR-GIST> -DisableReboots
-#
-# Pulled from samples by:
-# - Microsoft https://github.com/Microsoft/windows-dev-box-setup-scripts
-# - elithrar https://github.com/elithrar/dotfiles
-# - ElJefeDSecurIT https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e
-# - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
-# - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
-
 #----------------------------------------------------------------------------------------------------
-# Pre
+Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
-Disable-UAC
+# Download & import utilities
+$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$filePath = "$Env:TEMP\Utilities.ps1"
+Write-Host "Download & import $uri"
+Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+. $filePath
 
 #----------------------------------------------------------------------------------------------------
-# Install browsers
+Write-Header "Install browsers"
 #----------------------------------------------------------------------------------------------------
 
 # Google Chrome
@@ -31,7 +20,7 @@ Remove-Item "$Env:OneDrive\Desktop\Google Chrome.lnk" -ErrorAction "Ignore"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Chrome.json" -OutFile "$Env:ProgramFiles\Google\Chrome\Application\master_preferences" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
-# Install utilities
+Write-Header "Install utilities"
 #----------------------------------------------------------------------------------------------------
 
 # 7-Zip
@@ -56,7 +45,7 @@ choco install -y "notepadplusplus"
 choco install -y "spacesniffer"
 
 #----------------------------------------------------------------------------------------------------
-# Install additional cloud storage providers
+Write-Header "Install cloud storage providers"
 #----------------------------------------------------------------------------------------------------
 
 # Dropbox
@@ -69,7 +58,7 @@ Remove-Item "$Env:PUBLIC\Desktop\Google Sheets.lnk" -ErrorAction "Ignore"
 Remove-Item "$Env:PUBLIC\Desktop\Google Slides.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Install communications tools
+Write-Header "Install communications tools"
 #----------------------------------------------------------------------------------------------------
 
 # Slack
@@ -79,7 +68,7 @@ choco install -y "slack"
 choco install -y "zoom" --install-arguments="ZNoDesktopShortCut=true ZRecommend=""DisableVideo=1;MuteVoipWhenJoin=1;AutoJoinVOIP=1"""
 
 #----------------------------------------------------------------------------------------------------
-# Install basic graphics tools
+Write-Header "Install basic graphics tools"
 #----------------------------------------------------------------------------------------------------
 
 # Paint.net
@@ -87,9 +76,5 @@ choco install -y "paint.net"
 Remove-Item "$Env:PUBLIC\Desktop\paint.net.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Post
+Invoke-CleanupScripts
 #----------------------------------------------------------------------------------------------------
-
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula
