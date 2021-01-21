@@ -1,27 +1,16 @@
-# Boxstarter Script to install developer tools, frameworks, and applications.
-# https://boxstarter.org/
-#
-# Install Boxstarter:
-# 	. { iwr -useb https://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
-#
-# Set: Set-ExecutionPolicy RemoteSigned
-# Then: Install-BoxstarterPackage -PackageName <URL-TO-RAW-OR-GIST> -DisableReboots
-#
-# Pulled from samples by:
-# - Microsoft https://github.com/Microsoft/windows-dev-box-setup-scripts
-# - elithrar https://github.com/elithrar/dotfiles
-# - ElJefeDSecurIT https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e
-# - jessfraz https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f
-# - NickCraver https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9
-
 #----------------------------------------------------------------------------------------------------
-# Pre
+Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
-Disable-UAC
+# Download & import utilities
+$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$filePath = "$Env:TEMP\Utilities.ps1"
+Write-Host "Download & import $uri"
+Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+. $filePath
 
 #----------------------------------------------------------------------------------------------------
-# Windows Subsystem for Linux 2 (WSL2)
+Write-Host "Install Windows Subsystem for Linux 2 (WSL2)"
 #----------------------------------------------------------------------------------------------------
 
 $edition = (Get-WindowsEdition -Online).Edition
@@ -36,23 +25,19 @@ if ($edition -ne "Home") {
     # TODO: Need to somehow launch Ubuntu here, to let it initialize itself
 
     Write-Host "Setup Ubuntu"
-    wsl sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Ubuntu.sh)'
+    wsl sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/TaffarelJr/config/test/boxstarter/Ubuntu.sh)'
 
     Write-Host "Reboot WSL"
     Restart-Service -Name "LxssManager"
 }
 
 #----------------------------------------------------------------------------------------------------
-# Docker
+Write-Host "Install Docker"
 #----------------------------------------------------------------------------------------------------
 
 choco install -y "docker-desktop"
 Remove-Item "$Env:OneDrive\Desktop\Docker Desktop.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
-# Post
+Invoke-CleanupScripts
 #----------------------------------------------------------------------------------------------------
-
-Enable-UAC
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula
