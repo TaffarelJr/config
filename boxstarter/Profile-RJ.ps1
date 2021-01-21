@@ -79,20 +79,21 @@ $font = $fonts[$host.ui.PromptForChoice("Choose font", "What font should be inst
 $replaceFonts = ($fonts | Where-Object { $_ -NE $font } | Select-Object -ExpandProperty "Name") + @("Consolas")
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Configure Windows"
+Write-Header "Install developer fonts"
 #----------------------------------------------------------------------------------------------------
 
-# Install fonts
 $fonts | ForEach-Object {
     choco install -y $_.ChocolateyPackage
 }
 
-# Theme
-Write-Host "Configure Windows theme"
+#----------------------------------------------------------------------------------------------------
+Write-Header "Configure Windows Theme"
+#----------------------------------------------------------------------------------------------------
+
 Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
     Enter-Location -Path ".\Themes\Personalize\" {
-        Set-ItemProperty -Path "." -Name "AppsUseLightTheme"    -Type "DWord" -Value "0"
-        Set-ItemProperty -Path "." -Name "SystemUsesLightTheme" -Type "DWord" -Value "0"
+        Set-ItemProperty -Path "." -Name "AppsUseLightTheme"    -Type "DWord" -Value 0
+        Set-ItemProperty -Path "." -Name "SystemUsesLightTheme" -Type "DWord" -Value 0
     }
 
     Enter-Location -Path ".\Explorer\Accent\" {
@@ -102,8 +103,10 @@ Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
     }
 }
 
-# Search locations
-Write-Host "Add Windows Search locations"
+#----------------------------------------------------------------------------------------------------
+Write-Header "Add custom locations to Windows Search"
+#----------------------------------------------------------------------------------------------------
+
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile "$Env:TEMP\Microsoft.Search.Interop.dll" -UseBasicParsing
 Add-Type -Path "$Env:TEMP\Microsoft.Search.Interop.dll"
 $crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
@@ -112,8 +115,10 @@ foreach ($location in $searchLocations) {
 }
 $crawlManager.SaveAll()
 
-# Power & Sleep settings
-Write-Host "Configure Windows Power & Battery settings"
+#----------------------------------------------------------------------------------------------------
+Write-Header "Configure Power & Sleep settings"
+#----------------------------------------------------------------------------------------------------
+
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
 powercfg /import "$Env:TEMP\Windows.pow"
 
