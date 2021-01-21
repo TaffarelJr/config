@@ -46,10 +46,10 @@ function Enter-Location {
 
     # Push to the location
     Push-Location -Path $Path
-    {
-        # Execute the script block
-        & $ScriptBlock
-    }
+
+    # Execute the script block
+    & $ScriptBlock
+
     # Pop back to the previous location
     Pop-Location
 }
@@ -91,21 +91,13 @@ function Set-WindowsSearchFileExtension {
     )
 
     process {
-        Write-Host "Register extension $Extension ... " -NoNewline
-        $regPath = "HKCR:\$Extension\PersistentHandler\"
-
-        # Create the registry key if it doesn't already exist
-        if (-Not (Test-Path $regPath)) {
-            New-Item $regPath -Force | Out-Null
+        Write-Host "Register extension $Extension"
+        Enter-Location -Path "HKCR:\$Extension\" {
+            Enter-Location -Path ".\PersistentHandler\" {
+                Set-ItemProperty -Path "." -Name "(Default)"                 -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
+                Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
+            }
         }
-
-        # Set the registry values in the key
-        Enter-Location -Path $regPath {
-            Set-ItemProperty -Path "." -Name "(Default)"                 -Type "String" -Value "{5E941D80-BF96-11CD-B579-08002B30BFEB}"
-            Set-ItemProperty -Path "." -Name "OriginalPersistentHandler" -Type "String" -Value "{00000000-0000-0000-0000-000000000000}"
-        }
-
-        Write-Host "Done"
     }
 }
 

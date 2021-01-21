@@ -117,6 +117,7 @@ Write-Host "Update Windows Store applications"
 Write-Header "Configure Windows Explorer"
 #----------------------------------------------------------------------------------------------------
 
+# Configure settings built into Boxstarter
 Set-WindowsExplorerOptions `
     -DisableOpenFileExplorerToQuickAccess `
     -EnableShowRecentFilesInQuickAccess `
@@ -129,35 +130,45 @@ Set-WindowsExplorerOptions `
     -EnableShowRibbon `
     -EnableSnapAssist
 
-Write-Host "Configure advanced settings ... " -NoNewline
-Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\" {
-    Enter-Location -Path ".\Advanced\" {
-        Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value "0" # Show empty drives
-        Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value "0" # Show folder merge conflicts
-        Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value "1" # Launch folder windows in a separate process
-        Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value "1" # Restore previous folder windows at logon
-        Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value "1" # Show encrypted or compressed NTFS files in color
-        Set-ItemProperty -Path "." -Name "NavPaneShowAllFolders"      -Type "DWord" -Value "1" # Show all folders
+# Configure additional registry settings
+Write-Host "Configure advanced settings"
+Enter-Location -Path "HKCU:\" {
+    Enter-Location -Path ".\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
+        Enter-Location -Path ".\Explorer\" {
+            Enter-Location -Path ".\Advanced\" {
+                Set-ItemProperty -Path "." -Name "HideDrivesWithNoMedia"      -Type "DWord" -Value 0 # Show empty drives
+                Set-ItemProperty -Path "." -Name "HideMergeConflicts"         -Type "DWord" -Value 0 # Show folder merge conflicts
+                Set-ItemProperty -Path "." -Name "PersistBrowsers"            -Type "DWord" -Value 1 # Restore previous folder windows at logon
+                Set-ItemProperty -Path "." -Name "SeparateProcess"            -Type "DWord" -Value 1 # Launch folder windows in a separate process
+                Set-ItemProperty -Path "." -Name "ShowEncryptCompressedColor" -Type "DWord" -Value 1 # Show encrypted or compressed NTFS files in color
+            }
+
+            Enter-Location -Path ".\Search\" {
+                Enter-Location -Path ".\Preferences\" {
+                    Set-ItemProperty -Path "." -Name "ArchivedFiles" -Type "DWord" -Value 1 # Include compressed files (ZIP, CAB...)
+                }
+
+                Enter-Location -Path ".\PrimaryProperties\" {
+                    Enter-Location -Path ".\UnindexedLocations\" {
+                        Set-ItemProperty -Path "." -Name "SearchOnly" -Type "DWord" -Value 0 # Always search file names and contents
+                    }
+                }
+            }
+        }
+
+        Enter-Location -Path ".\GameDVR\" {
+            Set-ItemProperty -Path "." -Name "AppCaptureEnabled" -Type "DWord" -Value 0 # Disable Xbox Game Bar capture
+        }
     }
-    Enter-Location -Path ".\Search\" {
-        Set-ItemProperty -Path ".\Preferences\"                          -Name "ArchivedFiles" -Type "DWord" -Value "1" # Include compressed files (ZIP, CAB...)
-        Set-ItemProperty -Path ".\PrimaryProperties\UnindexedLocations\" -Name "SearchOnly"    -Type "DWord" -Value "0" # Always search file names and contents
+
+    Enter-Location -Path ".\System\GameConfigStore\" {
+        Set-ItemProperty -Path "." -Name "GameDVR_Enabled" -Type "DWord" -Value 0 # Disable Xbox Game Bar DVR
     }
 }
-Write-Host "Done"
 
-Write-Host "Disable Bing in Search box ... " -NoNewline
-Disable-BingSearch
-Write-Host "Done"
-
-#----------------------------------------------------------------------------------------------------
-Write-Header "Disable Xbox Game Bar"
-#----------------------------------------------------------------------------------------------------
-
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type "DWord" -Value "0"
-Set-ItemProperty -Path "HKCU:\System\GameConfigStore"                            -Name "GameDVR_Enabled"   -Type "DWord" -Value "0"
-
+# Additional Boxstarter features
 Disable-GameBarTips
+Disable-BingSearch
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Windows Search file extensions"
@@ -192,8 +203,8 @@ Enter-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\" {
     if (Test-Path $regPath) {
         Write-Host "Unlock Microsoft OneDrive ... " -NoNewline
         Enter-Location -Path $regPath {
-            Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value "0" # Enable file sync
-            Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value "0" # Enable file sync (next-gen)
+            Set-ItemProperty -Path "." -Name "DisableFileSync"     -Type "DWord" -Value 0 # Enable file sync
+            Set-ItemProperty -Path "." -Name "DisableFileSyncNGSC" -Type "DWord" -Value 0 # Enable file sync (next-gen)
         }
         Write-Host "Done"
     }
@@ -203,9 +214,9 @@ Enter-Location -Path "HKLM:\SOFTWARE\Policies\Microsoft\" {
     if (Test-Path $regPath) {
         Write-Host "Unlock Windows Store ... " -NoNewline
         Enter-Location -Path $regPath {
-            Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value "0" # Enable Store apps
-            Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value "0" # Do not remove Windows Store
-            Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value "0" # Do not require private Store only
+            Set-ItemProperty -Path "." -Name "DisableStoreApps"        -Type "DWord" -Value 0 # Enable Store apps
+            Set-ItemProperty -Path "." -Name "RemoveWindowsStore"      -Type "DWord" -Value 0 # Do not remove Windows Store
+            Set-ItemProperty -Path "." -Name "RequirePrivateStoreOnly" -Type "DWord" -Value 0 # Do not require private Store only
         }
         Write-Host "Done"
     }
