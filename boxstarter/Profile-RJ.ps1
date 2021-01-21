@@ -1,12 +1,3 @@
-$purpleShadowDark_AccentColorMenu = "0xffd6696b"
-$purpleShadowDark_StartColorMenu = "0xff9e4d4f"
-$purpleShadowDark_accentPalette = [byte[]]@(`
-        "0xd5", "0xd4", "0xff", "0x00", "0xad", "0xac", "0xf0", "0x00", `
-        "0x89", "0x87", "0xe4", "0x00", "0x6b", "0x69", "0xd6", "0x00", `
-        "0x4f", "0x4d", "0x9e", "0x00", "0x2d", "0x2b", "0x61", "0x00", `
-        "0x1f", "0x1f", "0x4d", "0x00", "0x00", "0xcc", "0x6a", "0x00"
-)
-
 #----------------------------------------------------------------------------------------------------
 Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
@@ -95,6 +86,16 @@ $fonts | ForEach-Object {
 Write-Header "Configure Windows Theme"
 #----------------------------------------------------------------------------------------------------
 
+# Purple Shadow Dark theme
+$accentColorMenu = "0xffd6696b"
+$startColorMenu = "0xff9e4d4f"
+$accentPalette = [byte[]]@(`
+        "0xd5", "0xd4", "0xff", "0x00", "0xad", "0xac", "0xf0", "0x00", `
+        "0x89", "0x87", "0xe4", "0x00", "0x6b", "0x69", "0xd6", "0x00", `
+        "0x4f", "0x4d", "0x9e", "0x00", "0x2d", "0x2b", "0x61", "0x00", `
+        "0x1f", "0x1f", "0x4d", "0x00", "0x00", "0xcc", "0x6a", "0x00"
+)
+
 Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
     Enter-Location -Path ".\Themes\Personalize\" {
         Set-ItemProperty -Path "." -Name "AppsUseLightTheme"    -Type "DWord" -Value 0
@@ -102,9 +103,9 @@ Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
     }
 
     Enter-Location -Path ".\Explorer\Accent\" {
-        Set-ItemProperty -Path "." -Name "AccentColorMenu" -Type "DWord"  -Value $purpleShadowDark_AccentColorMenu
-        Set-ItemProperty -Path "." -Name "AccentPalette"   -Type "Binary" -Value $purpleShadowDark_accentPalette
-        Set-ItemProperty -Path "." -Name "StartColorMenu"  -Type "DWord"  -Value $purpleShadowDark_StartColorMenu
+        Set-ItemProperty -Path "." -Name "AccentColorMenu" -Type "DWord"  -Value $accentColorMenu
+        Set-ItemProperty -Path "." -Name "AccentPalette"   -Type "Binary" -Value $accentPalette
+        Set-ItemProperty -Path "." -Name "StartColorMenu"  -Type "DWord"  -Value $startColorMenu
     }
 }
 
