@@ -1,9 +1,14 @@
 # Set PowerShell preference variables
 $ErrorActionPreference = "Stop"
 
+# Install YAML module
+Write-Host "Import YAML module"
+Install-Module "powershell-yaml" -Force
+Import-Module "powershell-yaml"
+
 # Set custom constants
-Set-Variable VsInstallDir  -Option Constant -Value "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
-Set-Variable VsMarketplace -Option Constant -Value "https://marketplace.visualstudio.com"
+Set-Variable "VsInstallDir"  -Option Constant -Value "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
+Set-Variable "VsMarketplace" -Option Constant -Value "https://marketplace.visualstudio.com"
 
 # Register HKEY_CLASSES_ROOT as an accessible drive
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null

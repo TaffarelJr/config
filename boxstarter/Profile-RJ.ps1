@@ -26,27 +26,35 @@ $themes = @(
     [PSCustomObject]@{
         Name            = "Dracula"
         KeyedName       = "&Dracula"
+        Base16          = "https://raw.githubusercontent.com/dracula/base16-dracula-scheme/master/dracula.yaml"
         NotepadPlusPlus = "https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml"
     }
     [PSCustomObject]@{
         Name            = "Tomorrow Night"
         KeyedName       = "&Tomorrow Night"
+        Base16          = "https://raw.githubusercontent.com/chriskempson/base16-tomorrow-scheme/master/tomorrow-night.yaml"
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night.xml"
     }
     [PSCustomObject]@{
         Name            = "Tomorrow Night Bright"
         KeyedName       = "Tomorrow Night &Bright"
+        Base16          = "https://raw.githubusercontent.com/Tyilo/base16-tomorrow-scheme/night-bright/tomorrow-night-bright.yaml"
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_bright.xml"
     }
     [PSCustomObject]@{
         Name            = "Tomorrow Night Eighties"
         KeyedName       = "Tomorrow Night &Eighties"
+        Base16          = "https://raw.githubusercontent.com/chriskempson/base16-tomorrow-scheme/master/tomorrow-night-eighties.yaml"
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_eighties.xml"
     }
 )
 
+# Prompt user
 $options = $themes | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
 $theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 2)]
+
+# Load Base16 pallete for selected theme
+$theme.Base16 = ConvertFrom-Yaml (Invoke-WebRequest -Uri $theme.Base16 -UseBasicParsing).Content
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Choose developer font"
@@ -70,6 +78,7 @@ $fonts = @(
     }
 )
 
+# Prompt user
 $options = $fonts | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
 $font = $fonts[$host.ui.PromptForChoice("Choose font", "What font should be installed?", $options, 2)]
 $replaceFonts = ($fonts | Where-Object { $_ -NE $font } | Select-Object -ExpandProperty "Name") + @("Consolas")
