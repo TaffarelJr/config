@@ -7,10 +7,6 @@ $purpleShadowDark_accentPalette = [byte[]]@(`
         "0x1f", "0x1f", "0x4d", "0x00", "0x00", "0xcc", "0x6a", "0x00"
 )
 
-$searchLocations = @(
-    "C:\Code"
-)
-
 #----------------------------------------------------------------------------------------------------
 Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
@@ -107,12 +103,20 @@ Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
 Write-Header "Add custom locations to Windows Search"
 #----------------------------------------------------------------------------------------------------
 
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile "$Env:TEMP\Microsoft.Search.Interop.dll" -UseBasicParsing
-Add-Type -Path "$Env:TEMP\Microsoft.Search.Interop.dll"
+Write-Host "Download interop library"
+$interopFile = "$Env:TEMP\Microsoft.Search.Interop.dll"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile $interopFile -UseBasicParsing
+Add-Type -Path $interopFile
 $crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
-foreach ($location in $searchLocations) {
-    $crawlManager.AddUserScopeRule("file:///$location", $true, $false, $null)
+
+Write-host "Add search locations"
+@(
+    "C:\Code"
+) | ForEach-Object {
+    Write-host "    $_"
+    $crawlManager.AddUserScopeRule("file:///$_", $true, $false, $null)
 }
+
 $crawlManager.SaveAll()
 
 #----------------------------------------------------------------------------------------------------
