@@ -3,10 +3,11 @@ Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Download & import utilities
-$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
+$fileUri = "$repoUri/boxstarter/Utilities.ps1"
 $filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $uri"
-Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+Write-Host "Download & import $fileUri"
+Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------

@@ -3,10 +3,11 @@ Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Download & import utilities
-$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
+$fileUri = "$repoUri/boxstarter/Utilities.ps1"
 $filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $uri"
-Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+Write-Host "Download & import $fileUri"
+Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
@@ -115,7 +116,7 @@ Write-Header "Add custom locations to Windows Search"
 
 Write-Host "Download interop library"
 $interopFile = "$Env:TEMP\Microsoft.Search.Interop.dll"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile $interopFile -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/boxstarter/Microsoft.Search.Interop.dll" -OutFile $interopFile -UseBasicParsing
 Add-Type -Path $interopFile
 $crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
 
@@ -133,7 +134,7 @@ $crawlManager.SaveAll()
 Write-Header "Configure Power & Sleep settings"
 #----------------------------------------------------------------------------------------------------
 
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
 powercfg /import "$Env:TEMP\Windows.pow"
 
 #----------------------------------------------------------------------------------------------------
@@ -181,7 +182,7 @@ Remove-Item "$Env:APPDATA\Notepad++\config.xml" -ErrorAction "Ignore"
 
 # Download configuration
 Write-Host "Download configuration for Notepad++"
-$file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -UseBasicParsing).Content
+$file = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++.xml" -UseBasicParsing).Content
 [regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
 [regex]::Matches($file, "«theme»") | ForEach-Object { $file = $file.Replace($_, $theme.Name) }
 $file | Out-File -FilePath "$Env:APPDATA\Notepad++\config.xml" -Encoding "windows-1252" -Force -NoNewline
@@ -213,14 +214,14 @@ Write-Header "Configure source control tools"
 
 # Git
 Write-Host "Configure Git"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig"     -OutFile "$Env:USERPROFILE\.gitconfig"     -UseBasicParsing
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig-rj"  -OutFile "$Env:USERPROFILE\.gitconfig-rj"  -UseBasicParsing
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig-wtw" -OutFile "$Env:USERPROFILE\.gitconfig-wtw" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.gitconfig"     -OutFile "$Env:USERPROFILE\.gitconfig"     -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.gitconfig-rj"  -OutFile "$Env:USERPROFILE\.gitconfig-rj"  -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.gitconfig-wtw" -OutFile "$Env:USERPROFILE\.gitconfig-wtw" -UseBasicParsing
 
 # Bash
 Write-Host "Configure Bash shell"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.bashrc"       -OutFile "$Env:USERPROFILE\.bashrc"       -UseBasicParsing
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.bash_profile" -OutFile "$Env:USERPROFILE\.bash_profile" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.bashrc"       -OutFile "$Env:USERPROFILE\.bashrc"       -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.bash_profile" -OutFile "$Env:USERPROFILE\.bash_profile" -UseBasicParsing
 
 # TortoiseGit
 Write-Host "Configure TortoiseGit"
@@ -267,7 +268,7 @@ if (Test-Path $devShell) {
 
     # Download configuration settings
     Write-Host "Configure Visual Studio 2019"
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.xml" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
+    Invoke-WebRequest -Uri "$repoUri/apps/VisualStudio.xml" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
 
     # Import configuration settings
     devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
@@ -279,10 +280,10 @@ Write-Header "Configure other applications"
 
 # TODO: Figure out how to import the '..\apps\CodeCompare.xml' file into Code Compare via command line
 Write-Host "Configure Code Compare"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.xml" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/CodeCompare.xml" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
 
 # LINQPad
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts
