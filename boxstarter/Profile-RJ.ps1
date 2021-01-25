@@ -18,25 +18,25 @@ $themes = @(
     [PSCustomObject]@{
         Name            = "Dracula"
         KeyedName       = "&Dracula"
-        Base16          = "https://raw.githubusercontent.com/dracula/base16-dracula-scheme/master/dracula.yaml"
+        Base16          = "$repoUri/themes/Dracula.yml"
         NotepadPlusPlus = "https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml"
     }
     [PSCustomObject]@{
         Name            = "Tomorrow Night"
         KeyedName       = "&Tomorrow Night"
-        Base16          = "https://raw.githubusercontent.com/chriskempson/base16-tomorrow-scheme/master/tomorrow-night.yaml"
+        Base16          = "$repoUri/themes/TomorrowNight.yml"
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night.xml"
     }
     [PSCustomObject]@{
         Name            = "Tomorrow Night Bright"
         KeyedName       = "Tomorrow Night &Bright"
-        Base16          = "https://raw.githubusercontent.com/Tyilo/base16-tomorrow-scheme/night-bright/tomorrow-night-bright.yaml"
+        Base16          = "$repoUri/themes/TomorrowNight-Bright.yml"
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_bright.xml"
     }
     [PSCustomObject]@{
         Name            = "Tomorrow Night Eighties"
         KeyedName       = "Tomorrow Night &Eighties"
-        Base16          = "https://raw.githubusercontent.com/chriskempson/base16-tomorrow-scheme/master/tomorrow-night-eighties.yaml"
+        Base16          = "$repoUri/themes/TomorrowNight-Eighties.yml"
         NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_eighties.xml"
     }
 )
