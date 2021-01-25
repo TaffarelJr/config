@@ -1,10 +1,15 @@
 # Set PowerShell preference variables
 $ErrorActionPreference = "Stop"
 
-# Install YAML module
-Write-Host "Import YAML module"
-Install-Module "powershell-yaml" -Force
-Import-Module "powershell-yaml"
+# Install modules
+@(
+    "powershell-yaml"
+    "Poshstache"
+) | ForEach-Object {
+    Write-Host "Import $_"
+    Install-Module $_ -Force
+    Import-Module $_
+}
 
 # Set custom constants
 Set-Variable "VsInstallDir"  -Option Constant -Value "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
@@ -197,6 +202,65 @@ function Install-VsixPackage {
         Remove-Item $VsixFile -ErrorAction "Ignore"
         Write-Host "$VsixFile installed successfully"
     }
+}
+
+# Downloads & parses the specified theme files
+function Import-Theme {
+    param (
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [hashtable]$Theme
+    )
+
+    process {
+        # Load Base16 pallete for selected theme
+        Write-Host "Load $($Theme.Base16Uri)"
+        (ConvertFrom-Yaml (Invoke-WebRequest -Uri $Theme.Base16Uri -UseBasicParsing).Content).GetEnumerator() | ForEach-Object {
+            if ($_.Key -Match "^base0[\dA-F]$") {
+                # Composite hex RGB value
+                $hex = $_.Value.ToUpper()
+                $Theme["$($_.Key)-hex"] = $hex
+
+                # Individual hex RGB values
+                $hexRgb = $hex -Split "(.{2})" | Where-Object { $_ }
+                $Theme["$($_.Key)-hex-r"] = $hexRgb[0]
+                $Theme["$($_.Key)-hex-g"] = $hexRgb[1]
+                $Theme["$($_.Key)-hex-b"] = $hexRgb[2]
+
+                # Composite hex BGR value
+                $Theme["$($_.Key)-hex-bgr"] = $hexRgb[2] + $hexRgb[1] + $hexRgb[0]
+
+                # Individual int RGB values
+                $Theme["$($_.Key)-rgb-r"] = [Convert]::ToByte($hexRgb[0], 16)
+                $Theme["$($_.Key)-rgb-g"] = [Convert]::ToByte($hexRgb[1], 16)
+                $Theme["$($_.Key)-rgb-b"] = [Convert]::ToByte($hexRgb[2], 16)
+            }
+            else {
+                $Theme[$_.Key] = $_.Value
+            }
+        }
+
+        return $Theme
+    }
+}
+
+# Replaces any mustache fields in the given template with the given values (including environment variables)
+function Expand-TemplateString {
+    param (
+        [Parameter(Mandatory)]
+        [string]$String,
+
+        [Parameter(Mandatory)]
+        [hashtable]$Values
+    )
+
+    # Include environment variables
+    $Values += [System.Environment]::GetEnvironmentVariables()
+
+    # Convert hashtable to JSON
+    $json = $Values | ConvertTo-Json
+
+    # Use Mustache to replace fields with values
+    ConvertTo-PoshstacheTemplate -InputString $String -ParametersObject $json
 }
 
 function Invoke-CleanupScripts {

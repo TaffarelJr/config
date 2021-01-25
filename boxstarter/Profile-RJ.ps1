@@ -11,77 +11,64 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Choose theme"
-#----------------------------------------------------------------------------------------------------
-
-$themes = @(
-    [PSCustomObject]@{
-        Name            = "Dracula"
-        KeyedName       = "&Dracula"
-        Base16          = "$repoUri/themes/Dracula.yml"
-        NotepadPlusPlus = "https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml"
-    }
-    [PSCustomObject]@{
-        Name            = "Tomorrow Night"
-        KeyedName       = "&Tomorrow Night"
-        Base16          = "$repoUri/themes/TomorrowNight.yml"
-        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night.xml"
-    }
-    [PSCustomObject]@{
-        Name            = "Tomorrow Night Bright"
-        KeyedName       = "Tomorrow Night &Bright"
-        Base16          = "$repoUri/themes/TomorrowNight-Bright.yml"
-        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_bright.xml"
-    }
-    [PSCustomObject]@{
-        Name            = "Tomorrow Night Eighties"
-        KeyedName       = "Tomorrow Night &Eighties"
-        Base16          = "$repoUri/themes/TomorrowNight-Eighties.yml"
-        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_eighties.xml"
-    }
-)
-
-# Prompt user
-$options = $themes | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
-$theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 2)]
-
-# Load Base16 pallete for selected theme
-$theme.Base16 = ConvertFrom-Yaml (Invoke-WebRequest -Uri $theme.Base16 -UseBasicParsing).Content
-
-#----------------------------------------------------------------------------------------------------
 Write-Header "Choose developer font"
 #----------------------------------------------------------------------------------------------------
 
 $fonts = @(
-    [PSCustomObject]@{
+    @{
         Name              = "Cascadia Code PL"
         KeyedName         = "&Cascadia Code PL"
         ChocolateyPackage = "cascadiacodepl"
     }
-    [PSCustomObject]@{
+    @{
         Name              = "DejaVu"
         KeyedName         = "&DejaVu"
         ChocolateyPackage = "dejavufonts"
     }
-    [PSCustomObject]@{
+    @{
         Name              = "Fira Code"
         KeyedName         = "&Fira Code"
         ChocolateyPackage = "firacode" # Currently displays lots of errors, but succeeds anyway
     }
 )
 
-# Prompt user
+# Install all fonts
+Write-Host "Install developer fonts"
+$fonts | ForEach-Object { choco install -y $_.ChocolateyPackage }
+
+# Prompt user to choose a specific font
 $options = $fonts | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
-$font = $fonts[$host.ui.PromptForChoice("Choose font", "What font should be installed?", $options, 2)]
-$replaceFonts = ($fonts | Where-Object { $_ -NE $font } | Select-Object -ExpandProperty "Name") + @("Consolas")
+$font = $fonts[$host.ui.PromptForChoice("Choose Font", "Select a developer font:", $options, 2)].Name
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Install developer fonts"
+Write-Header "Choose developer theme"
 #----------------------------------------------------------------------------------------------------
 
-$fonts | ForEach-Object {
-    choco install -y $_.ChocolateyPackage
-}
+$themes = @(
+    @{
+        KeyedName = "&Dracula"
+        Base16Uri = "$repoUri/themes/Dracula.yml"
+    }
+    @{
+        KeyedName = "&Tomorrow Night"
+        Base16Uri = "$repoUri/themes/TomorrowNight.yml"
+    }
+    @{
+        KeyedName = "Tomorrow Night &Bright"
+        Base16Uri = "$repoUri/themes/TomorrowNight-Bright.yml"
+    }
+    @{
+        KeyedName = "Tomorrow Night &Eighties"
+        Base16Uri = "$repoUri/themes/TomorrowNight-Eighties.yml"
+    }
+) | Import-Theme
+
+# Add the selected developer font to each theme
+$themes | ForEach-Object { $_["Font"] = $font }
+
+# Prompt user to choose a specific theme
+$options = $themes | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Scheme }
+$theme = $themes[$host.ui.PromptForChoice("Choose Theme", "Select a developer theme:", $options, 2)]
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Windows Theme"
@@ -166,40 +153,36 @@ Write-Header "Configure Notepad++"
 #----------------------------------------------------------------------------------------------------
 
 # Download themes
+$template = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++Theme.xml" -UseBasicParsing).Content
 $themes | ForEach-Object {
-    Write-Host "Download '$($_.Name)' theme for Notepad++"
-    $file = (Invoke-WebRequest -Uri $_.NotepadPlusPlus -UseBasicParsing).Content
-    $replaceFonts | ForEach-Object {
-        Write-Host "Replace ""$_.*?"" in theme file with ""$($font.Name)"""
-        [regex]::Matches($file, """$_.*?""") | ForEach-Object { $file = $file.Replace($_, """$($font.Name)""") }
-    }
-    $file | Out-File -FilePath "$Env:APPDATA\Notepad++\themes\$($_.Name).xml" -Encoding "windows-1252" -Force -NoNewline
+    Write-Host "Install '$($_.Scheme)' theme into Notepad++"
+    Expand-TemplateString -String $template -Values $_ | `
+        Out-File -FilePath "$Env:APPDATA\Notepad++\themes\$($_.Scheme).xml" -Encoding "windows-1252" -Force -NoNewline
 }
 
-# Delete any pre-existing configuration
-Write-Host "Delete existing configuration for Notepad++, if any"
-Remove-Item "$Env:APPDATA\Notepad++\config.xml" -ErrorAction "Ignore"
-
 # Download configuration
-Write-Host "Download configuration for Notepad++"
-$file = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++.xml" -UseBasicParsing).Content
-[regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
-[regex]::Matches($file, "«theme»") | ForEach-Object { $file = $file.Replace($_, $theme.Name) }
-$file | Out-File -FilePath "$Env:APPDATA\Notepad++\config.xml" -Encoding "windows-1252" -Force -NoNewline
+Write-Host "Download configuration"
+$template = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++.xml" -UseBasicParsing).Content
+Expand-TemplateString -String $template -Values $theme | `
+    Out-File -FilePath "$Env:APPDATA\Notepad++\config.xml" -Encoding "windows-1252" -Force -NoNewline
 
-# Download LuaScript page
-Write-Host "Scrape webpage for latest version of LuaScript plugin for Notepad++"
+# Scrape LuaScript page for download link
+Write-Host "Scrape webpage for latest version of LuaScript plugin"
 $response = Invoke-WebRequest -Uri "https://github.com/dail8859/LuaScript/releases/latest" -UseBasicParsing
 $anchor = $response.Links | Where-Object { $_.href -match "LuaScript_v.*?_x64.zip" } | Select-Object -ExpandProperty "href"
 $packageUri = "https://github.com$anchor"
-Write-Host "Download LuaScript plugin for Notepad++ from $packageUri"
-$file = $packageUri.Substring($packageUri.LastIndexOf("/") + 1)
-Invoke-WebRequest -Uri $packageUri -OutFile "$Env:TEMP\$file" -UseBasicParsing
-Write-Host "Unzip LuaScript plugin for Notepad++"
-Expand-Archive -LiteralPath "$Env:TEMP\$file" -DestinationPath "$Env:ProgramFiles\Notepad++\plugins\LuaScript\"
+
+# Download LuaScript plugin
+Write-Host "Download LuaScript plugin from $packageUri"
+$tempFilePath = "$Env:TEMP\$($packageUri.Substring($packageUri.LastIndexOf("/") + 1))"
+Invoke-WebRequest -Uri $packageUri -OutFile $tempFilePath -UseBasicParsing
+
+# Install LuaScript plugin
+Write-Host "Install LuaScript plugin"
+Expand-Archive -LiteralPath $tempFilePath -DestinationPath "$Env:ProgramFiles\Notepad++\plugins\LuaScript\"
 
 # Set startup Lua script
-Write-Host "Configure startup script for Notepad++"
+Write-Host "Configure startup script"
 @"
 -- Startup script
 -- Changes will take effect once Notepad++ is restarted
