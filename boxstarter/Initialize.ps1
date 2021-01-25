@@ -97,9 +97,10 @@ $mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVer
     Where-Object { $_ -match "McAfee Security" } | `
     Select-Object UninstallString
 if ($mcafee) {
-    $mcafee = $mcafee.UninstallString -Replace "C:\Program Files\McAfee\MSC\mcuihost.exe", ""
     Write-Host "Uninstall McAfee"
-    start-process "C:\Program Files\McAfee\MSC\mcuihost.exe" -arg "$mcafee" -Wait
+    $exePath = "C:\Program Files\McAfee\MSC\mcuihost.exe"
+    $mcafee = $mcafee.UninstallString -Replace $exePath, ""
+    start-process $exePath -arg "$mcafee" -Wait
 }
 
 #----------------------------------------------------------------------------------------------------
