@@ -12,8 +12,8 @@ $ErrorActionPreference = "Stop"
 }
 
 # Set custom constants
-Set-Variable "VsInstallDir"  -Option Constant -Value "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
-Set-Variable "VsMarketplace" -Option Constant -Value "https://marketplace.visualstudio.com"
+$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
+$vsMarketplace = "https://marketplace.visualstudio.com"
 
 # Register HKEY_CLASSES_ROOT as an accessible drive
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
@@ -115,7 +115,7 @@ function Set-WindowsSearchFileExtension {
 # (only works after VS is installed)
 function Get-InstalledVsix {
     Write-Host "Getting list of Visual Studio extensions that are already installed ..."
-    Get-ChildItem -Path "$VsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
+    Get-ChildItem -Path "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
         Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
         ForEach-Object { $_.Matches.Groups[1].Value } | `
         Sort-Object
@@ -130,7 +130,7 @@ function Get-VsixPackageInfo {
 
     process {
         # Format the URL to the VSIX web page in the Marketplace
-        $packagePage = "$VsMarketplace/items?itemName=$PackageName"
+        $packagePage = "$vsMarketplace/items?itemName=$PackageName"
 
         # Download the VSIX web page
         Write-Host "Scraping VSIX details from $packagePage ..."
@@ -148,7 +148,7 @@ function Get-VsixPackageInfo {
         [PSCustomObject]@{
             Id          = $vsixId
             PackageName = $PackageName
-            Uri         = "$VsMarketplace$anchor"
+            Uri         = "$vsMarketplace$anchor"
         }
     }
 }
@@ -198,7 +198,7 @@ function Install-VsixPackage {
     process {
         # Install the extension
         Write-Host "Installing $VsixFile ..."
-        Start-Process -Filepath "$VsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$VsixFile'" -Wait
+        Start-Process -Filepath "$vsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$VsixFile'" -Wait
         Remove-Item $VsixFile -ErrorAction "Ignore"
         Write-Host "$VsixFile installed successfully"
     }
