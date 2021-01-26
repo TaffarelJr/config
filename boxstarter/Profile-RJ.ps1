@@ -156,15 +156,15 @@ Write-Header "Configure Notepad++"
 $template = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++Theme.xml" -UseBasicParsing).Content
 $themes | ForEach-Object {
     Write-Host "Install '$($_.Scheme)' theme into Notepad++"
-    Expand-TemplateString -String $template -Values $_ | `
-        Out-File -FilePath "$Env:APPDATA\Notepad++\themes\$($_.Scheme).xml" -Encoding "windows-1252" -Force -NoNewline
+    $file = Expand-TemplateString -String $template -Values $_
+    [IO.File]::WriteAllLines("$Env:APPDATA\Notepad++\themes\$($_.Scheme).xml", $file, [System.Text.Encoding]::GetEncoding(1252))
 }
 
 # Download configuration
 Write-Host "Download configuration"
 $template = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++.xml" -UseBasicParsing).Content
-Expand-TemplateString -String $template -Values $theme | `
-    Out-File -FilePath "$Env:APPDATA\Notepad++\config.xml" -Encoding "windows-1252" -Force -NoNewline
+$file = Expand-TemplateString -String $template -Values $theme
+[IO.File]::WriteAllLines("$Env:APPDATA\Notepad++\config.xml", $file, [System.Text.Encoding]::GetEncoding(1252))
 
 # Scrape LuaScript page for download link
 Write-Host "Scrape webpage for latest version of LuaScript plugin"
@@ -183,13 +183,14 @@ Expand-Archive -LiteralPath $tempFilePath -DestinationPath "$Env:ProgramFiles\No
 
 # Set startup Lua script
 Write-Host "Configure startup script"
-@"
+$file = @"
 -- Startup script
 -- Changes will take effect once Notepad++ is restarted
 
 editor1.Technology = SC_TECHNOLOGY_DIRECTWRITE
 editor2.Technology = SC_TECHNOLOGY_DIRECTWRITE
-"@ | Out-File -FilePath "$Env:APPDATA\Notepad++\plugins\config\startup.lua" -Encoding "windows-1252" -Force
+"@
+[IO.File]::WriteAllLines("$Env:APPDATA\Notepad++\plugins\config\startup.lua", $file, [System.Text.Encoding]::GetEncoding(1252))
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure source control tools"
