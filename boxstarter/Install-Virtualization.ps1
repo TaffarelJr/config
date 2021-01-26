@@ -6,7 +6,7 @@ Write-Host "Run startup scripts"
 if ($edition -EQ "Home") { throw [System.IO.InvalidOperationException] "This script cannot be run on Windows 10 Home Edition" }
 
 # Download & import utilities
-$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
+$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/test"
 $fileUri = "$repoUri/boxstarter/Utilities.ps1"
 $filePath = "$Env:TEMP\Utilities.ps1"
 Write-Host "Download & import $fileUri"

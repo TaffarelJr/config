@@ -3,7 +3,7 @@ Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Download & import utilities
-$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
+$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/test"
 $fileUri = "$repoUri/boxstarter/Utilities.ps1"
 $filePath = "$Env:TEMP\Utilities.ps1"
 Write-Host "Download & import $fileUri"
