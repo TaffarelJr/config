@@ -42,6 +42,10 @@ Remove-Item "$Env:PUBLIC\Desktop\Defraggler.lnk" -ErrorAction "Ignore"
 # Notepad++
 choco install -y "notepadplusplus"
 
+# PowerShell Core
+choco install -y "powershell-core" --package-parameters="/CleanUpPath" --install-arguments="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
+RefreshEnv
+
 # SpaceSniffer
 choco install -y "spacesniffer"
 

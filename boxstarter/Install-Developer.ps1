@@ -155,10 +155,6 @@ Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.
 choco install -y "postman"
 Remove-Item "$Env:OneDrive\Desktop\Postman.lnk" -ErrorAction "Ignore"
 
-# PowerShell Core
-choco install -y "powershell-core" --package-parameters="/CleanUpPath" --install-arguments="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
-RefreshEnv
-
 # PuTTY
 choco install -y "putty"
 
