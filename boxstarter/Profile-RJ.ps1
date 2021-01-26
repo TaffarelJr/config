@@ -1,121 +1,127 @@
-$purpleShadowDark_AccentColorMenu = "0xffd6696b"
-$purpleShadowDark_StartColorMenu = "0xff9e4d4f"
-$purpleShadowDark_accentPalette = [byte[]]@(`
-        "0xd5", "0xd4", "0xff", "0x00", "0xad", "0xac", "0xf0", "0x00", `
-        "0x89", "0x87", "0xe4", "0x00", "0x6b", "0x69", "0xd6", "0x00", `
-        "0x4f", "0x4d", "0x9e", "0x00", "0x2d", "0x2b", "0x61", "0x00", `
-        "0x1f", "0x1f", "0x4d", "0x00", "0x00", "0xcc", "0x6a", "0x00"
-)
-
-$searchLocations = @(
-    "C:\Code"
-)
-
 #----------------------------------------------------------------------------------------------------
 Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Download & import utilities
-$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
+$fileUri = "$repoUri/boxstarter/Utilities.ps1"
 $filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $uri"
-Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+Write-Host "Download & import $fileUri"
+Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Choose theme"
+Write-Header "Add custom locations to Windows Search"
 #----------------------------------------------------------------------------------------------------
 
-$themes = @(
-    [PSCustomObject]@{
-        Name            = "Dracula"
-        KeyedName       = "&Dracula"
-        NotepadPlusPlus = "https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml"
-    }
-    [PSCustomObject]@{
-        Name            = "Tomorrow Night"
-        KeyedName       = "&Tomorrow Night"
-        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night.xml"
-    }
-    [PSCustomObject]@{
-        Name            = "Tomorrow Night Bright"
-        KeyedName       = "Tomorrow Night &Bright"
-        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_bright.xml"
-    }
-    [PSCustomObject]@{
-        Name            = "Tomorrow Night Eighties"
-        KeyedName       = "Tomorrow Night &Eighties"
-        NotepadPlusPlus = "https://raw.githubusercontent.com/chriskempson/tomorrow-theme/master/notepad%2B%2B/tomorrow_night_eighties.xml"
-    }
-)
+Write-Host "Download interop library"
+$interopFile = "$Env:TEMP\Microsoft.Search.Interop.dll"
+Invoke-WebRequest -Uri "$repoUri/boxstarter/Microsoft.Search.Interop.dll" -OutFile $interopFile -UseBasicParsing
+Add-Type -Path $interopFile
+$crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
 
-$options = $themes | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
-$theme = $themes[$host.ui.PromptForChoice("Choose theme", "What theme should be installed?", $options, 2)]
+Write-host "Add search locations"
+@(
+    "C:\Code"
+) | ForEach-Object {
+    Write-host "    $_"
+    $crawlManager.AddUserScopeRule("file:///$_", $true, $false, $null)
+}
+
+$crawlManager.SaveAll()
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Choose developer font"
+Write-Header "Configure Power & Sleep settings"
+#----------------------------------------------------------------------------------------------------
+
+Invoke-WebRequest -Uri "$repoUri/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
+powercfg /import "$Env:TEMP\Windows.pow"
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Install developer fonts"
 #----------------------------------------------------------------------------------------------------
 
 $fonts = @(
-    [PSCustomObject]@{
+    @{
         Name              = "Cascadia Code PL"
         KeyedName         = "&Cascadia Code PL"
         ChocolateyPackage = "cascadiacodepl"
     }
-    [PSCustomObject]@{
+    @{
         Name              = "DejaVu"
         KeyedName         = "&DejaVu"
         ChocolateyPackage = "dejavufonts"
     }
-    [PSCustomObject]@{
+    @{
         Name              = "Fira Code"
         KeyedName         = "&Fira Code"
         ChocolateyPackage = "firacode" # Currently displays lots of errors, but succeeds anyway
     }
 )
 
+# Install all fonts
+$fonts | ForEach-Object { choco install -y $_.ChocolateyPackage }
+
+# Prompt user to choose a specific font
 $options = $fonts | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
-$font = $fonts[$host.ui.PromptForChoice("Choose font", "What font should be installed?", $options, 2)]
-$replaceFonts = ($fonts | Where-Object { $_ -NE $font } | Select-Object -ExpandProperty "Name") + @("Consolas")
+$font = $fonts[$host.ui.PromptForChoice("Choose Font", "Select a developer font:", $options, 2)].Name
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Configure Windows"
+Write-Header "Install developer themes"
 #----------------------------------------------------------------------------------------------------
 
-# Install fonts
-$fonts | ForEach-Object {
-    choco install -y $_.ChocolateyPackage
-}
+$themes = @(
+    @{
+        KeyedName = "&Dracula"
+        Base16Uri = "$repoUri/themes/Dracula.yml"
+    }
+    @{
+        KeyedName = "&Tomorrow Night"
+        Base16Uri = "$repoUri/themes/TomorrowNight.yml"
+    }
+    @{
+        KeyedName = "Tomorrow Night &Bright"
+        Base16Uri = "$repoUri/themes/TomorrowNight-Bright.yml"
+    }
+    @{
+        KeyedName = "Tomorrow Night &Eighties"
+        Base16Uri = "$repoUri/themes/TomorrowNight-Eighties.yml"
+    }
+) | Import-Theme
 
-# Theme
-Write-Host "Configure Windows theme"
+# Add the selected developer font to each theme
+$themes | ForEach-Object { $_["Font"] = $font }
+
+# Prompt user to choose a specific theme
+$options = $themes | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Scheme }
+$theme = $themes[$host.ui.PromptForChoice("Choose Theme", "Select a developer theme:", $options, 2)]
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Configure Windows Theme"
+#----------------------------------------------------------------------------------------------------
+
+# Purple Shadow Dark theme
+$accentColorMenu = "0xffd6696b"
+$startColorMenu = "0xff9e4d4f"
+$accentPalette = [byte[]]@(`
+        "0xd5", "0xd4", "0xff", "0x00", "0xad", "0xac", "0xf0", "0x00", `
+        "0x89", "0x87", "0xe4", "0x00", "0x6b", "0x69", "0xd6", "0x00", `
+        "0x4f", "0x4d", "0x9e", "0x00", "0x2d", "0x2b", "0x61", "0x00", `
+        "0x1f", "0x1f", "0x4d", "0x00", "0x00", "0xcc", "0x6a", "0x00"
+)
+
 Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
     Enter-Location -Path ".\Themes\Personalize\" {
-        Set-ItemProperty -Path "." -Name "AppsUseLightTheme"    -Type "DWord" -Value "0"
-        Set-ItemProperty -Path "." -Name "SystemUsesLightTheme" -Type "DWord" -Value "0"
+        Set-ItemProperty -Path "." -Name "AppsUseLightTheme"    -Type "DWord" -Value 0
+        Set-ItemProperty -Path "." -Name "SystemUsesLightTheme" -Type "DWord" -Value 0
     }
 
     Enter-Location -Path ".\Explorer\Accent\" {
-        Set-ItemProperty -Path "." -Name "AccentColorMenu" -Type "DWord"  -Value $purpleShadowDark_AccentColorMenu
-        Set-ItemProperty -Path "." -Name "AccentPalette"   -Type "Binary" -Value $purpleShadowDark_accentPalette
-        Set-ItemProperty -Path "." -Name "StartColorMenu"  -Type "DWord"  -Value $purpleShadowDark_StartColorMenu
+        Set-ItemProperty -Path "." -Name "AccentColorMenu" -Type "DWord"  -Value $accentColorMenu
+        Set-ItemProperty -Path "." -Name "AccentPalette"   -Type "Binary" -Value $accentPalette
+        Set-ItemProperty -Path "." -Name "StartColorMenu"  -Type "DWord"  -Value $startColorMenu
     }
 }
-
-# Search locations
-Write-Host "Add Windows Search locations"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Microsoft.Search.Interop.dll" -OutFile "$Env:TEMP\Microsoft.Search.Interop.dll" -UseBasicParsing
-Add-Type -Path "$Env:TEMP\Microsoft.Search.Interop.dll"
-$crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
-foreach ($location in $searchLocations) {
-    $crawlManager.AddUserScopeRule("file:///$location", $true, $false, $null)
-}
-$crawlManager.SaveAll()
-
-# Power & Sleep settings
-Write-Host "Configure Windows Power & Battery settings"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
-powercfg /import "$Env:TEMP\Windows.pow"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install personal utilities"
@@ -146,47 +152,44 @@ Write-Header "Configure Notepad++"
 #----------------------------------------------------------------------------------------------------
 
 # Download themes
+$template = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++Theme.xml" -UseBasicParsing).Content
 $themes | ForEach-Object {
-    Write-Host "Download '$($_.Name)' theme for Notepad++"
-    $file = (Invoke-WebRequest -Uri $_.NotepadPlusPlus -UseBasicParsing).Content
-    $replaceFonts | ForEach-Object {
-        Write-Host "Replace ""$_.*?"" in theme file with ""$($font.Name)"""
-        [regex]::Matches($file, """$_.*?""") | ForEach-Object { $file = $file.Replace($_, """$($font.Name)""") }
-    }
-    $file | Out-File -FilePath "$Env:APPDATA\Notepad++\themes\$($_.Name).xml" -Encoding "windows-1252" -Force -NoNewline
+    Write-Host "Install '$($_.Scheme)' theme into Notepad++"
+    $file = Expand-TemplateString -String $template -Values $_
+    [IO.File]::WriteAllLines("$Env:APPDATA\Notepad++\themes\$($_.Scheme).xml", $file, [System.Text.Encoding]::GetEncoding(1252))
 }
 
-# Delete any pre-existing configuration
-Write-Host "Delete existing configuration for Notepad++, if any"
-Remove-Item "$Env:APPDATA\Notepad++\config.xml" -ErrorAction "Ignore"
-
 # Download configuration
-Write-Host "Download configuration for Notepad++"
-$file = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Notepad++.xml" -UseBasicParsing).Content
-[regex]::Matches($file, "%\w+%") | ForEach-Object { $file = $file.Replace($_, [System.Environment]::ExpandEnvironmentVariables($_)) }
-[regex]::Matches($file, "«theme»") | ForEach-Object { $file = $file.Replace($_, $theme.Name) }
-$file | Out-File -FilePath "$Env:APPDATA\Notepad++\config.xml" -Encoding "windows-1252" -Force -NoNewline
+Write-Host "Download configuration"
+$template = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++.xml" -UseBasicParsing).Content
+$file = Expand-TemplateString -String $template -Values $theme
+[IO.File]::WriteAllLines("$Env:APPDATA\Notepad++\config.xml", $file, [System.Text.Encoding]::GetEncoding(1252))
 
-# Download LuaScript page
-Write-Host "Scrape webpage for latest version of LuaScript plugin for Notepad++"
+# Scrape LuaScript page for download link
+Write-Host "Scrape webpage for latest version of LuaScript plugin"
 $response = Invoke-WebRequest -Uri "https://github.com/dail8859/LuaScript/releases/latest" -UseBasicParsing
 $anchor = $response.Links | Where-Object { $_.href -match "LuaScript_v.*?_x64.zip" } | Select-Object -ExpandProperty "href"
 $packageUri = "https://github.com$anchor"
-Write-Host "Download LuaScript plugin for Notepad++ from $packageUri"
-$file = $packageUri.Substring($packageUri.LastIndexOf("/") + 1)
-Invoke-WebRequest -Uri $packageUri -OutFile "$Env:TEMP\$file" -UseBasicParsing
-Write-Host "Unzip LuaScript plugin for Notepad++"
-Expand-Archive -LiteralPath "$Env:TEMP\$file" -DestinationPath "$Env:ProgramFiles\Notepad++\plugins\LuaScript\"
+
+# Download LuaScript plugin
+Write-Host "Download LuaScript plugin from $packageUri"
+$tempFilePath = "$Env:TEMP\$($packageUri.Substring($packageUri.LastIndexOf("/") + 1))"
+Invoke-WebRequest -Uri $packageUri -OutFile $tempFilePath -UseBasicParsing
+
+# Install LuaScript plugin
+Write-Host "Install LuaScript plugin"
+Expand-Archive -LiteralPath $tempFilePath -DestinationPath "$Env:ProgramFiles\Notepad++\plugins\LuaScript\" -Force
 
 # Set startup Lua script
-Write-Host "Configure startup script for Notepad++"
-@"
+Write-Host "Configure startup script"
+$file = @"
 -- Startup script
 -- Changes will take effect once Notepad++ is restarted
 
 editor1.Technology = SC_TECHNOLOGY_DIRECTWRITE
 editor2.Technology = SC_TECHNOLOGY_DIRECTWRITE
-"@ | Out-File -FilePath "$Env:APPDATA\Notepad++\plugins\config\startup.lua" -Encoding "windows-1252" -Force
+"@
+[IO.File]::WriteAllLines("$Env:APPDATA\Notepad++\plugins\config\startup.lua", $file, [System.Text.Encoding]::GetEncoding(1252))
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure source control tools"
@@ -194,14 +197,14 @@ Write-Header "Configure source control tools"
 
 # Git
 Write-Host "Configure Git"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig"     -OutFile "$Env:USERPROFILE\.gitconfig"     -UseBasicParsing
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig-rj"  -OutFile "$Env:USERPROFILE\.gitconfig-rj"  -UseBasicParsing
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.gitconfig-wtw" -OutFile "$Env:USERPROFILE\.gitconfig-wtw" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.gitconfig"     -OutFile "$Env:USERPROFILE\.gitconfig"     -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.gitconfig-rj"  -OutFile "$Env:USERPROFILE\.gitconfig-rj"  -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.gitconfig-wtw" -OutFile "$Env:USERPROFILE\.gitconfig-wtw" -UseBasicParsing
 
 # Bash
 Write-Host "Configure Bash shell"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.bashrc"       -OutFile "$Env:USERPROFILE\.bashrc"       -UseBasicParsing
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/.bash_profile" -OutFile "$Env:USERPROFILE\.bash_profile" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.bashrc"       -OutFile "$Env:USERPROFILE\.bashrc"       -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/.bash_profile" -OutFile "$Env:USERPROFILE\.bash_profile" -UseBasicParsing
 
 # TortoiseGit
 Write-Host "Configure TortoiseGit"
@@ -248,7 +251,7 @@ if (Test-Path $devShell) {
 
     # Download configuration settings
     Write-Host "Configure Visual Studio 2019"
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/VisualStudio.xml" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
+    Invoke-WebRequest -Uri "$repoUri/apps/VisualStudio.xml" -OutFile "$Env:TEMP\VisualStudio.vssettings" -UseBasicParsing
 
     # Import configuration settings
     devenv /ResetSettings "$Env:TEMP\VisualStudio.vssettings"
@@ -260,10 +263,10 @@ Write-Header "Configure other applications"
 
 # TODO: Figure out how to import the '..\apps\CodeCompare.xml' file into Code Compare via command line
 Write-Host "Configure Code Compare"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CodeCompare.xml" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/CodeCompare.xml" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
 
 # LINQPad
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts

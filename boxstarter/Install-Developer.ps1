@@ -3,10 +3,11 @@ Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Download & import utilities
-$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
+$fileUri = "$repoUri/boxstarter/Utilities.ps1"
 $filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $uri"
-Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+Write-Host "Download & import $fileUri"
+Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
@@ -153,10 +154,6 @@ Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.
 # Postman
 choco install -y "postman"
 Remove-Item "$Env:OneDrive\Desktop\Postman.lnk" -ErrorAction "Ignore"
-
-# PowerShell Core
-choco install -y "powershell-core" --package-parameters="/CleanUpPath" --install-arguments="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
-RefreshEnv
 
 # PuTTY
 choco install -y "putty"

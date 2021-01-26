@@ -1,9 +1,19 @@
 # Set PowerShell preference variables
 $ErrorActionPreference = "Stop"
 
+# Install modules
+@(
+    "powershell-yaml"
+    "Poshstache"
+) | ForEach-Object {
+    Write-Host "Import $_"
+    Install-Module $_ -Force
+    Import-Module $_
+}
+
 # Set custom constants
-Set-Variable VsInstallDir  -Option Constant -Value "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
-Set-Variable VsMarketplace -Option Constant -Value "https://marketplace.visualstudio.com"
+$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
+$vsMarketplace = "https://marketplace.visualstudio.com"
 
 # Register HKEY_CLASSES_ROOT as an accessible drive
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
@@ -105,7 +115,7 @@ function Set-WindowsSearchFileExtension {
 # (only works after VS is installed)
 function Get-InstalledVsix {
     Write-Host "Getting list of Visual Studio extensions that are already installed ..."
-    Get-ChildItem -Path "$VsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
+    Get-ChildItem -Path "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
         Select-String -List -Pattern '<Identity .*Id="(.+?)"' | `
         ForEach-Object { $_.Matches.Groups[1].Value } | `
         Sort-Object
@@ -120,7 +130,7 @@ function Get-VsixPackageInfo {
 
     process {
         # Format the URL to the VSIX web page in the Marketplace
-        $packagePage = "$VsMarketplace/items?itemName=$PackageName"
+        $packagePage = "$vsMarketplace/items?itemName=$PackageName"
 
         # Download the VSIX web page
         Write-Host "Scraping VSIX details from $packagePage ..."
@@ -138,7 +148,7 @@ function Get-VsixPackageInfo {
         [PSCustomObject]@{
             Id          = $vsixId
             PackageName = $PackageName
-            Uri         = "$VsMarketplace$anchor"
+            Uri         = "$vsMarketplace$anchor"
         }
     }
 }
@@ -188,10 +198,69 @@ function Install-VsixPackage {
     process {
         # Install the extension
         Write-Host "Installing $VsixFile ..."
-        Start-Process -Filepath "$VsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$VsixFile'" -Wait
+        Start-Process -Filepath "$vsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$VsixFile'" -Wait
         Remove-Item $VsixFile -ErrorAction "Ignore"
         Write-Host "$VsixFile installed successfully"
     }
+}
+
+# Downloads & parses the specified theme files
+function Import-Theme {
+    param (
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [hashtable]$Theme
+    )
+
+    process {
+        # Load Base16 pallete for selected theme
+        Write-Host "Load $($Theme.Base16Uri)"
+        (ConvertFrom-Yaml (Invoke-WebRequest -Uri $Theme.Base16Uri -UseBasicParsing).Content).GetEnumerator() | ForEach-Object {
+            if ($_.Key -Match "^base0[\dA-F]$") {
+                # Composite hex RGB value
+                $hex = $_.Value.ToUpper()
+                $Theme["$($_.Key)-hex"] = $hex
+
+                # Individual hex RGB values
+                $hexRgb = $hex -Split "(.{2})" | Where-Object { $_ }
+                $Theme["$($_.Key)-hex-r"] = $hexRgb[0]
+                $Theme["$($_.Key)-hex-g"] = $hexRgb[1]
+                $Theme["$($_.Key)-hex-b"] = $hexRgb[2]
+
+                # Composite hex BGR value
+                $Theme["$($_.Key)-hex-bgr"] = $hexRgb[2] + $hexRgb[1] + $hexRgb[0]
+
+                # Individual int RGB values
+                $Theme["$($_.Key)-rgb-r"] = [Convert]::ToByte($hexRgb[0], 16)
+                $Theme["$($_.Key)-rgb-g"] = [Convert]::ToByte($hexRgb[1], 16)
+                $Theme["$($_.Key)-rgb-b"] = [Convert]::ToByte($hexRgb[2], 16)
+            }
+            else {
+                $Theme[$_.Key] = $_.Value
+            }
+        }
+
+        return $Theme
+    }
+}
+
+# Replaces any mustache fields in the given template with the given values (including environment variables)
+function Expand-TemplateString {
+    param (
+        [Parameter(Mandatory)]
+        [string]$String,
+
+        [Parameter(Mandatory)]
+        [hashtable]$Values
+    )
+
+    # Include environment variables
+    $Values += [System.Environment]::GetEnvironmentVariables()
+
+    # Convert hashtable to JSON
+    $json = $Values | ConvertTo-Json
+
+    # Use Mustache to replace fields with values
+    ConvertTo-PoshstacheTemplate -InputString $String -ParametersObject $json
 }
 
 function Invoke-CleanupScripts {

@@ -3,10 +3,11 @@ Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Download & import utilities
-$uri = "https://raw.githubusercontent.com/TaffarelJr/config/main/boxstarter/Utilities.ps1"
+$repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
+$fileUri = "$repoUri/boxstarter/Utilities.ps1"
 $filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $uri"
-Invoke-WebRequest -Uri $uri -OutFile $filePath -UseBasicParsing
+Write-Host "Download & import $fileUri"
+Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
@@ -17,7 +18,7 @@ Write-Header "Install browsers"
 choco install -y "googlechrome"
 Remove-Item "$Env:PUBLIC\Desktop\Google Chrome.lnk"   -ErrorAction "Ignore"
 Remove-Item "$Env:OneDrive\Desktop\Google Chrome.lnk" -ErrorAction "Ignore"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/Chrome.json" -OutFile "$Env:ProgramFiles\Google\Chrome\Application\master_preferences" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/Chrome.json" -OutFile "$Env:ProgramFiles\Google\Chrome\Application\master_preferences" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install utilities"
@@ -29,7 +30,7 @@ choco install -y "7zip"
 # Piriform CCleaner
 choco install -y "ccleaner"
 Remove-Item "$Env:PUBLIC\Desktop\CCleaner.lnk" -ErrorAction "Ignore"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TaffarelJr/config/main/apps/CCleaner.ini" -OutFile "$Env:ProgramFiles\CCleaner\ccleaner.ini" -UseBasicParsing
+Invoke-WebRequest -Uri "$repoUri/apps/CCleaner.ini" -OutFile "$Env:ProgramFiles\CCleaner\ccleaner.ini" -UseBasicParsing
 
 # Chocolatey
 choco install -y "chocolatey"
@@ -40,6 +41,10 @@ Remove-Item "$Env:PUBLIC\Desktop\Defraggler.lnk" -ErrorAction "Ignore"
 
 # Notepad++
 choco install -y "notepadplusplus"
+
+# PowerShell Core
+choco install -y "powershell-core" --package-parameters="/CleanUpPath" --install-arguments="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
+RefreshEnv
 
 # SpaceSniffer
 choco install -y "spacesniffer"
