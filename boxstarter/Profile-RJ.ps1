@@ -179,7 +179,7 @@ Invoke-WebRequest -Uri $packageUri -OutFile $tempFilePath -UseBasicParsing
 
 # Install LuaScript plugin
 Write-Host "Install LuaScript plugin"
-Expand-Archive -LiteralPath $tempFilePath -DestinationPath "$Env:ProgramFiles\Notepad++\plugins\LuaScript\"
+Expand-Archive -LiteralPath $tempFilePath -DestinationPath "$Env:ProgramFiles\Notepad++\plugins\LuaScript\" -Force
 
 # Set startup Lua script
 Write-Host "Configure startup script"
