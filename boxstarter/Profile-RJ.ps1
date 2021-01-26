@@ -11,7 +11,7 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Choose developer font"
+Write-Header "Install developer fonts"
 #----------------------------------------------------------------------------------------------------
 
 $fonts = @(
@@ -41,7 +41,7 @@ $options = $fonts | ForEach-Object { New-Object System.Management.Automation.Hos
 $font = $fonts[$host.ui.PromptForChoice("Choose Font", "Select a developer font:", $options, 2)].Name
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Choose developer theme"
+Write-Header "Install developer themes"
 #----------------------------------------------------------------------------------------------------
 
 $themes = @(
