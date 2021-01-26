@@ -11,6 +11,33 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
+Write-Header "Add custom locations to Windows Search"
+#----------------------------------------------------------------------------------------------------
+
+Write-Host "Download interop library"
+$interopFile = "$Env:TEMP\Microsoft.Search.Interop.dll"
+Invoke-WebRequest -Uri "$repoUri/boxstarter/Microsoft.Search.Interop.dll" -OutFile $interopFile -UseBasicParsing
+Add-Type -Path $interopFile
+$crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
+
+Write-host "Add search locations"
+@(
+    "C:\Code"
+) | ForEach-Object {
+    Write-host "    $_"
+    $crawlManager.AddUserScopeRule("file:///$_", $true, $false, $null)
+}
+
+$crawlManager.SaveAll()
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Configure Power & Sleep settings"
+#----------------------------------------------------------------------------------------------------
+
+Invoke-WebRequest -Uri "$repoUri/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
+powercfg /import "$Env:TEMP\Windows.pow"
+
+#----------------------------------------------------------------------------------------------------
 Write-Header "Install developer fonts"
 #----------------------------------------------------------------------------------------------------
 
@@ -33,7 +60,6 @@ $fonts = @(
 )
 
 # Install all fonts
-Write-Host "Install developer fonts"
 $fonts | ForEach-Object { choco install -y $_.ChocolateyPackage }
 
 # Prompt user to choose a specific font
@@ -96,33 +122,6 @@ Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\" {
         Set-ItemProperty -Path "." -Name "StartColorMenu"  -Type "DWord"  -Value $startColorMenu
     }
 }
-
-#----------------------------------------------------------------------------------------------------
-Write-Header "Add custom locations to Windows Search"
-#----------------------------------------------------------------------------------------------------
-
-Write-Host "Download interop library"
-$interopFile = "$Env:TEMP\Microsoft.Search.Interop.dll"
-Invoke-WebRequest -Uri "$repoUri/boxstarter/Microsoft.Search.Interop.dll" -OutFile $interopFile -UseBasicParsing
-Add-Type -Path $interopFile
-$crawlManager = (New-Object Microsoft.Search.Interop.CSearchManagerClass).GetCatalog("SystemIndex").GetCrawlScopeManager()
-
-Write-host "Add search locations"
-@(
-    "C:\Code"
-) | ForEach-Object {
-    Write-host "    $_"
-    $crawlManager.AddUserScopeRule("file:///$_", $true, $false, $null)
-}
-
-$crawlManager.SaveAll()
-
-#----------------------------------------------------------------------------------------------------
-Write-Header "Configure Power & Sleep settings"
-#----------------------------------------------------------------------------------------------------
-
-Invoke-WebRequest -Uri "$repoUri/apps/Windows.pow" -OutFile "$Env:TEMP\Windows.pow" -UseBasicParsing
-powercfg /import "$Env:TEMP\Windows.pow"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install personal utilities"
