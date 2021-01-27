@@ -75,14 +75,11 @@ printf "${YELLOW}Install 'sendmail' package${NOCOLOR}\n"
 apt-get install -y 'sendmail'
 
 #--------------------------------------------------
-# Install python tools
+# Install apt tools
 #--------------------------------------------------
 
 printf "${YELLOW}Install 'pip' for python${NOCOLOR}\n"
-apt  install -y 'python3-pip'
-
-printf "${YELLOW}Install 'slack-cli' for python${NOCOLOR}\n"
-pip3 install 'slack-cli' --trusted-host='pypi.python.org'
+apt install -y 'python3-pip'
 
 #--------------------------------------------------
 # Set up git credential manager
