@@ -53,6 +53,7 @@ Write-Header "Install Visual Studio Code"
 # Visual Studio Code
 choco install -y "vscode" --package-parameters="/NoDesktopIcon"
 choco install -y "vscode-settingssync"
+RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install Visual Studio 2019"
