@@ -1,3 +1,7 @@
+# Show current PowerShell version
+Write-Host "PowerShell version:"
+$PSVersionTable | Out-String | Write-Host
+
 # Set PowerShell preference variables
 $ErrorActionPreference = "Stop"
 
