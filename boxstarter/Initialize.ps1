@@ -95,7 +95,7 @@ Write-Header "Remove bloatware" # so we don't update them later
 # McAfee
 $mcafee = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" | `
     ForEach-Object { Get-ItemProperty $_.PSPath } | `
-    Where-Object { $_ -match "McAfee Security" } | `
+    Where-Object { $_ -Match "McAfee Security" } | `
     Select-Object UninstallString
 if ($mcafee) {
     Write-Host "Uninstall McAfee"

@@ -11,33 +11,51 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
-Write-Host "Install Windows Subsystem for Linux 2 (WSL2)"
+Write-Header "Install Windows Subsystem for Linux 2 (WSL2)"
 #----------------------------------------------------------------------------------------------------
 
 $edition = (Get-WindowsEdition -Online).Edition
-if ($edition -ne "Home") {
-    # WSL 2
+if ($edition -eq "Home") {
+    Write-Host "<not available on Home edition of Windows>"
+}
+else {
+    # Install WSL 2
     choco install -y "wsl2" --package-parameters="/Retry:true"
 
-    # Ubuntu
+    # Install Ubuntu
     # https://docs.microsoft.com/en-us/windows/wsl/install-manual
     choco install -y "wsl-ubuntu-2004"
 
-    # TODO: Need to somehow launch Ubuntu here, to let it initialize itself
+    # Launch Ubuntu and allow it to initialize
+    Write-Host "Initialize Ubuntu"
+    $ubuntu = Get-ChildItem "$Env:ProgramFiles\WindowsApps\" | `
+        ForEach-Object { Get-ItemProperty $_.PSPath } | `
+        Where-Object { $_ -Match "Ubuntu" } | `
+        Get-ChildItem | `
+        ForEach-Object { Get-ItemProperty $_.PSPath } | `
+        Where-Object { $_ -Match ".exe" }
+    start-process $ubuntu -Wait
 
-    Write-Host "Setup Ubuntu"
-    wsl sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/TaffarelJr/config/test/boxstarter/Ubuntu.sh)'
+    # Configure Ubuntu
+    Write-Host "Run Ubuntu setup script"
+    wsl sudo sh -c "`$(curl -fsSL $repoUri/boxstarter/Ubuntu.sh)"
 
+    # Install Homebrew recipies
+    Write-Host "Run Homebrew setup script"
+    wsl sh -c "`$(curl -fsSL $repoUri/boxstarter/Homebrew.sh)"
+
+    # Reboot WSL to make sure changes take effect
     Write-Host "Reboot WSL"
     Restart-Service -Name "LxssManager"
 }
 
 #----------------------------------------------------------------------------------------------------
-Write-Host "Install Docker"
+Write-Header "Install Docker"
 #----------------------------------------------------------------------------------------------------
 
 choco install -y "docker-desktop"
 Remove-Item "$Env:OneDrive\Desktop\Docker Desktop.lnk" -ErrorAction "Ignore"
+RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts
