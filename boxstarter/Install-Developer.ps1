@@ -23,7 +23,7 @@ Write-Header "Install additional browsers"
 #----------------------------------------------------------------------------------------------------
 
 # Firefox
-choco install -y "firefox" --package-parameters="/NoDesktopShortcut"
+choco install -y "firefox" --package-parameters="/NoDesktopShortcut /RemoveDistributionDir"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install source control tools"
