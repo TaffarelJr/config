@@ -55,6 +55,7 @@ Write-Header "Install Docker"
 
 choco install -y "docker-desktop"
 Remove-Item "$Env:OneDrive\Desktop\Docker Desktop.lnk" -ErrorAction "Ignore"
+RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts
