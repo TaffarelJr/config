@@ -41,9 +41,7 @@ apt upgrade -y
 # https://gist.github.com/sgtoj/f82990bcd9e89db49b84e2d2e70b281d
 # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
 printf "${YELLOW}Change mount point to /c${NOCOLOR}\n"
-sudo echo ''                                           >> /etc/wsl.conf
-sudo echo ''                                           >> /etc/wsl.conf
-sudo echo '# Enable extra metadata options by default' >> /etc/wsl.conf
+sudo echo '# Enable extra metadata options by default' >  /etc/wsl.conf
 sudo echo '[automount]'                                >> /etc/wsl.conf
 sudo echo 'enabled = true'                             >> /etc/wsl.conf
 sudo echo 'root = /'                                   >> /etc/wsl.conf
