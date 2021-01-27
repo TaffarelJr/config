@@ -1,0 +1,2 @@
+# Allow bash scripts to use LF line endings
+.sh eol=lf
