@@ -50,14 +50,14 @@ sudo echo 'generateResolvConf = true'                  >> /etc/wsl.conf
 # Install Homebrew for Linux
 # https://docs.brew.sh/Homebrew-on-Linux
 printf "${YELLOW}Install Homebrew for Linux${NOCOLOR}\n"
-sh -c '$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)'
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Add Homebrew to path
 printf "${YELLOW}Add Homebrew to path${NOCOLOR}\n"
 test -d ~/.linuxbrew               && eval $(~/.linuxbrew/bin/brew shellenv)
 test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-test -r ~/.bash_profile            && echo 'eval \$($(brew --prefix)/bin/brew shellenv)' >> ~/.bash_profile
-                                      echo 'eval \$($(brew --prefix)/bin/brew shellenv)' >> ~/.profile
+test -r ~/.bash_profile            && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >> ~/.bash_profile
+                                      echo "eval \$($(brew --prefix)/bin/brew shellenv)" >> ~/.profile
 
 # Install basic utilities
 printf "${YELLOW}Install apt-get utility packages${NOCOLOR}\n"
