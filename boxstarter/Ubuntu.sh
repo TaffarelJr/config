@@ -61,11 +61,11 @@ test -r ~/.bash_profile            && echo "eval \$($(brew --prefix)/bin/brew sh
 
 # Install basic utilities
 printf "${YELLOW}Install apt-get utility packages${NOCOLOR}\n"
-apt-get install 'build-essential'
-apt-get install 'curl'
-apt-get install 'file'
-apt-get install 'git'
-apt-get install 'sendmail'
+apt-get install -y 'build-essential'
+apt-get install -y 'curl'
+apt-get install -y 'file'
+apt-get install -y 'git'
+apt-get install -y 'sendmail'
 
 # Install additional tools
 # https://github.com/im-platform/azurerm
@@ -81,7 +81,7 @@ brew install 'zip'
 
 # Install pip & Slack CLI for Python
 printf "${YELLOW}Install python tools${NOCOLOR}\n"
-apt install 'python3-pip'
+apt  install -y 'python3-pip'
 pip3 install 'slack-cli' --trusted-host='pypi.python.org'
 
 # Set up git credential manager
@@ -95,9 +95,9 @@ printf "${YELLOW}Install sqlcmd${NOCOLOR}\n"
 curl 'https://packages.microsoft.com/keys/microsoft.asc' | apt-key add -
 curl 'https://packages.microsoft.com/config/ubuntu/20.04/prod.list' | tee /etc/apt/sources.list.d/msprod.list
 apt-get update
-apt-get install 'mssql-tools' unixodbc-dev
+apt-get install -y 'mssql-tools' unixodbc-dev
 apt-get update
-apt-get install 'mssql-tools'
+apt-get install -y 'mssql-tools'
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 source ~/.bashrc
