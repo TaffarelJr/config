@@ -33,10 +33,15 @@ if ($edition -ne "Home") {
         Where-Object { $_ -Match ".exe" }
     start-process $ubuntu -Wait
 
-    # Install apps on Ubuntu
+    # Configure Ubuntu
     Write-Host "Run Ubuntu setup script"
     wsl sudo sh -c "`$(curl -fsSL $repoUri/boxstarter/Ubuntu.sh)"
 
+    # Install Homebrew recipies
+    Write-Host "Run Homebrew setup script"
+    wsl sh -c "`$(curl -fsSL $repoUri/boxstarter/Homebrew.sh)"
+
+    # Reboot WSL to make sure changes take effect
     Write-Host "Reboot WSL"
     Restart-Service -Name "LxssManager"
 }

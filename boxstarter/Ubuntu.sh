@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script should be run as sudo
+# This script MUST be run as sudo
 
 #--------------------------------------------------
 # Definitions
@@ -56,21 +56,6 @@ sudo echo 'generateHosts = true'                       >> /etc/wsl.conf
 sudo echo 'generateResolvConf = true'                  >> /etc/wsl.conf
 
 #--------------------------------------------------
-# Install Homebrew for Linux
-#--------------------------------------------------
-
-# https://docs.brew.sh/Homebrew-on-Linux
-printf "${YELLOW}Install Homebrew for Linux${NOCOLOR}\n"
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Add Homebrew to path
-printf "${YELLOW}Add Homebrew to path${NOCOLOR}\n"
-test -d ~/.linuxbrew               && eval $(~/.linuxbrew/bin/brew shellenv)
-test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-test -r ~/.bash_profile            && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >> ~/.bash_profile
-                                      echo "eval \$($(brew --prefix)/bin/brew shellenv)" >> ~/.profile
-
-#--------------------------------------------------
 # Install apt-get tools
 #--------------------------------------------------
 
@@ -88,34 +73,6 @@ apt-get install -y 'git'
 
 printf "${YELLOW}Install 'sendmail' package${NOCOLOR}\n"
 apt-get install -y 'sendmail'
-
-#--------------------------------------------------
-# Install Homebrew tools
-#--------------------------------------------------
-
-printf "${YELLOW}Install 'gcc' recipies${NOCOLOR}\n"
-brew install 'gcc'
-
-printf "${YELLOW}Install 'azure-cli' recipies${NOCOLOR}\n"
-brew install 'azure-cli'
-
-printf "${YELLOW}Install 'terraform' recipies${NOCOLOR}\n"
-brew install 'terraform'
-
-printf "${YELLOW}Install 'git' recipies${NOCOLOR}\n"
-brew install 'git'
-
-printf "${YELLOW}Install 'coreutils' recipies${NOCOLOR}\n"
-brew install 'coreutils'
-
-printf "${YELLOW}Install 'mutt' recipies${NOCOLOR}\n"
-brew install 'mutt'
-
-printf "${YELLOW}Install 'jq' recipies${NOCOLOR}\n"
-brew install 'jq'
-
-printf "${YELLOW}Install 'zip' recipies${NOCOLOR}\n"
-brew install 'zip'
 
 #--------------------------------------------------
 # Install python tools
