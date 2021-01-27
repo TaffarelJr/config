@@ -38,7 +38,7 @@ choco install -y "tortoisegit"
 RefreshEnv
 
 # GitHub Desktop
-choco install -y "github-desktop"
+choco install -y "github-desktop" --install-arguments="-s"
 Remove-Item "$Env:OneDrive\Desktop\GitHub Desktop.lnk" -ErrorAction "Ignore"
 RefreshEnv
 
