@@ -1,7 +1,8 @@
 #!/bin/bash
+# This script should be run as sudo
 
 #--------------------------------------------------
-# This script should be run as sudo
+# Definitions
 #--------------------------------------------------
 
 # Color constants (ANSI escape codes)
@@ -23,13 +24,20 @@ LIGHTPURPLE='\033[1;35m'
 LIGHTCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 
-# Update packages
+#--------------------------------------------------
+# Update Linux
+#--------------------------------------------------
+
 printf "${YELLOW}Get latest apt metadata${NOCOLOR}\n"
 apt update
+
 printf "${YELLOW}Update apt packages${NOCOLOR}\n"
 apt upgrade -y
 
+#--------------------------------------------------
 # Change the mount point from /mnt/c to /c
+#--------------------------------------------------
+
 # https://gist.github.com/sgtoj/f82990bcd9e89db49b84e2d2e70b281d
 # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
 printf "${YELLOW}Change mount point to /c${NOCOLOR}\n"
@@ -47,7 +55,10 @@ sudo echo '[network]'                                  >> /etc/wsl.conf
 sudo echo 'generateHosts = true'                       >> /etc/wsl.conf
 sudo echo 'generateResolvConf = true'                  >> /etc/wsl.conf
 
+#--------------------------------------------------
 # Install Homebrew for Linux
+#--------------------------------------------------
+
 # https://docs.brew.sh/Homebrew-on-Linux
 printf "${YELLOW}Install Homebrew for Linux${NOCOLOR}\n"
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -59,45 +70,93 @@ test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew
 test -r ~/.bash_profile            && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >> ~/.bash_profile
                                       echo "eval \$($(brew --prefix)/bin/brew shellenv)" >> ~/.profile
 
-# Install basic utilities
-printf "${YELLOW}Install apt-get utility packages${NOCOLOR}\n"
+#--------------------------------------------------
+# Install apt-get tools
+#--------------------------------------------------
+
+printf "${YELLOW}Install 'build-essential' package${NOCOLOR}\n"
 apt-get install -y 'build-essential'
+
+printf "${YELLOW}Install 'curl' package${NOCOLOR}\n"
 apt-get install -y 'curl'
+
+printf "${YELLOW}Install 'file' package${NOCOLOR}\n"
 apt-get install -y 'file'
+
+printf "${YELLOW}Install 'git' package${NOCOLOR}\n"
 apt-get install -y 'git'
+
+printf "${YELLOW}Install 'sendmail' package${NOCOLOR}\n"
 apt-get install -y 'sendmail'
 
-# Install additional tools
-# https://github.com/im-platform/azurerm
-printf "${YELLOW}Install Homebrew recipies${NOCOLOR}\n"
+#--------------------------------------------------
+# Install Homebrew tools
+#--------------------------------------------------
+
+printf "${YELLOW}Install 'gcc' recipies${NOCOLOR}\n"
 brew install 'gcc'
+
+printf "${YELLOW}Install 'azure-cli' recipies${NOCOLOR}\n"
 brew install 'azure-cli'
+
+printf "${YELLOW}Install 'terraform' recipies${NOCOLOR}\n"
 brew install 'terraform'
+
+printf "${YELLOW}Install 'git' recipies${NOCOLOR}\n"
 brew install 'git'
+
+printf "${YELLOW}Install 'coreutils' recipies${NOCOLOR}\n"
 brew install 'coreutils'
+
+printf "${YELLOW}Install 'mutt' recipies${NOCOLOR}\n"
 brew install 'mutt'
+
+printf "${YELLOW}Install 'jq' recipies${NOCOLOR}\n"
 brew install 'jq'
+
+printf "${YELLOW}Install 'zip' recipies${NOCOLOR}\n"
 brew install 'zip'
 
-# Install pip & Slack CLI for Python
-printf "${YELLOW}Install python tools${NOCOLOR}\n"
+#--------------------------------------------------
+# Install python tools
+#--------------------------------------------------
+
+printf "${YELLOW}Install 'pip' for python${NOCOLOR}\n"
 apt  install -y 'python3-pip'
+
+printf "${YELLOW}Install 'slack-cli' for python${NOCOLOR}\n"
 pip3 install 'slack-cli' --trusted-host='pypi.python.org'
 
+#--------------------------------------------------
 # Set up git credential manager
+#--------------------------------------------------
+
 # This is optional but it keeps you from having to enter git username/password each time
 printf "${YELLOW}Configure Git credential manager${NOCOLOR}\n"
 git config --global credential.helper '/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe'
 
+#--------------------------------------------------
 # Install sqlcmd
+#--------------------------------------------------
+
 # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-setup-tools?view=sql-server-2017#ubuntu
-printf "${YELLOW}Install sqlcmd${NOCOLOR}\n"
+printf "${YELLOW}Download sqlcmd info${NOCOLOR}\n"
 curl 'https://packages.microsoft.com/keys/microsoft.asc' | apt-key add -
 curl 'https://packages.microsoft.com/config/ubuntu/20.04/prod.list' | tee /etc/apt/sources.list.d/msprod.list
+
+printf "${YELLOW}Get latest apt-get metadata${NOCOLOR}\n"
 apt-get update
+
+printf "${YELLOW}Install mssql-tools (Unix ODBC)${NOCOLOR}\n"
 apt-get install -y 'mssql-tools' unixodbc-dev
+
+printf "${YELLOW}Update apt-get packages${NOCOLOR}\n"
 apt-get update
+
+printf "${YELLOW}Install mssql-tools${NOCOLOR}\n"
 apt-get install -y 'mssql-tools'
+
+printf "${YELLOW}Configure profile${NOCOLOR}\n"
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 source ~/.bashrc
