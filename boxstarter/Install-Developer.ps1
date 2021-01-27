@@ -14,8 +14,9 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 Write-Header "Enable Windows Developer Mode"
 #----------------------------------------------------------------------------------------------------
 
-Write-Host "Enable Windows Developer Mode"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\" -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value "1"
+Enter-Location -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\" {
+    Set-ItemProperty -Path "." -Name "AllowDevelopmentWithoutDevLicense" -Type "DWord" -Value 1
+}
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install additional browsers"
