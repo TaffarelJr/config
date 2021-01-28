@@ -179,7 +179,7 @@ Write-Header "Install JetBrains ReSharper"
 #----------------------------------------------------------------------------------------------------
 
 # JetBrains ReSharper Ultimate
-choco install -y "resharper"
+choco install -y "resharper-ultimate-all" --package-parameters "/NoCpp"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install database tools"
