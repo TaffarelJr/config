@@ -81,11 +81,9 @@ choco install -y "visualstudio2019-workload-netweb"                --package-par
 choco install -y "visualstudio2019-workload-universal"             --package-parameters "--passive --includeOptional" # Universal Windows Platform development workload
 # choco install -y "visualstudio2019-workload-visualstudioextension" --package-parameters "--passive --includeOptional" # Visual Studio extension development workload
 
-# Cleanup
+# Cleanup & reboot
 Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
-if (-Not ($Env:Path -Match "dotnet")) {
-    Restart-Computer
-}
+if (-Not ($Env:Path -Match "dotnet")) { Restart-Computer }
 dotnet --info
 
 # Install VS Extensions
@@ -182,13 +180,6 @@ Write-Header "Install JetBrains ReSharper"
 
 # JetBrains ReSharper Ultimate
 choco install -y "resharper"
-
-#----------------------------------------------------------------------------------------------------
-Write-Header "Install additional frameworks & SDKs"
-#----------------------------------------------------------------------------------------------------
-
-choco install -y "netfx-4.8-devpack"
-choco install -y "dotnet-5.0-sdk"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install database tools"
