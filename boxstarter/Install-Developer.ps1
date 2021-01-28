@@ -182,15 +182,43 @@ Write-Header "Install JetBrains ReSharper"
 choco install -y "resharper-ultimate-all" --package-parameters "/NoCpp"
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Install database tools"
+Write-Header "Install SQL Server Developer Edition"
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "azure-data-studio"
-choco install -y "postgresql"
-choco install -y "pgadmin4"
-choco install -y "servicebusexplorer"
+# SQL Server
 choco install -y "sql-server-2019"
+RefreshEnv
+
+# SQL Server Management Studio
 choco install -y "sql-server-management-studio"
+RefreshEnv
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Install Azure data tools"
+#----------------------------------------------------------------------------------------------------
+
+# Azure Data Studio
+choco install -y "azure-data-studio"
+
+# Azure Service Bus Explorer
+choco install -y "servicebusexplorer"
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Install PostgreSQL"
+#----------------------------------------------------------------------------------------------------
+
+# Prompt the user for a password
+$password = ""
+while ($password.Length -eq 0) {
+    $password = Read-Host -Prompt "Enter a password for PostgreSQL"
+}
+
+# PostgreSQL
+choco install -y "postgresql" --package-parameters "/Password:$password"
+RefreshEnv
+
+# pgAdmin4
+choco install -y "pgadmin4"
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts
