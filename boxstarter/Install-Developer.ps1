@@ -86,8 +86,22 @@ Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
 if (-Not ($Env:Path -Match "dotnet")) { Restart-Computer }
 dotnet --info
 
-# Install VS Extensions
+# Trust development certificates
+dotnet dev-certs https --trust
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Install Visual Studio 2019 Extensions"
+#----------------------------------------------------------------------------------------------------
+
+# Determine which VSIX are already installed
 $installed = Get-InstalledVsix
+
+# Start a session on the Visual Studio Marketplace
+Write-Host "Start a new session with Visual Studio Marketplace"
+$response = Invoke-WebRequest -Uri $vsMarketplace -UseBasicParsing -UseDefaultCredentials -SessionVariable "session"
+if ($response.StatusCode -NE 200) { throw [System.IO.InvalidOperationException] "Could not establish a session with Visual Studio Marketplace at $vsMarketplace" }
+
+# Determine which VSIX are to be installed, download them, and install them
 @(
     # Install extensions from Microsoft
     "Diagnostics.DiagnosticsConcurrencyVisualizer2019"   # Concurrency Visualizer for Visual Studio 2019
@@ -107,10 +121,7 @@ $installed = Get-InstalledVsix
     "DevartSoftware.DevartT4EditorforVisualStudio"       # Devart T4 Editor for Visual Studio
     "GitHub.GitHubExtensionforVisualStudio"              # GitHub Extension for Visual Studio
     "EWoodruff.VisualStudioSpellCheckerVS2017andLater"   # Visual Studio Spell Checker (VS2017 and Later)
-) | Get-VsixPackageInfo | Where-Object { $installed -NotContains $_.Id } | Get-VsixPackage | Install-VsixPackage
-
-# Trust development certificates
-dotnet dev-certs https --trust
+) | Get-VsixInfo -Session $session | Where-Object { $installed -NotContains $_.Id } | Get-Vsix -Session $session | Install-Vsix
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install developer utilities"
