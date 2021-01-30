@@ -16,6 +16,7 @@ $ErrorActionPreference = "Stop"
 }
 
 # Set custom constants
+$vsUserDir = "$Env:LOCALAPPDATA\Microsoft\VisualStudio"
 $vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
 $vsMarketplace = "https://marketplace.visualstudio.com"
 $edition = (Get-WindowsEdition -Online).Edition
@@ -125,8 +126,8 @@ function Set-WindowsSearchFileExtension {
 # Gather list of installed VS extensions
 # (only works after VS is installed)
 function Get-InstalledVsix {
-    Write-Host "Getting list of Visual Studio extensions that are already installed ..."
-    Get-ChildItem -Path "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
+    Write-Host "Get list of Visual Studio extensions that are already installed ..."
+    Get-ChildItem -Path $vsUserDir, "$vsInstallDir\CommonExtensions", "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
         Select-String -List -Pattern '<Identity .*?Id="(.+?)"' | `
         ForEach-Object { $_.Matches.Groups[1].Value } | `
         Sort-Object
@@ -147,7 +148,7 @@ function Get-VsixInfo {
         $packagePage = "$vsMarketplace/items?itemName=$PackageName"
 
         # Download the VSIX web page
-        Write-Host "Scraping VSIX details from $packagePage ..."
+        Write-Host "Scrape VSIX details from $packagePage ..."
         $response = Invoke-WebRequest -Uri $packagePage -UseBasicParsing -WebSession $Session
         if ($response.StatusCode -NE 200) { throw [System.IO.InvalidOperationException] "Could not find VSIX page at $packagePage" }
 
@@ -183,7 +184,7 @@ function Get-Vsix {
         $vsixFileName = "$Env:TEMP\$($Vsix.PackageName).vsix"
 
         # Download VSIX
-        Write-Host "Attempting to download $($Vsix.Uri) ..."
+        Write-Host "Download $($Vsix.Uri) ..."
         Invoke-WebRequest -Uri $Vsix.Uri -OutFile $vsixFileName -UseBasicParsing -WebSession $Session
 
         # Verify the file was downloaded
@@ -205,10 +206,9 @@ function Install-Vsix {
 
     process {
         # Install the extension
-        Write-Host "Installing $VsixFile ..."
-        Start-Process -Filepath "$vsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin '$VsixFile'" -Wait
+        Write-Host "Install $VsixFile ..."
+        Start-Process -Filepath "$vsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin /force `"$VsixFile`"" -Wait
         Remove-Item $VsixFile -ErrorAction "Ignore"
-        Write-Host "$VsixFile installed successfully"
     }
 }
 
