@@ -57,7 +57,7 @@ Write-Header "Install cloud storage providers"
 choco install -y $chocoCache "dropbox"
 
 # Google Backup and Sync
-choco install -y $chocoCache "google-backup-and-sync"
+choco install -y $chocoCache "google-backup-and-sync" --ignore-checksums # Workaround
 Remove-Item "$Env:PUBLIC\Desktop\Google Docs.lnk"   -ErrorAction "Ignore"
 Remove-Item "$Env:PUBLIC\Desktop\Google Sheets.lnk" -ErrorAction "Ignore"
 Remove-Item "$Env:PUBLIC\Desktop\Google Slides.lnk" -ErrorAction "Ignore"
