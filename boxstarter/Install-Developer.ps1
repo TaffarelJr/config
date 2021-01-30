@@ -83,7 +83,7 @@ choco install -y $chocoCache "visualstudio2019-workload-universal"             -
 
 # Cleanup & reboot
 Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
-if (-Not ($Env:Path -Match "dotnet")) { Restart-Computer }
+if (-Not ($Env:Path -Match "dotnet")) { Invoke-Reboot }
 dotnet --info
 
 # Trust development certificates
