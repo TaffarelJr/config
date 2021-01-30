@@ -5,12 +5,6 @@ $PSVersionTable | Out-String | Write-Host
 # Set PowerShell preference variables
 $ErrorActionPreference = "Stop"
 
-# Configure Chocolatey cache path. This is a workaround for a current bug:
-# https://github.com/chocolatey/boxstarter/issues/241
-$chocoCache = "$Env:TEMP\ChocoCache"
-New-Item -Path $chocoCache -ItemType directory -Force | Out-Null
-$chocoCache = "--cacheLocation=`"$chocoCache`""
-
 # Install modules
 @(
     "powershell-yaml"
@@ -24,6 +18,13 @@ $chocoCache = "--cacheLocation=`"$chocoCache`""
 # Set custom constants
 $vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
 $vsMarketplace = "https://marketplace.visualstudio.com"
+$edition = (Get-WindowsEdition -Online).Edition
+
+# Configure Chocolatey cache path. This is a workaround for a current bug:
+# https://github.com/chocolatey/boxstarter/issues/241
+$chocoCache = "$Env:TEMP\ChocoCache"
+New-Item -Path $chocoCache -ItemType directory -Force | Out-Null
+$chocoCache = "--cacheLocation=`"$chocoCache`""
 
 # Register HKEY_CLASSES_ROOT as an accessible drive
 New-PSDrive -Name "HKCR" -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" | out-null
