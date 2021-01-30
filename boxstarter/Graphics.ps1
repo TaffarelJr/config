@@ -14,11 +14,11 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 Write-Header "Install advanced graphics tools"
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "gimp"
-choco install -y "hugin"
-choco install -y "image-composite-editor"
-choco install -y "inkscape"
-choco install -y "shotcut"
+choco install -y $chocoCache "gimp"
+choco install -y $chocoCache "hugin"
+choco install -y $chocoCache "image-composite-editor"
+choco install -y $chocoCache "inkscape"
+choco install -y $chocoCache "shotcut"
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts

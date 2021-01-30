@@ -20,11 +20,11 @@ if ($edition -eq "Home") {
 }
 else {
     # Install WSL 2
-    choco install -y "wsl2" --package-parameters="/Retry:true"
+    choco install -y $chocoCache "wsl2" --package-parameters="/Retry:true"
 
     # Install Ubuntu
     # https://docs.microsoft.com/en-us/windows/wsl/install-manual
-    choco install -y "wsl-ubuntu-2004"
+    choco install -y $chocoCache "wsl-ubuntu-2004"
 
     # Launch Ubuntu and allow it to initialize
     Write-Host "Initialize Ubuntu"
@@ -53,7 +53,7 @@ else {
 Write-Header "Install Docker"
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "docker-desktop"
+choco install -y $chocoCache "docker-desktop"
 Remove-Item "$Env:OneDrive\Desktop\Docker Desktop.lnk" -ErrorAction "Ignore"
 RefreshEnv
 

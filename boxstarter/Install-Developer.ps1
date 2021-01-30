@@ -23,27 +23,27 @@ Write-Header "Install additional browsers"
 #----------------------------------------------------------------------------------------------------
 
 # Firefox
-choco install -y "firefox" --package-parameters="/NoDesktopShortcut /RemoveDistributionDir"
+choco install -y $chocoCache "firefox" --package-parameters="/NoDesktopShortcut /RemoveDistributionDir"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install source control tools"
 #----------------------------------------------------------------------------------------------------
 
 # Git for Windows
-choco install -y "git"
+choco install -y $chocoCache "git"
 RefreshEnv
 
 # TortoiseGit
-choco install -y "tortoisegit"
+choco install -y $chocoCache "tortoisegit"
 RefreshEnv
 
 # GitHub Desktop
-choco install -y "github-desktop" --install-arguments="-s"
+choco install -y $chocoCache "github-desktop" --install-arguments="-s"
 Remove-Item "$Env:OneDrive\Desktop\GitHub Desktop.lnk" -ErrorAction "Ignore"
 RefreshEnv
 
 # Sourcetree
-choco install -y "sourcetree"
+choco install -y $chocoCache "sourcetree"
 Remove-Item "$Env:PUBLIC\Desktop\Sourcetree.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
@@ -51,8 +51,8 @@ Write-Header "Install Visual Studio Code"
 #----------------------------------------------------------------------------------------------------
 
 # Visual Studio Code
-choco install -y "vscode" --package-parameters="/NoDesktopIcon"
-choco install -y "vscode-settingssync"
+choco install -y $chocoCache "vscode" --package-parameters="/NoDesktopIcon"
+choco install -y $chocoCache "vscode-settingssync"
 RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
@@ -60,26 +60,26 @@ Write-Header "Install Visual Studio 2019"
 #----------------------------------------------------------------------------------------------------
 
 # Install Visual Studio 2019 Core
-choco install -y "visualstudio2019professional" --package-parameters "--passive"
+choco install -y $chocoCache "visualstudio2019professional" --package-parameters "--passive"
 
 # Install workloads
-choco install -y "visualstudio2019-workload-azure"                 --package-parameters "--passive --includeOptional" # Azure development workload
-choco install -y "visualstudio2019-workload-data"                  --package-parameters "--passive --includeOptional" # Data storage and processing workload
-# choco install -y "visualstudio2019-workload-datascience"           --package-parameters "--passive --includeOptional" # Data science and analytical applications workload
-choco install -y "visualstudio2019-workload-manageddesktop"        --package-parameters "--passive --includeOptional" # .NET desktop develoment workload
-choco install -y "visualstudio2019-workload-managedgame"           --package-parameters "--passive --includeOptional" # Game development with Unity workload
-# choco install -y "visualstudio2019-workload-nativecrossplat"       --package-parameters "--passive --includeOptional" # Linux development with C++ workload
-# choco install -y "visualstudio2019-workload-nativedesktop"         --package-parameters "--passive --includeOptional" # Desktop development with C++ workload
-# choco install -y "visualstudio2019-workload-nativegame"            --package-parameters "--passive --includeOptional" # Game development with C++ workload
-# choco install -y "visualstudio2019-workload-nativemobile"          --package-parameters "--passive --includeOptional" # Mobile development with C++ workload
-choco install -y "visualstudio2019-workload-netcoretools"          --package-parameters "--passive --includeOptional" # .NET Core cross-platform development workload
-# choco install -y "visualstudio2019-workload-netcrossplat"          --package-parameters "--passive --includeOptional" # Mobile development with .NET workload
-choco install -y "visualstudio2019-workload-netweb"                --package-parameters "--passive --includeOptional" # ASP.NET and web development workload
-# choco install -y "visualstudio2019-workload-node"                  --package-parameters "--passive --includeOptional" # Node.js development workload
-# choco install -y "visualstudio2019-workload-office"                --package-parameters "--passive --includeOptional" # Office/SharePoint development workload
-# choco install -y "visualstudio2019-workload-python"                --package-parameters "--passive --includeOptional" # Python development workload
-choco install -y "visualstudio2019-workload-universal"             --package-parameters "--passive --includeOptional" # Universal Windows Platform development workload
-# choco install -y "visualstudio2019-workload-visualstudioextension" --package-parameters "--passive --includeOptional" # Visual Studio extension development workload
+choco install -y $chocoCache "visualstudio2019-workload-azure"                 --package-parameters "--passive --includeOptional" # Azure development workload
+choco install -y $chocoCache "visualstudio2019-workload-data"                  --package-parameters "--passive --includeOptional" # Data storage and processing workload
+# choco install -y $chocoCache "visualstudio2019-workload-datascience"           --package-parameters "--passive --includeOptional" # Data science and analytical applications workload
+choco install -y $chocoCache "visualstudio2019-workload-manageddesktop"        --package-parameters "--passive --includeOptional" # .NET desktop develoment workload
+choco install -y $chocoCache "visualstudio2019-workload-managedgame"           --package-parameters "--passive --includeOptional" # Game development with Unity workload
+# choco install -y $chocoCache "visualstudio2019-workload-nativecrossplat"       --package-parameters "--passive --includeOptional" # Linux development with C++ workload
+# choco install -y $chocoCache "visualstudio2019-workload-nativedesktop"         --package-parameters "--passive --includeOptional" # Desktop development with C++ workload
+# choco install -y $chocoCache "visualstudio2019-workload-nativegame"            --package-parameters "--passive --includeOptional" # Game development with C++ workload
+# choco install -y $chocoCache "visualstudio2019-workload-nativemobile"          --package-parameters "--passive --includeOptional" # Mobile development with C++ workload
+choco install -y $chocoCache "visualstudio2019-workload-netcoretools"          --package-parameters "--passive --includeOptional" # .NET Core cross-platform development workload
+# choco install -y $chocoCache "visualstudio2019-workload-netcrossplat"          --package-parameters "--passive --includeOptional" # Mobile development with .NET workload
+choco install -y $chocoCache "visualstudio2019-workload-netweb"                --package-parameters "--passive --includeOptional" # ASP.NET and web development workload
+# choco install -y $chocoCache "visualstudio2019-workload-node"                  --package-parameters "--passive --includeOptional" # Node.js development workload
+# choco install -y $chocoCache "visualstudio2019-workload-office"                --package-parameters "--passive --includeOptional" # Office/SharePoint development workload
+# choco install -y $chocoCache "visualstudio2019-workload-python"                --package-parameters "--passive --includeOptional" # Python development workload
+choco install -y $chocoCache "visualstudio2019-workload-universal"             --package-parameters "--passive --includeOptional" # Universal Windows Platform development workload
+# choco install -y $chocoCache "visualstudio2019-workload-visualstudioextension" --package-parameters "--passive --includeOptional" # Visual Studio extension development workload
 
 # Cleanup & reboot
 Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
@@ -128,7 +128,7 @@ Write-Header "Install developer utilities"
 #----------------------------------------------------------------------------------------------------
 
 # Azure CLI
-choco install -y "azure-cli"
+choco install -y $chocoCache "azure-cli"
 RefreshEnv
 
 # Devart Code Compare
@@ -143,19 +143,19 @@ if (-not (Test-Path "$Env:ProgramFiles\Devart\Code Compare\CodeCompare.exe")) {
 }
 
 # Fiddler
-choco install -y "fiddler"
+choco install -y $chocoCache "fiddler"
 RefreshEnv
 
 # GNU Make
-choco install -y "make"
+choco install -y $chocoCache "make"
 
 # LINQPad
-choco install -y "linqpad"
+choco install -y $chocoCache "linqpad"
 Remove-Item "$Env:OneDrive\Desktop\LINQPad 6 (x64).lnk" -ErrorAction "Ignore"
 RefreshEnv
 
 # Node.js
-choco install -y "nodejs"
+choco install -y $chocoCache "nodejs"
 RefreshEnv
 
 # NuGet CLI
@@ -163,14 +163,14 @@ Write-Host "Download NuGet CLI"
 Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile "$Env:ProgramFiles\dotnet\nuget.exe" -UseBasicParsing
 
 # Postman
-choco install -y "postman"
+choco install -y $chocoCache "postman"
 Remove-Item "$Env:OneDrive\Desktop\Postman.lnk" -ErrorAction "Ignore"
 
 # PuTTY
-choco install -y "putty"
+choco install -y $chocoCache "putty"
 
 # Sysinternals
-choco install -y "sysinternals"
+choco install -y $chocoCache "sysinternals"
 
 # WinGPG
 Write-Host "Install WinGPG"
@@ -179,29 +179,29 @@ Invoke-WebRequest -Uri "https://s3.amazonaws.com/assets.scand.com/WinGPG/WinGPG-
 Start-Process -Filepath $file -ArgumentList "/SILENT /NORESTART" -Wait
 
 # WinSCP
-choco install -y "winscp"
+choco install -y $chocoCache "winscp"
 Remove-Item "$Env:PUBLIC\Desktop\WinSCP.lnk" -ErrorAction "Ignore"
 
 # Wireshark
-choco install -y "wireshark"
+choco install -y $chocoCache "wireshark"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install JetBrains ReSharper"
 #----------------------------------------------------------------------------------------------------
 
 # JetBrains ReSharper Ultimate
-choco install -y "resharper-ultimate-all" --package-parameters "/NoCpp"
+choco install -y $chocoCache "resharper-ultimate-all" --package-parameters "/NoCpp"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install SQL Server Developer Edition"
 #----------------------------------------------------------------------------------------------------
 
 # SQL Server
-choco install -y "sql-server-2019"
+choco install -y $chocoCache "sql-server-2019"
 RefreshEnv
 
 # SQL Server Management Studio
-choco install -y "sql-server-management-studio"
+choco install -y $chocoCache "sql-server-management-studio"
 RefreshEnv
 
 #----------------------------------------------------------------------------------------------------
@@ -209,10 +209,10 @@ Write-Header "Install Azure data tools"
 #----------------------------------------------------------------------------------------------------
 
 # Azure Data Studio
-choco install -y "azure-data-studio"
+choco install -y $chocoCache "azure-data-studio"
 
 # Azure Service Bus Explorer
-choco install -y "servicebusexplorer"
+choco install -y $chocoCache "servicebusexplorer"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install PostgreSQL"
@@ -225,11 +225,11 @@ while ($password.Length -eq 0) {
 }
 
 # PostgreSQL
-choco install -y "postgresql" --package-parameters "/Password:$password"
+choco install -y $chocoCache "postgresql" --package-parameters "/Password:$password"
 RefreshEnv
 
 # pgAdmin4
-choco install -y "pgadmin4"
+choco install -y $chocoCache "pgadmin4"
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts
