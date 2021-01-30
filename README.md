@@ -15,6 +15,7 @@ The [boxstarter](./boxstarter) folder contains scripts to automatically configur
 - [ElJefeDSecurIT](https://gist.github.com/ElJefeDSecurIT/014fcfb87a7372d64934995b5f09683e)
 - [jessfraz](https://gist.github.com/jessfraz/7c319b046daa101a4aaef937a20ff41f)
 - [NickCraver](https://gist.github.com/NickCraver/7ebf9efbfd0c3eab72e9)
+- [David Gardiner](https://david.gardiner.net.au/2018/07/boxstarter-and-chocolatey-tips.html)
 
 To run them manually:
 
