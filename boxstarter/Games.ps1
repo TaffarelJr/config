@@ -14,15 +14,15 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 Write-Header "Install game platforms"
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "origin"
-choco install -y "steam"
-choco install -y "uplay"
+choco install -y $chocoCache "origin"
+choco install -y $chocoCache "steam"
+choco install -y $chocoCache "uplay"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install individual games"
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "minecraft-launcher"
+choco install -y $chocoCache "minecraft-launcher"
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts

@@ -60,7 +60,7 @@ $fonts = @(
 )
 
 # Install all fonts
-$fonts | ForEach-Object { choco install -y $_.ChocolateyPackage }
+$fonts | ForEach-Object { choco install -y $chocoCache $_.ChocolateyPackage }
 
 # Prompt user to choose a specific font
 $options = $fonts | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
@@ -128,24 +128,24 @@ Write-Header "Install personal utilities"
 #----------------------------------------------------------------------------------------------------
 
 # Advanced Renamer
-choco install -y "advanced-renamer"
+choco install -y $chocoCache "advanced-renamer"
 
 # Attribute Changer
-choco install -y "attributechanger"
+choco install -y $chocoCache "attributechanger"
 
 # Divvy
-choco install -y "divvy"
+choco install -y $chocoCache "divvy"
 Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 
 # Duplicate Cleaner
-choco install -y "duplicatecleaner"
+choco install -y $chocoCache "duplicatecleaner"
 Remove-Item "$Env:PUBLIC\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore"
 
 # Link Shell Extension
-choco install -y "linkshellextension"
+choco install -y $chocoCache "linkshellextension"
 
 # Free Download Manager
-choco install -y "freedownloadmanager"
+choco install -y $chocoCache "freedownloadmanager"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Notepad++"

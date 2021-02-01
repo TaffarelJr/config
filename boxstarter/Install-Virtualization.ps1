@@ -11,20 +11,30 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
+Write-Header "Install Microsoft Hyper-V"
+#----------------------------------------------------------------------------------------------------
+
+if ($edition -EQ "Home") {
+    Write-Host "<not available on Home edition of Windows>"
+}
+else {
+    choco install -y $chocoCache "Microsoft-Hyper-V-All" -source "windowsfeatures"
+}
+
+#----------------------------------------------------------------------------------------------------
 Write-Header "Install Windows Subsystem for Linux 2 (WSL2)"
 #----------------------------------------------------------------------------------------------------
 
-$edition = (Get-WindowsEdition -Online).Edition
-if ($edition -eq "Home") {
+if ($edition -EQ "Home") {
     Write-Host "<not available on Home edition of Windows>"
 }
 else {
     # Install WSL 2
-    choco install -y "wsl2" --package-parameters="/Retry:true"
+    choco install -y $chocoCache "wsl2" --package-parameters="/Retry:true"
 
     # Install Ubuntu
     # https://docs.microsoft.com/en-us/windows/wsl/install-manual
-    choco install -y "wsl-ubuntu-2004"
+    choco install -y $chocoCache "wsl-ubuntu-2004"
 
     # Launch Ubuntu and allow it to initialize
     Write-Host "Initialize Ubuntu"
@@ -53,7 +63,7 @@ else {
 Write-Header "Install Docker"
 #----------------------------------------------------------------------------------------------------
 
-choco install -y "docker-desktop"
+choco install -y $chocoCache "docker-desktop"
 Remove-Item "$Env:OneDrive\Desktop\Docker Desktop.lnk" -ErrorAction "Ignore"
 RefreshEnv
 
