@@ -66,14 +66,17 @@ function Enter-Location {
         New-Item -Path $Path
     }
 
-    # Push to the location
-    Push-Location -Path $Path
+    try {
+        # Push to the location
+        Push-Location -Path $Path
 
-    # Execute the script block
-    & $ScriptBlock
-
-    # Pop back to the previous location
-    Pop-Location
+        # Execute the script block
+        & $ScriptBlock
+    }
+    finally {
+        # Pop back to the previous location
+        Pop-Location
+    }
 }
 
 # Disable specified Windows Services
@@ -84,9 +87,35 @@ function Disable-WindowsService {
     )
 
     process {
-        Write-Host "Disable Windows Service '$Service' ... " -NoNewline
+        Write-Host "Disable Windows Service '$Service'"
         Set-Service -Name $Service -StartupType "Disabled"
-        Write-Host "Done"
+        Stop-Service $Service
+    }
+}
+
+# Disable specified application startup
+function Disable-Startup {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string]$App
+    )
+
+    process {
+        Write-Host "Disable application startup for '$App'"
+        Enter-Location -Path "HKLM:\SOFTWARE\" {
+            Enter-Location -Path ".\Microsoft\Windows\CurrentVersion\Run\" {
+                Remove-ItemProperty -Path "." -Name $App -ErrorAction "Ignore"
+            }
+            Enter-Location -Path ".\Wow6432Node\Microsoft\Windows\CurrentVersion\Run\" {
+                Remove-ItemProperty -Path "." -Name $App -ErrorAction "Ignore"
+            }
+        }
+        Enter-Location -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\" {
+            Remove-ItemProperty -Path "." -Name $App -ErrorAction "Ignore"
+        }
+        Enter-Location -Path "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\" {
+            Remove-Item $App -ErrorAction "Ignore"
+        }
     }
 }
 
@@ -101,7 +130,7 @@ function Remove-WindowsStoreApp {
         Write-Host "Uninstall Windows Store apps like '$AppNamePattern'"
         Get-AppxPackage $AppNamePattern -AllUsers | Remove-AppxPackage
         Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $AppNamePattern | Remove-AppxProvisionedPackage -Online | Format-List | Out-String | Write-Host
-        Remove-Item "$Env:LOCALAPPDATA\Packages\$AppNamePattern" -Recurse -Force -ErrorAction 0
+        Remove-Item "$Env:LOCALAPPDATA\Packages\$AppNamePattern" -Recurse -Force -ErrorAction "Ignore"
     }
 }
 

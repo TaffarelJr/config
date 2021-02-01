@@ -14,10 +14,20 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 Write-Header "Install advanced graphics tools"
 #----------------------------------------------------------------------------------------------------
 
+# GIMP
 choco install -y $chocoCache "gimp"
+
+# Hugin
 choco install -y $chocoCache "hugin"
+
+# Microsoft ICE (retired?)
 choco install -y $chocoCache "image-composite-editor"
+
+# Inkscape
 choco install -y $chocoCache "inkscape"
+Remove-Item "$Env:OneDrive\Desktop\Inkscape.lnk" -ErrorAction "Ignore"
+
+# Shotcut
 choco install -y $chocoCache "shotcut"
 
 #----------------------------------------------------------------------------------------------------

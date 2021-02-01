@@ -14,15 +14,26 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 Write-Header "Install game platforms"
 #----------------------------------------------------------------------------------------------------
 
+# EA Origin
 choco install -y $chocoCache "origin"
+
+# Steam
 choco install -y $chocoCache "steam"
+Remove-Item "$Env:PUBLIC\Desktop\Steam.lnk" -ErrorAction "Ignore"
+"Steam Client Service" | Disable-WindowsService
+Stop-Process -Name "steam" -Force
+"Steam" | Disable-Startup
+
+# Ubisoft Connect
 choco install -y $chocoCache "uplay"
+Remove-Item "$Env:OneDrive\Desktop\Ubisoft Connect.lnk" -ErrorAction "Ignore"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install individual games"
 #----------------------------------------------------------------------------------------------------
 
-choco install -y $chocoCache "minecraft-launcher"
+# Minecraft (Java Edition)
+choco install -y $chocoCache "minecraft-launcher" --package-parameters="/NOICON"
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts
