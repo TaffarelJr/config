@@ -20,6 +20,9 @@ choco install -y $chocoCache "origin"
 # Steam
 choco install -y $chocoCache "steam"
 Remove-Item "$Env:PUBLIC\Desktop\Steam.lnk" -ErrorAction "Ignore"
+"Steam Client Service" | Disable-WindowsService
+Stop-Process -Name "steam" -Force
+"Steam" | Disable-Startup
 
 # Ubisoft Connect
 choco install -y $chocoCache "uplay"
