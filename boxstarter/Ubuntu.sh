@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # This script MUST be run as sudo
 
 #--------------------------------------------------
@@ -111,4 +111,4 @@ apt-get install -y 'mssql-tools'
 printf "${YELLOW}Configure profile${NOCOLOR}\n"
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
-source ~/.bashrc
+. ~/.bashrc

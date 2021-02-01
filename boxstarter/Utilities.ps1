@@ -23,7 +23,7 @@ $edition = (Get-WindowsEdition -Online).Edition
 
 # Configure Chocolatey cache path. This is a workaround for a current bug:
 # https://github.com/chocolatey/boxstarter/issues/241
-$chocoCache = "$Env:TEMP\ChocoCache"
+$chocoCache = "$Env:LOCALAPPDATA\Temp\ChocoCache"
 New-Item -Path $chocoCache -ItemType directory -Force | Out-Null
 $chocoCache = "--cacheLocation=`"$chocoCache`""
 
