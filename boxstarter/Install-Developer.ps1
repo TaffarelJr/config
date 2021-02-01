@@ -86,9 +86,6 @@ Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
 if (-Not ($Env:Path -Match "dotnet")) { Invoke-Reboot }
 dotnet --info
 
-# Trust development certificates
-dotnet dev-certs https --trust
-
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install Visual Studio 2019 Extensions"
 #----------------------------------------------------------------------------------------------------
@@ -122,6 +119,13 @@ if ($response.StatusCode -NE 200) { throw [System.IO.InvalidOperationException] 
     "GitHub.GitHubExtensionforVisualStudio"              # GitHub Extension for Visual Studio
     "EWoodruff.VisualStudioSpellCheckerVS2017andLater"   # Visual Studio Spell Checker (VS2017 and Later)
 ) | Get-VsixInfo -Session $session | Where-Object { $installed -NotContains $_.Id } | Get-Vsix -Session $session | Install-Vsix
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Install JetBrains ReSharper"
+#----------------------------------------------------------------------------------------------------
+
+# JetBrains ReSharper Ultimate
+choco install -y $chocoCache "resharper-ultimate-all" --package-parameters="/NoCpp"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install developer utilities"
@@ -186,13 +190,6 @@ Remove-Item "$Env:PUBLIC\Desktop\WinSCP.lnk" -ErrorAction "Ignore"
 choco install -y $chocoCache "wireshark"
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Install JetBrains ReSharper"
-#----------------------------------------------------------------------------------------------------
-
-# JetBrains ReSharper Ultimate
-choco install -y $chocoCache "resharper-ultimate-all" --package-parameters="/NoCpp"
-
-#----------------------------------------------------------------------------------------------------
 Write-Header "Install SQL Server Developer Edition"
 #----------------------------------------------------------------------------------------------------
 
@@ -230,6 +227,13 @@ RefreshEnv
 
 # pgAdmin4
 choco install -y $chocoCache "pgadmin4"
+
+#----------------------------------------------------------------------------------------------------
+Write-Header "Install development certificate"
+#----------------------------------------------------------------------------------------------------
+
+# Trust pre-installed ASP.NET self-signed dev certificate
+dotnet dev-certs https --trust
 
 #----------------------------------------------------------------------------------------------------
 Invoke-CleanupScripts

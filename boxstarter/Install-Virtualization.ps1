@@ -11,10 +11,13 @@ Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
 . $filePath
 
 #----------------------------------------------------------------------------------------------------
-Write-Header "Install Hyper-V"
+Write-Header "Install Microsoft Hyper-V"
 #----------------------------------------------------------------------------------------------------
 
-if ($edition -ne "Home") {
+if ($edition -EQ "Home") {
+    Write-Host "<not available on Home edition of Windows>"
+}
+else {
     choco install -y $chocoCache "Microsoft-Hyper-V-All" -source "windowsfeatures"
 }
 
@@ -22,7 +25,7 @@ if ($edition -ne "Home") {
 Write-Header "Install Windows Subsystem for Linux 2 (WSL2)"
 #----------------------------------------------------------------------------------------------------
 
-if ($edition -eq "Home") {
+if ($edition -EQ "Home") {
     Write-Host "<not available on Home edition of Windows>"
 }
 else {
