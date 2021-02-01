@@ -60,26 +60,26 @@ Write-Header "Install Visual Studio 2019"
 #----------------------------------------------------------------------------------------------------
 
 # Install Visual Studio 2019 Core
-choco install -y $chocoCache "visualstudio2019professional" --package-parameters "--passive"
+choco install -y $chocoCache "visualstudio2019professional" --package-parameters="--passive"
 
 # Install workloads
-choco install -y $chocoCache "visualstudio2019-workload-azure"                 --package-parameters "--passive --includeOptional" # Azure development workload
-choco install -y $chocoCache "visualstudio2019-workload-data"                  --package-parameters "--passive --includeOptional" # Data storage and processing workload
-# choco install -y $chocoCache "visualstudio2019-workload-datascience"           --package-parameters "--passive --includeOptional" # Data science and analytical applications workload
-choco install -y $chocoCache "visualstudio2019-workload-manageddesktop"        --package-parameters "--passive --includeOptional" # .NET desktop develoment workload
-choco install -y $chocoCache "visualstudio2019-workload-managedgame"           --package-parameters "--passive --includeOptional" # Game development with Unity workload
-# choco install -y $chocoCache "visualstudio2019-workload-nativecrossplat"       --package-parameters "--passive --includeOptional" # Linux development with C++ workload
-# choco install -y $chocoCache "visualstudio2019-workload-nativedesktop"         --package-parameters "--passive --includeOptional" # Desktop development with C++ workload
-# choco install -y $chocoCache "visualstudio2019-workload-nativegame"            --package-parameters "--passive --includeOptional" # Game development with C++ workload
-# choco install -y $chocoCache "visualstudio2019-workload-nativemobile"          --package-parameters "--passive --includeOptional" # Mobile development with C++ workload
-choco install -y $chocoCache "visualstudio2019-workload-netcoretools"          --package-parameters "--passive --includeOptional" # .NET Core cross-platform development workload
-# choco install -y $chocoCache "visualstudio2019-workload-netcrossplat"          --package-parameters "--passive --includeOptional" # Mobile development with .NET workload
-choco install -y $chocoCache "visualstudio2019-workload-netweb"                --package-parameters "--passive --includeOptional" # ASP.NET and web development workload
-# choco install -y $chocoCache "visualstudio2019-workload-node"                  --package-parameters "--passive --includeOptional" # Node.js development workload
-# choco install -y $chocoCache "visualstudio2019-workload-office"                --package-parameters "--passive --includeOptional" # Office/SharePoint development workload
-# choco install -y $chocoCache "visualstudio2019-workload-python"                --package-parameters "--passive --includeOptional" # Python development workload
-choco install -y $chocoCache "visualstudio2019-workload-universal"             --package-parameters "--passive --includeOptional" # Universal Windows Platform development workload
-# choco install -y $chocoCache "visualstudio2019-workload-visualstudioextension" --package-parameters "--passive --includeOptional" # Visual Studio extension development workload
+choco install -y $chocoCache "visualstudio2019-workload-azure"                 --package-parameters="--passive --includeOptional" # Azure development workload
+choco install -y $chocoCache "visualstudio2019-workload-data"                  --package-parameters="--passive --includeOptional" # Data storage and processing workload
+# choco install -y $chocoCache "visualstudio2019-workload-datascience"           --package-parameters="--passive --includeOptional" # Data science and analytical applications workload
+choco install -y $chocoCache "visualstudio2019-workload-manageddesktop"        --package-parameters="--passive --includeOptional" # .NET desktop develoment workload
+choco install -y $chocoCache "visualstudio2019-workload-managedgame"           --package-parameters="--passive --includeOptional" # Game development with Unity workload
+# choco install -y $chocoCache "visualstudio2019-workload-nativecrossplat"       --package-parameters="--passive --includeOptional" # Linux development with C++ workload
+# choco install -y $chocoCache "visualstudio2019-workload-nativedesktop"         --package-parameters="--passive --includeOptional" # Desktop development with C++ workload
+# choco install -y $chocoCache "visualstudio2019-workload-nativegame"            --package-parameters="--passive --includeOptional" # Game development with C++ workload
+# choco install -y $chocoCache "visualstudio2019-workload-nativemobile"          --package-parameters="--passive --includeOptional" # Mobile development with C++ workload
+choco install -y $chocoCache "visualstudio2019-workload-netcoretools"          --package-parameters="--passive --includeOptional" # .NET Core cross-platform development workload
+# choco install -y $chocoCache "visualstudio2019-workload-netcrossplat"          --package-parameters="--passive --includeOptional" # Mobile development with .NET workload
+choco install -y $chocoCache "visualstudio2019-workload-netweb"                --package-parameters="--passive --includeOptional" # ASP.NET and web development workload
+# choco install -y $chocoCache "visualstudio2019-workload-node"                  --package-parameters="--passive --includeOptional" # Node.js development workload
+# choco install -y $chocoCache "visualstudio2019-workload-office"                --package-parameters="--passive --includeOptional" # Office/SharePoint development workload
+# choco install -y $chocoCache "visualstudio2019-workload-python"                --package-parameters="--passive --includeOptional" # Python development workload
+choco install -y $chocoCache "visualstudio2019-workload-universal"             --package-parameters="--passive --includeOptional" # Universal Windows Platform development workload
+# choco install -y $chocoCache "visualstudio2019-workload-visualstudioextension" --package-parameters="--passive --includeOptional" # Visual Studio extension development workload
 
 # Cleanup & reboot
 Remove-Item "$Env:PUBLIC\Desktop\Unity Hub.lnk" -ErrorAction "Ignore"
@@ -190,7 +190,7 @@ Write-Header "Install JetBrains ReSharper"
 #----------------------------------------------------------------------------------------------------
 
 # JetBrains ReSharper Ultimate
-choco install -y $chocoCache "resharper-ultimate-all" --package-parameters "/NoCpp"
+choco install -y $chocoCache "resharper-ultimate-all" --package-parameters="/NoCpp"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install SQL Server Developer Edition"
@@ -225,7 +225,7 @@ while ($password.Length -eq 0) {
 }
 
 # PostgreSQL
-choco install -y $chocoCache "postgresql" --package-parameters "/Password:$password"
+choco install -y $chocoCache "postgresql" --package-parameters="/Password:$password"
 RefreshEnv
 
 # pgAdmin4
