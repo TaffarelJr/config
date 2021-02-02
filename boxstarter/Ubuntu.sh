@@ -24,14 +24,25 @@ LIGHTPURPLE='\033[1;35m'
 LIGHTCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 
+header () {
+    text=$1
+    line=$(printf '%.s-' $(seq ${#text}))
+
+    printf "\n"
+    printf "${ORANGE}+-${line}-+${NOCOLOR}\n"
+    printf "${ORANGE}| ${text} |${NOCOLOR}\n"
+    printf "${ORANGE}+-${line}-+${NOCOLOR}\n"
+    printf "\n"
+}
+
 #--------------------------------------------------
 # Update Linux
 #--------------------------------------------------
 
-printf "${YELLOW}Get latest apt metadata${NOCOLOR}\n"
+header "Get latest apt metadata"
 apt update
 
-printf "${YELLOW}Update apt packages${NOCOLOR}\n"
+header "Update apt packages"
 apt upgrade -y
 
 #--------------------------------------------------
@@ -40,7 +51,7 @@ apt upgrade -y
 
 # https://gist.github.com/sgtoj/f82990bcd9e89db49b84e2d2e70b281d
 # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
-printf "${YELLOW}Change mount point to /c${NOCOLOR}\n"
+header "Change mount point to /c"
 sudo echo '# Enable extra metadata options by default' >  /etc/wsl.conf
 sudo echo '[automount]'                                >> /etc/wsl.conf
 sudo echo 'enabled = true'                             >> /etc/wsl.conf
@@ -57,26 +68,26 @@ sudo echo 'generateResolvConf = true'                  >> /etc/wsl.conf
 # Install apt-get tools
 #--------------------------------------------------
 
-printf "${YELLOW}Install 'build-essential' package${NOCOLOR}\n"
+header "Install 'build-essential' package"
 apt-get install -y 'build-essential'
 
-printf "${YELLOW}Install 'curl' package${NOCOLOR}\n"
+header "Install 'curl' package"
 apt-get install -y 'curl'
 
-printf "${YELLOW}Install 'file' package${NOCOLOR}\n"
+header "Install 'file' package"
 apt-get install -y 'file'
 
-printf "${YELLOW}Install 'git' package${NOCOLOR}\n"
+header "Install 'git' package"
 apt-get install -y 'git'
 
-printf "${YELLOW}Install 'sendmail' package${NOCOLOR}\n"
+header "Install 'sendmail' package"
 apt-get install -y 'sendmail'
 
 #--------------------------------------------------
 # Install apt tools
 #--------------------------------------------------
 
-printf "${YELLOW}Install 'pip' for python${NOCOLOR}\n"
+header "Install 'pip' for python"
 apt install -y 'python3-pip'
 
 #--------------------------------------------------
@@ -84,7 +95,7 @@ apt install -y 'python3-pip'
 #--------------------------------------------------
 
 # This is optional but it keeps you from having to enter git username/password each time
-printf "${YELLOW}Configure Git credential manager${NOCOLOR}\n"
+header "Configure Git credential manager"
 git config --global credential.helper '/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe'
 
 #--------------------------------------------------
@@ -92,23 +103,23 @@ git config --global credential.helper '/c/Program\ Files/Git/mingw64/libexec/git
 #--------------------------------------------------
 
 # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-setup-tools?view=sql-server-2017#ubuntu
-printf "${YELLOW}Download sqlcmd info${NOCOLOR}\n"
+header "Download sqlcmd info"
 curl 'https://packages.microsoft.com/keys/microsoft.asc' | apt-key add -
 curl 'https://packages.microsoft.com/config/ubuntu/20.04/prod.list' | tee /etc/apt/sources.list.d/msprod.list
 
-printf "${YELLOW}Get latest apt-get metadata${NOCOLOR}\n"
+header "Get latest apt-get metadata"
 apt-get update
 
-printf "${YELLOW}Install mssql-tools (Unix ODBC)${NOCOLOR}\n"
+header "Install mssql-tools (Unix ODBC)"
 apt-get install -y 'mssql-tools' unixodbc-dev
 
-printf "${YELLOW}Update apt-get packages${NOCOLOR}\n"
+header "Update apt-get packages"
 apt-get update
 
-printf "${YELLOW}Install mssql-tools${NOCOLOR}\n"
+header "Install mssql-tools"
 apt-get install -y 'mssql-tools'
 
-printf "${YELLOW}Configure profile${NOCOLOR}\n"
+header "Configure profile"
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 . ~/.bashrc

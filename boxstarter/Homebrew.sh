@@ -24,19 +24,30 @@ LIGHTPURPLE='\033[1;35m'
 LIGHTCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 
+header () {
+    text=$1
+    line=$(printf '%.s-' $(seq ${#text}))
+
+    printf "\n"
+    printf "${ORANGE}+-${line}-+${NOCOLOR}\n"
+    printf "${ORANGE}| ${text} |${NOCOLOR}\n"
+    printf "${ORANGE}+-${line}-+${NOCOLOR}\n"
+    printf "\n"
+}
+
 #--------------------------------------------------
 # Install Homebrew for Linux
 #--------------------------------------------------
 
 # https://docs.brew.sh/Homebrew-on-Linux
-printf "${YELLOW}Install Homebrew for Linux${NOCOLOR}\n"
+header "Install Homebrew for Linux"
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 #--------------------------------------------------
 # Add Homebrew to path
 #--------------------------------------------------
 
-printf "${YELLOW}Add Homebrew to path${NOCOLOR}\n"
+header "Add Homebrew to path"
 test -d ~/.linuxbrew               && eval $(~/.linuxbrew/bin/brew shellenv)
 test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 test -r ~/.bash_profile            && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >> ~/.bash_profile
@@ -46,26 +57,26 @@ test -r ~/.bash_profile            && echo "eval \$($(brew --prefix)/bin/brew sh
 # Install Homebrew recipes
 #--------------------------------------------------
 
-printf "${YELLOW}Install 'gcc' recipe${NOCOLOR}\n"
+header "Install 'gcc' recipe"
 brew install 'gcc'
 
-printf "${YELLOW}Install 'azure-cli' recipe${NOCOLOR}\n"
+header "Install 'azure-cli' recipe"
 brew install 'azure-cli'
 
-printf "${YELLOW}Install 'terraform' recipe${NOCOLOR}\n"
+header "Install 'terraform' recipe"
 brew install 'terraform'
 
-printf "${YELLOW}Install 'git' recipe${NOCOLOR}\n"
+header "Install 'git' recipe"
 brew install 'git'
 
-printf "${YELLOW}Install 'coreutils' recipe${NOCOLOR}\n"
+header "Install 'coreutils' recipe"
 brew install 'coreutils'
 
-printf "${YELLOW}Install 'mutt' recipe${NOCOLOR}\n"
+header "Install 'mutt' recipe"
 brew install 'mutt'
 
-printf "${YELLOW}Install 'jq' recipe${NOCOLOR}\n"
+header "Install 'jq' recipe"
 brew install 'jq'
 
-printf "${YELLOW}Install 'zip' recipe${NOCOLOR}\n"
+header "Install 'zip' recipe"
 brew install 'zip'
