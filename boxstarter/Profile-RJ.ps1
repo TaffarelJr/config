@@ -57,6 +57,11 @@ $fonts = @(
         KeyedName         = "&Fira Code"
         ChocolateyPackage = "firacode" # Currently displays lots of errors, but succeeds anyway
     }
+    @{
+        Name              = "Hack"
+        KeyedName         = "&Hack"
+        ChocolateyPackage = "hackfont"
+    }
 )
 
 # Install all fonts
