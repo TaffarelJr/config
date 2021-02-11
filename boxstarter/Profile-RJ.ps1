@@ -57,6 +57,11 @@ $fonts = @(
         KeyedName         = "&Fira Code"
         ChocolateyPackage = "firacode" # Currently displays lots of errors, but succeeds anyway
     }
+    @{
+        Name              = "Hack"
+        KeyedName         = "&Hack"
+        ChocolateyPackage = "hackfont"
+    }
 )
 
 # Install all fonts
@@ -141,11 +146,11 @@ Remove-Item "$Env:OneDrive\Desktop\Divvy.lnk" -ErrorAction "Ignore"
 choco install -y $chocoCache "duplicatecleaner"
 Remove-Item "$Env:PUBLIC\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore"
 
-# Link Shell Extension
-choco install -y $chocoCache "linkshellextension"
-
 # Free Download Manager
 choco install -y $chocoCache "freedownloadmanager"
+
+# Link Shell Extension
+choco install -y $chocoCache "linkshellextension"
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Configure Notepad++"
