@@ -156,12 +156,18 @@ choco install -y $chocoCache "linkshellextension"
 Write-Header "Configure Notepad++"
 #----------------------------------------------------------------------------------------------------
 
+# Make sure folder exists
+$notepadThemePath = "$Env:APPDATA\Notepad++\themes"
+If(!(Test-Path $notepadThemePath)) {
+    New-Item -ItemType Directory -Force -Path $notepadThemePath
+}
+
 # Download themes
 $template = (Invoke-WebRequest -Uri "$repoUri/apps/Notepad++Theme.xml" -UseBasicParsing).Content
 $themes | ForEach-Object {
     Write-Host "Install '$($_.Scheme)' theme into Notepad++"
     $file = Expand-TemplateString -String $template -Values $_
-    [IO.File]::WriteAllLines("$Env:APPDATA\Notepad++\themes\$($_.Scheme).xml", $file, [System.Text.Encoding]::GetEncoding(1252))
+    [IO.File]::WriteAllLines("$notepadThemePath\$($_.Scheme).xml", $file, [System.Text.Encoding]::GetEncoding(1252))
 }
 
 # Download configuration
