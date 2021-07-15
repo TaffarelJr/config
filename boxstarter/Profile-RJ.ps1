@@ -272,6 +272,10 @@ Write-Host "Configure Code Compare"
 Invoke-WebRequest -Uri "$repoUri/apps/CodeCompare.xml" -OutFile "$Env:OneDrive\CodeCompare.settings"  -UseBasicParsing
 
 # LINQPad
+$linqPadPath = "$Env:APPDATA\LINQPad"
+If(!(Test-Path $linqPadPath)) {
+    New-Item -ItemType Directory -Force -Path $linqPadPath
+}
 Invoke-WebRequest -Uri "$repoUri/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
 
 #----------------------------------------------------------------------------------------------------
