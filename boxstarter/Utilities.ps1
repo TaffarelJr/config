@@ -12,25 +12,31 @@ if ($(Get-PSRepository -Name "PSGallery" | Select-Object -ExpandProperty "Instal
     Set-PSRepository -Name $galleryName -InstallationPolicy $trustLevel
 }
 
-# Import PowerShell modules
+# Import PowerShell modules as needed
 @(
     "powershell-yaml"
     "Poshstache"
 ) | ForEach-Object {
+    # Check if the module is already imported
     $module = Get-Module -Name $_
     if ($module -eq $null) {
+        # If not, check if the module is already installed locally
         $module = Get-Module -ListAvailable -Name $_
         if ($module -eq $null) {
+            # If not, check if the module is available for download
             $module = Find-Module -Name $_
             if ($module -eq $null) {
+                # If not, then there's nothing we can do
                 Write-Host "Module '$_' not recognized"
             }
             else {
+                # Otherwise, download the module
                 Install-Module -Name $_ -Scope "CurrentUser" -Force
                 Write-Host "Module '$_' downloaded successfully"
             }
         }
 
+        # Import the module
         Import-Module -Name $_
         Write-Host "Module '$_' imported successfully"
     }
@@ -40,10 +46,12 @@ if ($(Get-PSRepository -Name "PSGallery" | Select-Object -ExpandProperty "Instal
 }
 
 # Set custom constants
+$winEdition = (Get-WindowsEdition -Online).Edition
+$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional"
+$vsCommonDir = "$vsInstallDir\Common7"
+$vsIdeDir = "$vsCommonDir\IDE"
 $vsUserDir = "$Env:LOCALAPPDATA\Microsoft\VisualStudio"
-$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional\Common7\IDE"
 $vsMarketplace = "https://marketplace.visualstudio.com"
-$edition = (Get-WindowsEdition -Online).Edition
 
 # Configure Chocolatey cache path. This is a workaround for a current bug:
 # https://github.com/chocolatey/boxstarter/issues/241
@@ -180,7 +188,7 @@ function Set-WindowsSearchFileExtension {
 # (only works after VS is installed)
 function Get-InstalledVsix {
     Write-Host "Get list of Visual Studio extensions that are already installed ..."
-    Get-ChildItem -Path $vsUserDir, "$vsInstallDir\CommonExtensions", "$vsInstallDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
+    Get-ChildItem -Path $vsUserDir, "$vsIdeDir\CommonExtensions", "$vsIdeDir\Extensions" -File -Filter "*.vsixmanifest" -Recurse | `
         Select-String -List -Pattern '<Identity .*?Id="(.+?)"' | `
         ForEach-Object { $_.Matches.Groups[1].Value } | `
         Sort-Object
@@ -260,7 +268,7 @@ function Install-Vsix {
     process {
         # Install the extension
         Write-Host "Install $VsixFile ..."
-        Start-Process -Filepath "$vsInstallDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin /force `"$VsixFile`"" -Wait
+        Start-Process -Filepath "$vsIdeDir\VSIXInstaller.exe" -ArgumentList "/quiet /admin /force `"$VsixFile`"" -Wait
         Remove-Item $VsixFile -ErrorAction "Ignore"
     }
 }

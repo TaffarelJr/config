@@ -260,12 +260,11 @@ Write-Header "Configure Visual Studio 2019"
 #----------------------------------------------------------------------------------------------------
 
 # Check if Visual Studio is installed
-$vsInstallPath = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional"
-$devShell = "$vsInstallPath\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+$devShell = "$vsCommonDir\Tools\Microsoft.VisualStudio.DevShell.dll"
 if (Test-Path $devShell) {
     # Load the Visual Studio Developer Console commands
     Import-Module $devShell
-    Enter-VsDevShell -VsInstallPath $vsInstallPath
+    Enter-VsDevShell -VsInstallPath $vsInstallDir
 
     # Download configuration settings
     Write-Host "Configure Visual Studio 2019"
