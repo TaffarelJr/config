@@ -46,26 +46,31 @@ $fonts = @(
         Name              = "Cascadia Code PL"
         KeyedName         = "&Cascadia Code PL"
         ChocolateyPackage = "cascadiacodepl"
+        NerdFont          = "cascadia-code-nerd-font"
     }
     @{
         Name              = "DejaVu"
         KeyedName         = "&DejaVu"
         ChocolateyPackage = "dejavufonts"
+        NerdFont          = "font-nerd-dejavusansmono"
     }
     @{
         Name              = "Fira Code"
         KeyedName         = "&Fira Code"
-        ChocolateyPackage = "firacode" # Currently displays lots of errors, but succeeds anyway
+        ChocolateyPackage = "firacode"
+        NerdFont          = "firacodenf"
     }
     @{
         Name              = "Hack"
         KeyedName         = "&Hack"
         ChocolateyPackage = "hackfont"
+        NerdFont          = "nerdfont-hack"
     }
 )
 
 # Install all fonts
 $fonts | ForEach-Object { choco install -y $chocoCache $_.ChocolateyPackage }
+$fonts | ForEach-Object { choco install -y $chocoCache $_.NerdFont }
 
 # Prompt user to choose a specific font
 $options = $fonts | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
