@@ -12,14 +12,31 @@ if ($(Get-PSRepository -Name "PSGallery" | Select-Object -ExpandProperty "Instal
     Set-PSRepository -Name $galleryName -InstallationPolicy $trustLevel
 }
 
-# Install modules
+# Import PowerShell modules
 @(
     "powershell-yaml"
     "Poshstache"
 ) | ForEach-Object {
-    Write-Host "Import $_"
-    Install-Module $_ -Force
-    Import-Module $_
+    $module = Get-Module -Name $_
+    if ($module -eq $null) {
+        $module = Get-Module -ListAvailable -Name $_
+        if ($module -eq $null) {
+            $module = Find-Module -Name $_
+            if ($module -eq $null) {
+                Write-Host "Module '$_' not recognized"
+            }
+            else {
+                Install-Module -Name $_ -Scope "CurrentUser" -Force
+                Write-Host "Module '$_' downloaded successfully"
+            }
+        }
+
+        Import-Module -Name $_
+        Write-Host "Module '$_' imported successfully"
+    }
+    else {
+        Write-Host " Module '$_' is already imported"
+    }
 }
 
 # Set custom constants
