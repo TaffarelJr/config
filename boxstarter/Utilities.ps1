@@ -5,6 +5,13 @@ $PSVersionTable | Out-String | Write-Host
 # Set PowerShell preference variables
 $ErrorActionPreference = "Stop"
 
+# Make sure the PSGallery is trusted
+$galleryName = "PSGallery"
+$trustLevel = "Trusted"
+if ($(Get-PSRepository -Name "PSGallery" | Select-Object -ExpandProperty "InstallationPolicy") -ne $trustLevel) {
+    Set-PSRepository -Name $galleryName -InstallationPolicy $trustLevel
+}
+
 # Install modules
 @(
     "powershell-yaml"
