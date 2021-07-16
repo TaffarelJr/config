@@ -28,8 +28,8 @@
         "defaults":
         {
             // Put settings here that you want to apply to all profiles.
-            "hidden": false,
-            "fontFace": "Cascadia Code PL"
+            "fontFace": "Consolas"
+            "hidden": false
         },
         "list":
         [
