@@ -3,15 +3,18 @@ Write-Host "Run startup scripts"
 #----------------------------------------------------------------------------------------------------
 
 # Validate Windows version
-if ($edition -EQ "Home") { throw [System.IO.InvalidOperationException] "This script cannot be run on Windows 10 Home Edition" }
+if ($edition -EQ "Home") {
+    throw [System.IO.InvalidOperationException] "This script cannot be run on Windows 10 Home Edition"
+}
 
 # Download & import utilities
 $repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
-$fileUri = "$repoUri/boxstarter/Utilities.ps1"
-$filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $fileUri"
-Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
-. $filePath
+$utilitiesFilename = "Utilities.ps1"
+$utilitiesUri = "$repoUri/boxstarter/$utilitiesFilename"
+$utilitiesLocalPath = "$Env:TEMP\$utilitiesFilename"
+Write-Host "Download & import $utilitiesUri"
+Invoke-WebRequest -Uri $utilitiesUri -OutFile $utilitiesLocalPath -UseBasicParsing
+. $utilitiesLocalPath
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install Microsoft Hyper-V"

@@ -4,11 +4,12 @@ Write-Host "Run startup scripts"
 
 # Download & import utilities
 $repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
-$fileUri = "$repoUri/boxstarter/Utilities.ps1"
-$filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $fileUri"
-Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
-. $filePath
+$utilitiesFilename = "Utilities.ps1"
+$utilitiesUri = "$repoUri/boxstarter/$utilitiesFilename"
+$utilitiesLocalPath = "$Env:TEMP\$utilitiesFilename"
+Write-Host "Download & import $utilitiesUri"
+Invoke-WebRequest -Uri $utilitiesUri -OutFile $utilitiesLocalPath -UseBasicParsing
+. $utilitiesLocalPath
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Install browsers"

@@ -4,11 +4,12 @@ Write-Host "Run startup scripts"
 
 # Download & import utilities
 $repoUri = "https://raw.githubusercontent.com/TaffarelJr/config/main"
-$fileUri = "$repoUri/boxstarter/Utilities.ps1"
-$filePath = "$Env:TEMP\Utilities.ps1"
-Write-Host "Download & import $fileUri"
-Invoke-WebRequest -Uri $fileUri -OutFile $filePath -UseBasicParsing
-. $filePath
+$utilitiesFilename = "Utilities.ps1"
+$utilitiesUri = "$repoUri/boxstarter/$utilitiesFilename"
+$utilitiesLocalPath = "$Env:TEMP\$utilitiesFilename"
+Write-Host "Download & import $utilitiesUri"
+Invoke-WebRequest -Uri $utilitiesUri -OutFile $utilitiesLocalPath -UseBasicParsing
+. $utilitiesLocalPath
 
 #----------------------------------------------------------------------------------------------------
 Write-Header "Add custom locations to Windows Search"
@@ -163,7 +164,7 @@ Write-Header "Configure Notepad++"
 
 # Make sure folder exists
 $notepadThemePath = "$Env:APPDATA\Notepad++\themes"
-If(!(Test-Path $notepadThemePath)) {
+If (!(Test-Path $notepadThemePath)) {
     New-Item -ItemType Directory -Force -Path $notepadThemePath
 }
 
@@ -284,7 +285,7 @@ Invoke-WebRequest -Uri "$repoUri/apps/CodeCompare.xml" -OutFile "$Env:OneDrive\C
 
 # LINQPad
 $linqPadPath = "$Env:APPDATA\LINQPad"
-If(!(Test-Path $linqPadPath)) {
+If (!(Test-Path $linqPadPath)) {
     New-Item -ItemType Directory -Force -Path $linqPadPath
 }
 Invoke-WebRequest -Uri "$repoUri/apps/LINQPad.xml" -OutFile "$Env:APPDATA\LINQPad\RoamingUserOptions.xml" -UseBasicParsing
