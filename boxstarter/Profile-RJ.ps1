@@ -154,6 +154,7 @@ Remove-Item "$Env:PUBLIC\Desktop\Duplicate Cleaner Pro.lnk" -ErrorAction "Ignore
 
 # Free Download Manager
 choco install -y $chocoCache "freedownloadmanager"
+Remove-Item "$Env:PUBLIC\Desktop\Free Download Manager.lnk" -ErrorAction "Ignore"
 
 # Link Shell Extension
 choco install -y $chocoCache "linkshellextension"
