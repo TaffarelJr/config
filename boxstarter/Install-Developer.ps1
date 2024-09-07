@@ -12,6 +12,25 @@ Invoke-WebRequest -Uri $utilitiesUri -OutFile $utilitiesLocalPath -UseBasicParsi
 . $utilitiesLocalPath
 
 #----------------------------------------------------------------------------------------------------
+Write-Header "User Prompts"
+#----------------------------------------------------------------------------------------------------
+
+# Prompt user to choose Visual Studio version
+$vsEditions = @(
+    @{
+        Name      = "Professional"
+        KeyedName = "&Professional"
+    }
+    @{
+        Name      = "Enterprise"
+        KeyedName = "&Enterprise"
+    }
+)
+
+$options = $vsEditions | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }
+$vsEdition = $themes[$host.ui.PromptForChoice("Choose Visual Studio edition", "Select a Visual Studio edition:", $options, 1)]
+
+#----------------------------------------------------------------------------------------------------
 Write-Header "Enable Windows Developer Mode"
 #----------------------------------------------------------------------------------------------------
 

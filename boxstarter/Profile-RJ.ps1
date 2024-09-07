@@ -44,34 +44,40 @@ Write-Header "Install developer fonts"
 
 $fonts = @(
     @{
-        Name              = "Cascadia Code PL"
-        KeyedName         = "&Cascadia Code PL"
-        ChocolateyPackage = "cascadiacodepl"
-        NerdFont          = "cascadia-code-nerd-font"
+        KeyedName          = "&Cascadia"
+        CodeFontName       = "Cascadia Code PL"
+        NerdFontName       = "Cascadia"
+        ChocolateyPackages = @(
+            "cascadiacodepl",
+            "cascadia-code-nerd-font"
+        )
     }
     @{
-        Name              = "DejaVu"
-        KeyedName         = "&DejaVu"
-        ChocolateyPackage = "dejavufonts"
-        NerdFont          = "font-nerd-dejavusansmono"
+        Name                      = "DejaVu Sans Mono"
+        KeyedName                 = "&DejaVu"
+        NerdFontName              = "DejaVuSansMono NF"
+        ChocolateyPackage         = "dejavufonts"
+        ChocolateyNerdFontPackage = "font-nerd-dejavusansmono"
     }
     @{
-        Name              = "Fira Code"
-        KeyedName         = "&Fira Code"
-        ChocolateyPackage = "firacode"
-        NerdFont          = "firacodenf"
+        Name                      = "Fira Code"
+        KeyedName                 = "&Fira Code"
+        NerdFontName              = "FiraCode NF"
+        ChocolateyPackage         = "firacode"
+        ChocolateyNerdFontPackage = "firacodenf"
     }
     @{
-        Name              = "Hack"
-        KeyedName         = "&Hack"
-        ChocolateyPackage = "hackfont"
-        NerdFont          = "nerdfont-hack"
+        Name                      = "Hack"
+        KeyedName                 = "&Hack"
+        NerdFontName              = "Cascadia"
+        ChocolateyPackage         = "hackfont"
+        ChocolateyNerdFontPackage = "nerdfont-hack"
     }
 )
 
 # Install all fonts
 $fonts | ForEach-Object { choco install -y $chocoCache $_.ChocolateyPackage }
-$fonts | ForEach-Object { choco install -y $chocoCache $_.NerdFont }
+$fonts | ForEach-Object { choco install -y $chocoCache $_.ChocolateyNerdFontPackage }
 
 # Prompt user to choose a specific font
 $options = $fonts | ForEach-Object { New-Object System.Management.Automation.Host.ChoiceDescription $_.KeyedName, $_.Name }

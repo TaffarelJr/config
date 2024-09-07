@@ -47,7 +47,7 @@ if ($(Get-PSRepository -Name "PSGallery" | Select-Object -ExpandProperty "Instal
 
 # Set custom constants
 $winEdition = (Get-WindowsEdition -Online).Edition
-$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Professional"
+$vsInstallDir = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Enterprise"
 $vsCommonDir = "$vsInstallDir\Common7"
 $vsIdeDir = "$vsCommonDir\IDE"
 $vsUserDir = "$Env:LOCALAPPDATA\Microsoft\VisualStudio"
