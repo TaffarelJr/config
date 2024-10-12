@@ -35,4 +35,22 @@ function Backup-Registry {
 
 #-------------------------------------------------------------------------------
 
+function Assert-RegistryDrives {
+    <#
+        .SYNOPSIS
+            Ensures all registry hives have a mapped PSDrive,
+            to make them accessible.
+    #>
+
+    $hives | ForEach-Object {
+        if (-not (Get-PSDrive -Name $_.Short -ErrorAction 'SilentlyContinue')) {
+            Write-Host "Mapping PSDrive to $($_.Name)"
+            New-PSDrive -Name $_.Short -PSProvider 'Registry' -Root $_.Name -Scope 'Global' | Out-Null
+        }
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Backup-Registry
+Export-ModuleMember -Function Assert-RegistryDrives
