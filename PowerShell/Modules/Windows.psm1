@@ -22,6 +22,24 @@ function Assert-Admin {
 
 #-------------------------------------------------------------------------------
 
+function Assert-ComputerName {
+    <#
+        .SYNOPSIS
+            Prompts the user to change the name of the computer.
+    #>
+
+    Write-Host
+    Write-Host "Computer name is: $Env:COMPUTERNAME"
+    Write-Host 'What would you like to change it to?'
+    $name = Read-Host -Prompt '<press ENTER to skip>'
+
+    if (($null -ne $name) -and ($name.Length -gt 0)) {
+        Rename-Computer -NewName $name
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 function Disable-WindowsService {
     <#
         .SYNOPSIS
@@ -106,5 +124,6 @@ function Remove-FromWindowsStartup {
 #-------------------------------------------------------------------------------
 
 Export-ModuleMember -Function Assert-Admin
+Export-ModuleMember -Function Assert-ComputerName
 Export-ModuleMember -Function Disable-WindowsService
 Export-ModuleMember -Function Remove-FromWindowsStartup
