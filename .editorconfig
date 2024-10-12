@@ -7,13 +7,19 @@ charset = utf-8
 indent_style = space
 indent_size = 4
 tab_width = 4
+max_line_length = 120
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.md]
-trim_trailing_whitespace = false
+# VS Code: Go to Settings->Rulers (convert from ARGB here, to RGBA in Settings)
+guidelines = 80 1px solid 5000ff00, 100 1px solid 75ffff00, 120 1px solid ff8b0000
+
+[*.{bash,fish,sh}] # Required by file format
+end_of_line = lf
+
+[*.{yaml,yml}] # Required by file format
+indent_style = space
+
+[*.{config,js,json,jsx,md,svg,ts,tsx,xml,yaml,yml}] # Looks better
 indent_size = 2
 tab_width = 2
-
-[*.sh]
-end_of_line = lf
