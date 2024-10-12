@@ -37,4 +37,33 @@ function Assert-PowerShellLanguageMode {
 
 #-------------------------------------------------------------------------------
 
+function Assert-PowerShellModule {
+    <#
+        .SYNOPSIS
+            Ensures the specified PowerShell module is installed and available.
+
+        .PARAMETER Name
+            The name of the PowerShell module to be installed.
+    #>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, Mandatory, ValueFromPipeline)]
+        [string] $Name
+    )
+
+    process {
+        # Check if the module is already installed
+        $module = Get-Module -Name $Name -ListAvailable
+        if ($null -eq $module) {
+            # If not, install it
+            Write-Host "Installing PowerShell module '$Name'"
+            Install-Module -Name $Name -Scope 'AllUsers' -Force
+        }
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-PowerShellLanguageMode
+Export-ModuleMember -Function Assert-PowerShellModule
