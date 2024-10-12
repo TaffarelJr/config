@@ -52,5 +52,43 @@ function Assert-RegistryDrives {
 
 #-------------------------------------------------------------------------------
 
+function Assert-RegistryKey {
+    <#
+        .SYNOPSIS
+            Ensures a registry key exists, creating it if necessary.
+
+        .PARAMETER Hive
+            The registry hive to which the key belongs.
+
+        .PARAMETER Key
+            The registry key path (excluding the hive).
+
+        .OUTPUTS
+            The registry key object, in a writable state.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [RegistryHive] $Hive,
+
+        [Parameter(Position = 1, Mandatory)]
+        [string] $Key
+    )
+
+    # Open the registry key
+    $hiveKey = [RegistryKey]::OpenBaseKey($Hive, [RegistryView]::Default)
+    $registryKey = $hiveKey.OpenSubKey($Key, $true) # Writable
+    if ($null -eq $registryKey) {
+        # If it doesn't exist, create it
+        Write-Host "Creating registry key '$($Hive.ToString()):\$Key'"
+        $registryKey = $hiveKey.CreateSubKey($Key, $true) # Writable
+    }
+
+    return $registryKey
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Backup-Registry
 Export-ModuleMember -Function Assert-RegistryDrives
+Export-ModuleMember -Function Assert-RegistryKey
