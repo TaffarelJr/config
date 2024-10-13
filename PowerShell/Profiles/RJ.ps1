@@ -1,4 +1,5 @@
-"$PSScriptRoot\..\Modules\*.psm1" | Get-ChildItem | Import-Module -Force
+$moduleDir = "$PSScriptRoot\..\Modules"
+"$moduleDir\*.psm1" | Get-ChildItem | Import-Module -Force
 Initialize-Environment
 
 #-------------------------------------------------------------------------------
@@ -12,6 +13,10 @@ $devDrive = 'C:\Dev'
 $devFont = [PSCustomObject]@{
     Name    = 'FiraCode NF'
     Package = 'firacodenf'
+}
+
+$ohMyPosh = [PSCustomObject]@{
+    PowerShell = '$Env:POSH_THEMES_PATH\powerlevel10k_rainbow.omp.json'
 }
 
 #-------------------------------------------------------------------------------
@@ -45,4 +50,51 @@ $changed = `
 if ($changed) {
     Write-Host 'Saving changes...'
     Set-WindowsTerminalConfig $config
+}
+
+#-------------------------------------------------------------------------------
+Start-Component 'Oh-My-Posh'
+#-------------------------------------------------------------------------------
+
+Assert-WinGetPackage -Name 'JanDeDobbeleer.OhMyPosh'
+Update-SessionEnvironment # Reload the environment -- part of Chocolatey
+oh-my-posh enable autoupgrade
+
+#-------------------------------------------------------------------------------
+Start-Component '(Windows) PowerShell 5'
+#-------------------------------------------------------------------------------
+
+$theme = if ($ohMyPosh.PowerShell) {
+    " --config `"$($ohMyPosh.PowerShell)`""
+}
+else { $null }
+
+Invoke-PowerShell5 -ModuleDir $moduleDir -Arguments $theme -ScriptBlock {
+    param ($theme)
+
+    Write-Host 'Installing theme ...'
+    Assert-FileContentBlock `
+        -Path $Profile.CurrentUserAllHosts  `
+        -Find '# Load Oh-My-Posh theme.*?(\s*$|(\r\n){2,}|\n{2,})' `
+        -Content @"
+# Load Oh-My-Posh theme
+oh-my-posh init pwsh$theme | Invoke-Expression
+"@
+}
+
+#-------------------------------------------------------------------------------
+Start-Component 'PowerShell (Core) 7'
+#-------------------------------------------------------------------------------
+
+Invoke-PowerShell7 -ModuleDir $moduleDir -Arguments $theme -ScriptBlock {
+    param ($theme)
+
+    Write-Host 'Installing theme ...'
+    Assert-FileContentBlock `
+        -Path $Profile.CurrentUserAllHosts  `
+        -Find '# Load Oh-My-Posh theme.*?(\s*$|(\r\n){2,}|\n{2,})' `
+        -Content @"
+# Load Oh-My-Posh theme
+oh-my-posh init pwsh$theme | Invoke-Expression
+"@
 }
