@@ -40,4 +40,42 @@ function Assert-WinGetSource {
 
 #-------------------------------------------------------------------------------
 
+function Assert-WinGetPackage {
+    <#
+        .SYNOPSIS
+            Ensures the specified WinGet package is installed.
+
+        .PARAMETER Name
+            The name of the package to install.
+
+        .PARAMETER Confirm
+            A script block that can be used to
+            confirm the package was installed correctly.
+            Optional. Defaults to returning the installed package version.
+    #>
+
+    param (
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Name,
+
+        [Parameter(Position = 1)]
+        [ScriptBlock] $Confirm = {
+            Get-WinGetPackage "$Name" `
+            | Select-Object -ExpandProperty 'InstalledVersion'
+        }
+    )
+
+    Write-Host 'Installing WinGet package ''' -NoNewline
+    Write-Host $Name -ForegroundColor 'DarkCyan' -NoNewline
+    Write-Host ''' ...'
+    winget install --exact "$Name" --source=winget `
+        --accept-package-agreements `
+        --accept-source-agreements
+
+    Confirm-Installation -ScriptBlock $Confirm
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-WinGetSource
+Export-ModuleMember -Function Assert-WinGetPackage
