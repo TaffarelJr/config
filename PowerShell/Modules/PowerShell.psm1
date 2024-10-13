@@ -121,6 +121,35 @@ function Assert-PowerShellModule {
 
 #-------------------------------------------------------------------------------
 
+function Assert-PowerShellConfiguration {
+    <#
+        .SYNOPSIS
+            Ensures common PowerShell configuration settings are applied
+            to the current PowerShell installation.
+    #>
+
+    # Ensure the PowerShell Gallery is installed and trusted
+    Assert-PowerShellRepository `
+        -Name 'PSGallery' `
+        -Uri 'https://www.powershellgallery.com/api/v2' `
+        -Trusted
+
+    # Set UTF-8 as default
+    Assert-FileContentBlock `
+        -Path $Profile.CurrentUserAllHosts  `
+        -Find '# Default to UTF-8.*?(\s*$|(\r\n){2,}|\n{2,})' `
+        -Content @'
+# Default to UTF-8
+$utf8 = New-Object System.Text.UTF8Encoding
+[Console]::OutputEncoding = $utf8
+[Console]::InputEncoding = $utf8
+$OutputEncoding = $utf8
+'@
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-PowerShellLanguageMode
 Export-ModuleMember -Function Assert-PowerShellRepository
 Export-ModuleMember -Function Assert-PowerShellModule
+Export-ModuleMember -Function Assert-PowerShellConfiguration
