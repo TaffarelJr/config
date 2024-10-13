@@ -97,6 +97,20 @@ function Assert-ChocolateyPackage {
 
 #-------------------------------------------------------------------------------
 
+function Assert-ChocolateyUpdates {
+    <#
+        .SYNOPSIS
+            Ensures any Chocolatey package updates are installed.
+    #>
+
+    Start-Component 'Chocolatey Updates'
+
+    choco upgrade all --yes --limitoutput
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-ChocolateyProfile
 Export-ModuleMember -Function Assert-ChocolateySource
 Export-ModuleMember -Function Assert-ChocolateyPackage
+Export-ModuleMember -Function Assert-ChocolateyUpdates
