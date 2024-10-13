@@ -13,4 +13,54 @@ function Assert-ChocolateyProfile {
 
 #-------------------------------------------------------------------------------
 
+function Assert-ChocolateySource {
+    <#
+        .SYNOPSIS
+            Ensures the specified Chocolatey source is registered.
+
+        .PARAMETER Name
+            The name of the Chocolatey source.
+
+        .PARAMETER Uri
+            The URI of the Chocolatey source.
+
+        .PARAMETER Priority
+            The priority of the Chocolatey source.
+            Lower is higher priority.
+            Optional. Defaults to 0.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Name,
+
+        [Parameter(Position = 1, Mandatory)]
+        [string] $Uri,
+
+        [Parameter(Position = 2)]
+        [int] $Priority = 0
+    )
+
+    # The PowerShell module seems to be having trouble creating sources properly;
+    # so for now we have to resort to the command line instead.
+
+    $source = Get-ChocolateySource | Where-Object { $_.Name -eq $Name }
+    if ($null -eq $source) {
+        # Create the source if it doesn't exist
+        Write-Host "Registering source '$Name' ..."
+        choco source add --name=$Name --source=$Uri --priority=$Priority --limitoutput
+    }
+    elseif (($source.Source -ne $Uri) `
+            -or ($source.Priority -ne $Priority) `
+            -or ($source.Disabled)) {
+        # Update the source if necessary
+        Write-Host "Updating source '$Name' ..."
+        choco source remove --name=$Name --limitoutput
+        choco source add --name=$Name --source=$Uri --priority=$Priority --limitoutput
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-ChocolateyProfile
+Export-ModuleMember -Function Assert-ChocolateySource

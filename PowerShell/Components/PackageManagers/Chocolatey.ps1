@@ -20,3 +20,8 @@ Update-SessionEnvironment # Reload the environment -- part of Chocolatey
 # Both CLI and PowerShell module should be available
 Confirm-Installation -ScriptBlock { choco --version }
 Confirm-Installation -Label 'PowerShell module' -ScriptBlock { (Get-ChocolateyVersion).ToString() }
+
+Assert-ChocolateySource `
+    -Name 'chocolatey' `
+    -Uri 'https://community.chocolatey.org/api/v2/' `
+    -Priority 0
