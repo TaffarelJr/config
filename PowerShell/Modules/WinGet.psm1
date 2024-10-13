@@ -77,5 +77,19 @@ function Assert-WinGetPackage {
 
 #-------------------------------------------------------------------------------
 
+function Assert-WinGetUpdates {
+    <#
+        .SYNOPSIS
+            Ensures any WinGet package (or Microsoft Store app) updates are installed.
+    #>
+
+    Start-Component 'WinGet Updates'
+
+    winget upgrade --all --accept-package-agreements --accept-source-agreements
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-WinGetSource
 Export-ModuleMember -Function Assert-WinGetPackage
+Export-ModuleMember -Function Assert-WinGetUpdates
