@@ -62,5 +62,41 @@ function Assert-ChocolateySource {
 
 #-------------------------------------------------------------------------------
 
+function Assert-ChocolateyPackage {
+    <#
+        .SYNOPSIS
+            Ensures the specified Chocolatey package is installed.
+
+        .PARAMETER Name
+            The name of the package to install.
+
+        .PARAMETER Confirm
+            A script block that can be used to
+            confirm the package was installed correctly.
+            Optional. Defaults to returning the installed package version.
+    #>
+
+    param (
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Name,
+
+        [Parameter(Position = 1)]
+        [ScriptBlock] $Confirm = {
+            Get-ChocolateyPackage "$Name" `
+            | Select-Object -ExpandProperty 'Version'
+        }
+    )
+
+    Write-Host 'Installing Chocolatey package ''' -NoNewline
+    Write-Host $Name -ForegroundColor 'DarkCyan' -NoNewline
+    Write-Host ''' ...'
+    choco upgrade "$Name" --yes --limitoutput
+
+    Confirm-Installation -ScriptBlock $Confirm
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-ChocolateyProfile
 Export-ModuleMember -Function Assert-ChocolateySource
+Export-ModuleMember -Function Assert-ChocolateyPackage
