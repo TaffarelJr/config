@@ -37,6 +37,62 @@ function Assert-PowerShellLanguageMode {
 
 #-------------------------------------------------------------------------------
 
+function Assert-PowerShellRepository {
+    <#
+        .SYNOPSIS
+            Ensures the specified PowerShell repository is registered.
+
+        .PARAMETER Name
+            The name of the PowerShell repository.
+
+        .PARAMETER Uri
+            The URI of the PowerShell repository.
+
+        .PARAMETER Trusted
+            If present, indicates that the PowerShell repository
+            is trusted; otherwise, it's considered untrusted.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Name,
+
+        [Parameter(Position = 1, Mandatory)]
+        [string] $Uri,
+
+        [Parameter(Position = 2)]
+        [Switch] $Trusted = $false
+    )
+
+    $policy = if ($Trusted) { 'Trusted' } else { 'Untrusted' }
+
+    $repo = Get-PSRepository | Where-Object { $_.Name -eq $Name }
+    if ($null -eq $repo) {
+        # Create the repository if it doesn't exist
+        Write-Host "Registering $Name ..."
+        Register-PSRepository `
+            -Name $Name `
+            -SourceLocation $Uri `
+            -InstallationPolicy $policy
+    }
+    elseif ($repo.SourceLocation -ne $Uri) {
+        # Update the source location if it's wrong
+        Write-Host "Updating $Name source location ..."
+        Unregister-PSRepository -Name $Name
+        Register-PSRepository `
+            -Name $Name `
+            -SourceLocation $Uri `
+            -InstallationPolicy $policy
+    }
+    elseif ($repo.InstallationPolicy -ne $policy) {
+        # Update the installation policy if it's wrong
+        Write-Host "Updating $Name installation policy ..."
+        Set-PSRepository -Name $Name -InstallationPolicy $policy
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 function Assert-PowerShellModule {
     <#
         .SYNOPSIS
@@ -66,4 +122,5 @@ function Assert-PowerShellModule {
 #-------------------------------------------------------------------------------
 
 Export-ModuleMember -Function Assert-PowerShellLanguageMode
+Export-ModuleMember -Function Assert-PowerShellRepository
 Export-ModuleMember -Function Assert-PowerShellModule
