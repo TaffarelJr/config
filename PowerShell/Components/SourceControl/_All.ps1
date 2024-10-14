@@ -7,3 +7,4 @@ Start-ComponentGroup 'Source Control Tools'
 
 . "$PSScriptRoot\Git.ps1"
 . "$PSScriptRoot\GitVersion.ps1"
+. "$PSScriptRoot\TortoiseGit.ps1"
