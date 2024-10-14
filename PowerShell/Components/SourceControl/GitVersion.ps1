@@ -2,8 +2,7 @@
 Initialize-Environment
 
 #-------------------------------------------------------------------------------
-Start-ComponentGroup 'Source Control Tools'
+Start-Component 'GitVersion'
 #-------------------------------------------------------------------------------
 
-. "$PSScriptRoot\Git.ps1"
-. "$PSScriptRoot\GitVersion.ps1"
+Assert-WinGetPackage -Name 'GitTools.GitVersion' -Confirm { gitversion /version }
