@@ -2,10 +2,7 @@
 Initialize-Environment
 
 #-------------------------------------------------------------------------------
-Start-ComponentGroup 'Source Control Tools'
+Start-Component 'GitHub Desktop'
 #-------------------------------------------------------------------------------
 
-. "$PSScriptRoot\Git.ps1"
-. "$PSScriptRoot\GitVersion.ps1"
-. "$PSScriptRoot\TortoiseGit.ps1"
-. "$PSScriptRoot\GitHubDesktop.ps1"
+Assert-WinGetPackage -Name 'GitHub.GitHubDesktop'
