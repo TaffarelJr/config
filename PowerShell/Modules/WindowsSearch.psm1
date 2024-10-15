@@ -45,4 +45,43 @@ function Assert-WindowsSearchLocation {
 
 #-------------------------------------------------------------------------------
 
+function Assert-WindowsSearchContents {
+    <#
+        .SYNOPSIS
+            Ensures that files with the specified file extension are included
+            in Windows Search with their contents indexed as plain text.
+
+        .PARAMETER Extension
+            The file extension to be indexed as plain text.
+    #>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, Mandatory, ValueFromPipeline)]
+        [string] $Extension
+    )
+
+    process {
+        Assert-RegistryValue `
+            -Hive ClassesRoot `
+            -Key "$Extension" `
+            -ValueData "$Extension file" `
+            -DefaultValue
+
+        Assert-RegistryValue `
+            -Hive ClassesRoot `
+            -Key "$Extension\PersistentHandler" `
+            -ValueData '{5E941D80-BF96-11CD-B579-08002B30BFEB}'
+
+        Assert-RegistryValue `
+            -Hive ClassesRoot `
+            -Key "$Extension\PersistentHandler" `
+            -ValueName 'OriginalPersistentHandler' `
+            -ValueData '{00000000-0000-0000-0000-000000000000}'
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-WindowsSearchLocation
+Export-ModuleMember -Function Assert-WindowsSearchContents
