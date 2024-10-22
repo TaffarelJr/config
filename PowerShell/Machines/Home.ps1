@@ -10,3 +10,4 @@ $componentDir = "$PSScriptRoot\..\Components"
 . "$componentDir\Utilities\_All.ps1" -CCleaner
 . "$componentDir\Browsers\_All.ps1"
 . "$componentDir\CloudStorage\_All.ps1" -GoogleDrive -Dropbox
+. "$componentDir\Communications\_All.ps1"
