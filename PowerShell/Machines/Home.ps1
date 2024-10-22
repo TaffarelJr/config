@@ -8,3 +8,4 @@ $componentDir = "$PSScriptRoot\..\Components"
 . "$componentDir\OS\_All.ps1"
 . "$componentDir\Shells\_All.ps1"
 . "$componentDir\Utilities\_All.ps1" -CCleaner
+. "$componentDir\Browsers\_All.ps1"

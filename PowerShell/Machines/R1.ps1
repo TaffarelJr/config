@@ -8,6 +8,7 @@ $componentDir = "$PSScriptRoot\..\Components"
 . "$componentDir\OS\_All.ps1"
 . "$componentDir\Shells\_All.ps1"
 . "$componentDir\Utilities\_All.ps1"
+. "$componentDir\Browsers\_All.ps1" -Firefox
 
 # Developer tools
 . "$componentDir\SourceControl\_All.ps1"
