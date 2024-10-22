@@ -1,3 +1,33 @@
+$packageDir = "$Env:LOCALAPPDATA\Microsoft\WinGet\Packages"
+
+#-------------------------------------------------------------------------------
+
+function Get-WinGetPackageDir {
+    <#
+        .SYNOPSIS
+            Retrieves the directory path for the specified WinGet package.
+
+        .PARAMETER Name
+            The name of the WinGet package.
+
+        .OUTPUTS
+            The directory path for the specified WinGet package,
+            or $null if the package is not installed.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Name
+    )
+
+    $package = Get-ChildItem -Path $packageDir -Filter "$Name*" -Directory
+    if ($null -ne $package) {
+        return $package.FullName
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 function Assert-WinGetSource {
     <#
         .SYNOPSIS
@@ -90,6 +120,7 @@ function Assert-WinGetUpdates {
 
 #-------------------------------------------------------------------------------
 
+Export-ModuleMember -Function Get-WinGetPackageDir
 Export-ModuleMember -Function Assert-WinGetSource
 Export-ModuleMember -Function Assert-WinGetPackage
 Export-ModuleMember -Function Assert-WinGetUpdates
