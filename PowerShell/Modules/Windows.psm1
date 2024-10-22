@@ -1,4 +1,5 @@
 using namespace System.Security.Principal
+using namespace System.IO
 
 #-------------------------------------------------------------------------------
 
@@ -35,6 +36,40 @@ function Assert-ComputerName {
 
     if (($null -ne $name) -and ($name.Length -gt 0)) {
         Rename-Computer -NewName $name
+    }
+}
+
+#-------------------------------------------------------------------------------
+
+function Assert-Shortcut {
+    <#
+        .SYNOPSIS
+            Ensures a shortcut exists in the specified location
+            targeting the specified file.
+
+        .PARAMETER Location
+            The path to the location where the shortcut should exist.
+
+        .PARAMETER Target
+            The path to the file that should be targeted by the shortcut.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Location,
+
+        [Parameter(Position = 1, Mandatory)]
+        [string] $Target
+    )
+
+    # Check if a shortcut exists at the specified location
+    if (-not (Test-Path -Path $Location)) {
+        # If not, create it
+        Write-Host "Creating shortcut to '$([Path]::GetFileName($Target))'"
+        $shell = New-Object -COMObject 'WScript.Shell'
+        $shortcut = $shell.CreateShortcut($Location)
+        $shortcut.TargetPath = $Target
+        $shortcut.Save()
     }
 }
 
@@ -125,5 +160,6 @@ function Remove-FromWindowsStartup {
 
 Export-ModuleMember -Function Assert-Admin
 Export-ModuleMember -Function Assert-ComputerName
+Export-ModuleMember -Function Assert-Shortcut
 Export-ModuleMember -Function Disable-WindowsService
 Export-ModuleMember -Function Remove-FromWindowsStartup
