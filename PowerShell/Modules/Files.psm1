@@ -20,4 +20,27 @@ function Assert-File {
 
 #-------------------------------------------------------------------------------
 
+function Remove-File {
+    <#
+        .SYNOPSIS
+            Ensures a file does not exist.
+
+        .PARAMETER Path
+            The path to the file.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Path
+    )
+
+    if (Test-Path -Path $Path) {
+        Write-Host "Deleting file '$Path'"
+        Remove-Item -Path $Path
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-File
+Export-ModuleMember -Function Remove-File
