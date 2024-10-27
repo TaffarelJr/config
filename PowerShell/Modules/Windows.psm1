@@ -65,5 +65,46 @@ function Disable-WindowsService {
 
 #-------------------------------------------------------------------------------
 
+function Remove-FromWindowsStartup {
+    <#
+        .SYNOPSIS
+            Ensures the specified application does not start up with Windows.
+
+        .PARAMETER Name
+            The name of the application.
+    #>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, Mandatory, ValueFromPipeline)]
+        [string] $Name
+    )
+
+    # There are 4 places where apps can be registered to start automatically;
+    # we need to make sure the app is removed from all of them.
+    process {
+        Remove-RegistryValue `
+            -Hive LocalMachine `
+            -Key 'SOFTWARE\Microsoft\Windows\CurrentVersion\Run' `
+            -ValueName $Name
+
+        Remove-RegistryValue `
+            -Hive LocalMachine `
+            -Key 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Run' `
+            -ValueName $Name
+
+        Remove-RegistryValue `
+            -Hive CurrentUser `
+            -Key 'Software\Microsoft\Windows\CurrentVersion\Run' `
+            -ValueName $Name
+
+        Remove-File -Path `
+            "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\$Name"
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-Admin
 Export-ModuleMember -Function Disable-WindowsService
+Export-ModuleMember -Function Remove-FromWindowsStartup
