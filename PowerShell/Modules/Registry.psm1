@@ -89,6 +89,103 @@ function Assert-RegistryKey {
 
 #-------------------------------------------------------------------------------
 
+function Assert-RegistryValue {
+    <#
+        .SYNOPSIS
+            Ensures a registry value exists, creating it if necessary.
+
+        .PARAMETER Hive
+            The registry hive to which the key belongs.
+
+        .PARAMETER Key
+            The registry key path (excluding the hive).
+
+        .PARAMETER ValueName
+            The name of the registry value.
+            Optional. Defaults to '(Default)'.
+
+        .PARAMETER ValueData
+            The data for the registry value.
+
+        .PARAMETER ValueType
+            The data type of the registry value.
+            Optional. Defaults to 'String'.
+
+        .PARAMETER DefaultValue
+            If specified, the value is set only on creation.
+            If it already exists, the existing value is not modified.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [RegistryHive] $Hive,
+
+        [Parameter(Position = 1, Mandatory)]
+        [string] $Key,
+
+        [Parameter(Position = 2)]
+        [string] $ValueName = '(Default)',
+
+        [Parameter(Position = 3, Mandatory)]
+        $ValueData,
+
+        [Parameter(Position = 4)]
+        [RegistryValueKind] $ValueType = [RegistryValueKind]::String,
+
+        [Parameter(Position = 5)]
+        [switch] $DefaultValue
+    )
+
+    # Get the current data in the registry value
+    $registryKey = Assert-RegistryKey -Hive $Hive -Key $Key
+    $currentValue = $registryKey.GetValue($ValueName, $null, `
+            [RegistryValueOptions]::DoNotExpandEnvironmentNames)
+
+    # Set the registry value data, if necessary
+    if ($null -eq $currentValue) {
+        Write-Host "Creating registry value '$ValueName' set to '$ValueData' ($ValueType)"
+        $registryKey.SetValue($ValueName, (Convert $ValueData $ValueType), $ValueType)
+    }
+    elseif ((-not $DefaultValue) -and ($currentValue -cne $ValueData)) {
+        Write-Host "Setting registry value '$ValueName' to '$ValueData' ($ValueType)"
+        $registryKey.SetValue($ValueName, (Convert $ValueData $ValueType), $ValueType)
+    }
+
+    $registryKey.Close()
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Backup-Registry
 Export-ModuleMember -Function Assert-RegistryDrives
 Export-ModuleMember -Function Assert-RegistryKey
+Export-ModuleMember -Function Assert-RegistryValue
+
+# Private helper functions:
+#-------------------------------------------------------------------------------
+
+function Convert {
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        $ValueData,
+
+        [Parameter(Position = 1, Mandatory)]
+        [RegistryValueKind] $ValueType
+    )
+
+    switch ($ValueType) {
+        Binary {
+            # Hexadecimal string: 2 chars = 1 byte
+            $binary = [byte[]]::new($ValueData.Length / 2)
+            for ($i = 0; $i -lt $ValueData.Length; $i += 2) {
+                $binary[$i / 2] = [Convert]::ToByte($ValueData.Substring($i, 2), 16)
+            }
+            return $binary
+        }
+
+        DWord { return [Convert]::ToInt32($ValueData) }
+        QWord { return [Convert]::ToInt64($ValueData) }
+        MultiString { return ($ValueData -Split "`n") }
+        default { return $ValueData }
+    }
+}
