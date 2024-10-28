@@ -55,4 +55,36 @@ function Assert-EnvVar {
 
 #-------------------------------------------------------------------------------
 
+function Assert-PathEnvVar {
+    <#
+        .SYNOPSIS
+            Ensures the given path is included in the `Path` environment variable.
+
+        .PARAMETER Path
+            The path to be included in the `Path` environment variable.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Path
+    )
+
+    # Check if the given path is already in the environment variable
+    $pathArray = $Env:Path -Split ';'
+    if ($pathArray -NotContains $Path) {
+        # If not, add it
+        $name = 'Path'
+        Write-Host "Adding '$Path' to environment variable '$name'"
+        $pathArray += $Path
+        $newPath = $pathArray -Join ';'
+        [Environment]::SetEnvironmentVariable($name, $newPath, `
+                [EnvironmentVariableTarget]::Machine)
+        [Environment]::SetEnvironmentVariable($name, $newPath, `
+                [EnvironmentVariableTarget]::Process)
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-EnvVar
+Export-ModuleMember -Function Assert-PathEnvVar
