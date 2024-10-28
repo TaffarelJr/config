@@ -156,10 +156,87 @@ function Assert-RegistryValue {
 
 #-------------------------------------------------------------------------------
 
+function Remove-RegistryKey {
+    <#
+        .SYNOPSIS
+            Ensures a registry key is removed.
+
+        .PARAMETER Hive
+            The registry hive to which the key belongs.
+
+        .PARAMETER Key
+            The registry key path (excluding the hive).
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [RegistryHive] $Hive,
+
+        [Parameter(Position = 1, Mandatory)]
+        [string] $Key
+    )
+
+    # Check if the registry key exists
+    $hiveKey = [RegistryKey]::OpenBaseKey($Hive, [RegistryView]::Default)
+    $registryKey = $hiveKey.OpenSubKey($Key, $false) # Read-only
+    if ($null -eq $registryKey) {
+        # If so, delete it
+        Write-Host "Deleting registry key '$($Hive.ToString()):\$Key'"
+        $hiveKey.DeleteSubKeyTree($Key)
+    }
+}
+
+#-------------------------------------------------------------------------------
+
+function Remove-RegistryValue {
+    <#
+        .SYNOPSIS
+            Ensures a registry value is removed.
+
+        .PARAMETER Hive
+            The registry hive to which the key belongs.
+
+        .PARAMETER Key
+            The registry key path (excluding the hive).
+
+        .PARAMETER ValueName
+            The name of the registry value.
+            Optional. Defaults to '(Default)'.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [RegistryHive] $Hive,
+
+        [Parameter(Position = 1, Mandatory)]
+        [string] $Key,
+
+        [Parameter(Position = 2)]
+        [string] $ValueName = '(Default)'
+    )
+
+    # Get the registry value
+    $hiveKey = [RegistryKey]::OpenBaseKey($Hive, [RegistryView]::Default)
+    $registryKey = $hiveKey.OpenSubKey($Key, $true) # Writable
+    $currentValue = $registryKey.GetValue($ValueName, $null);
+
+    # Delete the registry value data, if it exists
+    if ($null -ne $currentValue) {
+        Write-Host "Deleting registry value '$ValueName'"
+        $registryKey.DeleteValue($ValueName)
+    }
+
+    $registryKey.Close()
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Backup-Registry
 Export-ModuleMember -Function Assert-RegistryDrives
 Export-ModuleMember -Function Assert-RegistryKey
 Export-ModuleMember -Function Assert-RegistryValue
+Export-ModuleMember -Function Remove-RegistryKey
+Export-ModuleMember -Function Remove-RegistryValue
 
 # Private helper functions:
 #-------------------------------------------------------------------------------
