@@ -121,6 +121,141 @@ function Assert-PowerShellModule {
 
 #-------------------------------------------------------------------------------
 
+function Assert-PowerShellConfiguration {
+    <#
+        .SYNOPSIS
+            Ensures common PowerShell configuration settings are applied
+            to the current PowerShell installation.
+    #>
+
+    # Ensure the PowerShell Gallery is installed and trusted
+    Assert-PowerShellRepository `
+        -Name 'PSGallery' `
+        -Uri 'https://www.powershellgallery.com/api/v2' `
+        -Trusted
+
+    # Set UTF-8 as default
+    Assert-FileContentBlock `
+        -Path $Profile.CurrentUserAllHosts  `
+        -Find '# Default to UTF-8.*?(\s*$|(\r\n){2,}|\n{2,})' `
+        -Content @'
+# Default to UTF-8
+$utf8 = New-Object System.Text.UTF8Encoding
+[Console]::OutputEncoding = $utf8
+[Console]::InputEncoding = $utf8
+$OutputEncoding = $utf8
+'@
+}
+
+#-------------------------------------------------------------------------------
+
+function Invoke-PowerShell5 {
+    <#
+        .SYNOPSIS
+            Launches a new PowerShell 5 process (if necessary)
+            in the same window, and executes the given command inside it.
+
+        .PARAMETER ModuleDir
+            The path to the directory where all the installation modules
+            are stored.
+
+        .PARAMETER ScriptBlock
+            The script block to be executed in the PowerShell 5 process.
+
+        .PARAMETER Arguments
+            Any arguments to be passed to the script block.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $ModuleDir,
+
+        [Parameter(Position = 1, Mandatory)]
+        [ScriptBlock] $ScriptBlock,
+
+        [Parameter(Position = 2)]
+        [object[]] $Arguments
+    )
+
+    # Check what version of PowerShell is currently executing
+    if ($PSVersionTable.PSVersion.Major -gt 5) {
+        # If it's a newer version, launch a new PowerShell 5 process
+        # and execute the given script block in that process
+        Write-Host 'Starting PowerShell 5 ...'
+        powershell -args $ModuleDir, $ScriptBlock, $Arguments -Command {
+            param ($ModuleDir, $ScriptBlock, $Arguments)
+
+            "$ModuleDir\*.psm1" | Get-ChildItem | Import-Module -Force
+            Initialize-Environment
+            Write-Host
+
+            $ScriptBlock = [ScriptBlock]::Create($ScriptBlock)
+            & $ScriptBlock @Arguments
+        }
+    }
+    else {
+        # Otherwise, just execute the given script block in the current process
+        & $ScriptBlock @Arguments
+    }
+}
+
+#-------------------------------------------------------------------------------
+
+function Invoke-PowerShell7 {
+    <#
+        .SYNOPSIS
+            Launches a new PowerShell 7 process (if necessary)
+            in the same window, and executes the given command inside it.
+
+        .PARAMETER ModuleDir
+            The path to the directory where all the installation modules
+            are stored.
+
+        .PARAMETER ScriptBlock
+            The script block to be executed in the PowerShell 7 process.
+
+        .PARAMETER Arguments
+            Any arguments to be passed to the script block.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $ModuleDir,
+
+        [Parameter(Position = 1, Mandatory)]
+        [ScriptBlock] $ScriptBlock,
+
+        [Parameter(Position = 2)]
+        [object[]] $Arguments
+    )
+
+    # Check what version of PowerShell is currently executing
+    if ($PSVersionTable.PSVersion.Major -lt 7) {
+        # If it's an older version, launch a new PowerShell 7 process
+        # and execute the given script block in that process
+        Write-Host 'Starting PowerShell 7 ...'
+        pwsh -args $ModuleDir, $ScriptBlock, $Arguments -Command {
+            param ($ModuleDir, $ScriptBlock, $Arguments)
+
+            "$ModuleDir\*.psm1" | Get-ChildItem | Import-Module -Force
+            Initialize-Environment
+            Write-Host
+
+            $ScriptBlock = [ScriptBlock]::Create($ScriptBlock)
+            & $ScriptBlock @Arguments
+        }
+    }
+    else {
+        # Otherwise, just execute the given script block in the current process
+        & $ScriptBlock @Arguments
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-PowerShellLanguageMode
 Export-ModuleMember -Function Assert-PowerShellRepository
 Export-ModuleMember -Function Assert-PowerShellModule
+Export-ModuleMember -Function Assert-PowerShellConfiguration
+Export-ModuleMember -Function Invoke-PowerShell5
+Export-ModuleMember -Function Invoke-PowerShell7
