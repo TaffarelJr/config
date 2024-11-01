@@ -102,7 +102,8 @@ function Assert-RegistryValue {
 
         .PARAMETER ValueName
             The name of the registry value.
-            Optional. Defaults to '(Default)'.
+            Passing $null or an empty string will set the default value.
+            Optional. Defaults to $null.
 
         .PARAMETER ValueData
             The data for the registry value.
@@ -124,7 +125,7 @@ function Assert-RegistryValue {
         [string] $Key,
 
         [Parameter(Position = 2)]
-        [string] $ValueName = '(Default)',
+        [string] $ValueName = $null,
 
         [Parameter(Position = 3, Mandatory)]
         $ValueData,
