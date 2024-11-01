@@ -66,7 +66,7 @@ function Assert-WindowsSearchContents {
             -Hive ClassesRoot `
             -Key "$Extension" `
             -ValueData "$Extension file" `
-            -DefaultValue
+            -CreateOnly
 
         Assert-RegistryValue `
             -Hive ClassesRoot `
