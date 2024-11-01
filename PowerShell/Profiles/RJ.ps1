@@ -57,7 +57,6 @@ Start-Component 'Oh-My-Posh'
 #-------------------------------------------------------------------------------
 
 Assert-WinGetPackage -Name 'JanDeDobbeleer.OhMyPosh'
-Update-SessionEnvironment # Reload the environment -- part of Chocolatey
 oh-my-posh enable autoupgrade
 
 #-------------------------------------------------------------------------------

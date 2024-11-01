@@ -14,8 +14,7 @@ Invoke-Expression ((New-Object WebClient).DownloadString($uri))
 # Make sure environment variable is set and profile is loaded
 $path = Convert-Path "$((Get-Command choco).Path)\..\.."
 Assert-EnvVar -Name 'ChocolateyInstall' -Value $path -Target Machine
-Import-ChocolateyProfile
-Update-SessionEnvironment # Reload the environment -- part of Chocolatey
+Assert-ChocolateyProfile
 
 # Both CLI and PowerShell module should be available
 Confirm-Installation -ScriptBlock { choco --version }

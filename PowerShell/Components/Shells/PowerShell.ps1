@@ -28,7 +28,6 @@ Start-Component 'PowerShell (Core) 7'
 #-------------------------------------------------------------------------------
 
 Assert-WinGetPackage -Name 'Microsoft.PowerShell'
-Update-SessionEnvironment
 
 Write-Host
 Invoke-PowerShell7 -ModuleDir $moduleDir -ScriptBlock {

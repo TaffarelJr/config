@@ -26,7 +26,7 @@ function Assert-ChocolateySource {
 
         .PARAMETER Priority
             The priority of the Chocolatey source.
-            Lower is higher priority.
+            Lower number means higher priority.
             Optional. Defaults to 0.
     #>
 
