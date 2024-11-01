@@ -64,7 +64,10 @@ function Assert-FileContentBlock {
 
     # Load the contents of the file
     Assert-File -Path $Path
-    $existingContent = (Get-Content -Path $Path -Raw)?.Trim()
+    $existingContent = Get-Content -Path $Path -Raw
+    if ($existingContent) {
+        $existingContent = $existingContent.Trim()
+    }
 
     if (($null -eq $existingContent) -or ($existingContent.Length -eq 0)) {
         # If the file is empty, just write the given content to the file
