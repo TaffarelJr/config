@@ -112,9 +112,9 @@ function Assert-RegistryValue {
             The data type of the registry value.
             Optional. Defaults to 'String'.
 
-        .PARAMETER DefaultValue
-            If specified, the value is set only on creation.
-            If it already exists, the existing value is not modified.
+        .PARAMETER CreateOnly
+            If specified, the value is only set if it doesn't already exist.
+            If it already exists, the value is not modified.
     #>
 
     param(
@@ -134,7 +134,7 @@ function Assert-RegistryValue {
         [RegistryValueKind] $ValueType = [RegistryValueKind]::String,
 
         [Parameter(Position = 5)]
-        [switch] $DefaultValue
+        [switch] $CreateOnly
     )
 
     # Get the current data in the registry value
@@ -147,7 +147,7 @@ function Assert-RegistryValue {
         Write-Host "Creating registry value '$ValueName' set to '$ValueData' ($ValueType)"
         $registryKey.SetValue($ValueName, (Convert $ValueData $ValueType), $ValueType)
     }
-    elseif ((-not $DefaultValue) -and ($currentValue -cne $ValueData)) {
+    elseif ((-not $CreateOnly) -and ($currentValue -cne $ValueData)) {
         Write-Host "Setting registry value '$ValueName' to '$ValueData' ($ValueType)"
         $registryKey.SetValue($ValueName, (Convert $ValueData $ValueType), $ValueType)
     }
