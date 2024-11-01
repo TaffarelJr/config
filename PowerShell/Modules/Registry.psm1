@@ -152,6 +152,7 @@ function Assert-RegistryValue {
         $registryKey.SetValue($ValueName, (Convert $ValueData $ValueType), $ValueType)
     }
 
+    # Flush changes
     $registryKey.Close()
 }
 
@@ -180,7 +181,7 @@ function Remove-RegistryKey {
     # Check if the registry key exists
     $hiveKey = [RegistryKey]::OpenBaseKey($Hive, [RegistryView]::Default)
     $registryKey = $hiveKey.OpenSubKey($Key, $false) # Read-only
-    if ($null -eq $registryKey) {
+    if ($null -ne $registryKey) {
         # If so, delete it
         Write-Host "Deleting registry key '$($Hive.ToString()):\$Key'"
         $hiveKey.DeleteSubKeyTree($Key)
@@ -216,18 +217,21 @@ function Remove-RegistryValue {
         [string] $ValueName = '(Default)'
     )
 
-    # Get the registry value
+    # Check if the registry key exists
     $hiveKey = [RegistryKey]::OpenBaseKey($Hive, [RegistryView]::Default)
     $registryKey = $hiveKey.OpenSubKey($Key, $true) # Writable
-    $currentValue = $registryKey.GetValue($ValueName, $null);
+    if ($null -ne $registryKey) {
+        # If so, check if the registry value exists
+        $currentValue = $registryKey.GetValue($ValueName, $null);
+        if ($null -ne $currentValue) {
+            # If so, delete it
+            Write-Host "Deleting registry value '$ValueName'"
+            $registryKey.DeleteValue($ValueName)
 
-    # Delete the registry value data, if it exists
-    if ($null -ne $currentValue) {
-        Write-Host "Deleting registry value '$ValueName'"
-        $registryKey.DeleteValue($ValueName)
+            # Flush changes
+            $registryKey.Close()
+        }
     }
-
-    $registryKey.Close()
 }
 
 #-------------------------------------------------------------------------------
