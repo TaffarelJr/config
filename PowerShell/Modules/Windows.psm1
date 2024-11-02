@@ -222,6 +222,36 @@ function Remove-FromWindowsStartup {
 
 #-------------------------------------------------------------------------------
 
+function Remove-FromWindowsDesktop {
+    <#
+        .SYNOPSIS
+            Removes the specified shortcut(s) from the desktop.
+
+        .PARAMETER Name
+            The name or pattern of the shortcut(s) to be removed if found.
+            Wildcards are supported.
+    #>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, Mandatory, ValueFromPipeline)]
+        [string] $Name
+    )
+
+    process {
+        @(
+            "$Env:PUBLIC\Desktop"
+            [Environment]::GetFolderPath('Desktop')
+        ) | ForEach-Object {
+            Get-ChildItem -Path $_ -Filter "$Name.lnk" | ForEach-Object {
+                Remove-Item -Path $_.FullName -Force
+            }
+        }
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 Export-ModuleMember -Function Assert-Admin
 Export-ModuleMember -Function Assert-ComputerName
 Export-ModuleMember -Function Assert-Shortcut
@@ -229,6 +259,7 @@ Export-ModuleMember -Function Assert-PinnedToStartmenu
 Export-ModuleMember -Function Assert-UnpinnedFromStartmenu
 Export-ModuleMember -Function Disable-WindowsService
 Export-ModuleMember -Function Remove-FromWindowsStartup
+Export-ModuleMember -Function Remove-FromWindowsDesktop
 
 # Private helper functions:
 #-------------------------------------------------------------------------------
