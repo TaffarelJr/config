@@ -3,6 +3,10 @@ using namespace System.IO
 
 #-------------------------------------------------------------------------------
 
+$startMenuLocation = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs"
+
+#-------------------------------------------------------------------------------
+
 function Assert-Admin {
     <#
         .SYNOPSIS
@@ -97,7 +101,7 @@ function Assert-PinnedToStartmenu {
     )
 
     # Create a shortcut in the Start Menu folder (required)
-    $shortcut = "$startMenu\$Name.lnk"
+    $shortcut = "$startMenuLocation\$Name.lnk"
     Assert-Shortcut -Location $shortcut -Target $Path
 
     # Pin the shortcut to the Start Menu
@@ -122,7 +126,7 @@ function Assert-UnpinnedFromStartmenu {
     )
 
     # Check if the specified shortcut exists
-    $shortcut = "$startMenu\$Name.lnk"
+    $shortcut = "$startMenuLocation\$Name.lnk"
     if (Test-Path -Path $shortcut) {
         # If so, unpin it from the Start Menu
         Invoke-Verb -Path $shortcut -Verb 'startunpin' `
