@@ -125,6 +125,44 @@ function Assert-FileContentBlock {
 
 #-------------------------------------------------------------------------------
 
+function Assert-LineEndings {
+    <#
+        .SYNOPSIS
+            Ensures the specified text has the specified line endings.
+
+        .PARAMETER Text
+            The text to be inspected.
+
+        .PARAMETER LineEnding
+            The line ending to use when appending content.
+            Optional. Defaults to CRLF.
+
+        .OUTPUTS
+            The given text with the specified line endings.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Text,
+
+        [Parameter(Position = 1)]
+        [string] $LineEnding = "`r`n"
+    )
+
+    # Ensure proper line endings in given text
+    switch ($LineEnding) {
+        "`r`n" {
+            return [Regex]::Replace($Text, '([^\r])\n', '$1\r\n', [RegexOptions]::Singleline)
+        }
+
+        "`n" {
+            return $Text.Replace("`r`n", "`n")
+        }
+    }
+}
+
+#-------------------------------------------------------------------------------
+
 function Remove-File {
     <#
         .SYNOPSIS
@@ -149,4 +187,5 @@ function Remove-File {
 
 Export-ModuleMember -Function Assert-File
 Export-ModuleMember -Function Assert-FileContentBlock
+Export-ModuleMember -Function Assert-LineEndings
 Export-ModuleMember -Function Remove-File
