@@ -1,3 +1,5 @@
+using namespace Microsoft.Win32
+
 $moduleDir = "$PSScriptRoot\..\Modules"
 "$moduleDir\*.psm1" | Get-ChildItem | Import-Module -Force
 Initialize-Environment
@@ -183,3 +185,60 @@ Assert-FileContentBlock `
 # Load Oh-My-Posh theme
 eval `"`$(oh-my-posh init bash$theme)`"
 "@
+
+#-------------------------------------------------------------------------------
+Start-Component 'TortoiseGit'
+#-------------------------------------------------------------------------------
+
+# Settings -> General -> Colors 1
+$hive = [RegistryHive]::CurrentUser
+$key = 'Software\TortoiseGit'
+Assert-RegistryValue $hive $key 'DarkTheme'              1 DWord # Dark theme
+$key = 'Software\TortoiseGit\TortoiseProc\Graph'
+Assert-RegistryValue $hive $key 'RevGraphUseLocalForCur' 0 DWord # Use local branch color for current branch
+$key = 'Software\TortoiseGit\Colors'
+Remove-RegistryValue $hive $key 'Conflict'      # Default (ABGR)
+Remove-RegistryValue $hive $key 'Added'         # Default (ABGR)
+Remove-RegistryValue $hive $key 'Deleted'       # Default (ABGR)
+Remove-RegistryValue $hive $key 'Merged'        # Default (ABGR)
+Remove-RegistryValue $hive $key 'Modified'      # Default (ABGR)
+Remove-RegistryValue $hive $key 'Renamed'       # Default (ABGR)
+Remove-RegistryValue $hive $key 'NoteNode'      # Default (ABGR)
+Remove-RegistryValue $hive $key 'OtherRef'      # Default (ABGR)
+
+# Settings -> General -> Colors 2
+Remove-RegistryValue $hive $key 'CurrentBranch' # Default (ABGR)
+Remove-RegistryValue $hive $key 'LocalBranch'   # Default (ABGR)
+Remove-RegistryValue $hive $key 'RemoteBranch'  # Default (ABGR)
+Remove-RegistryValue $hive $key 'Tag'           # Default (ABGR)
+Remove-RegistryValue $hive $key 'FilterMatch'   # Default (ABGR)
+
+# Settings -> General -> Colors 3
+Remove-RegistryValue $hive $key 'BranchLine1'   # Default (ABGR)
+Remove-RegistryValue $hive $key 'BranchLine2'   # Default (ABGR)
+Remove-RegistryValue $hive $key 'BranchLine3'   # Default (ABGR)
+Remove-RegistryValue $hive $key 'BranchLine4'   # Default (ABGR)
+Remove-RegistryValue $hive $key 'BranchLine5'   # Default (ABGR)
+Remove-RegistryValue $hive $key 'BranchLine6'   # Default (ABGR)
+Remove-RegistryValue $hive $key 'BranchLine7'   # Default (ABGR)
+Remove-RegistryValue $hive $key 'BranchLine8'   # Default (ABGR)
+$key = 'Software\TortoiseGit\TortoiseProc\Graph'
+Assert-RegistryValue $hive $key 'LogLineWidth'           2 DWord # Line
+Assert-RegistryValue $hive $key 'LogNodeSize'           10 DWord # Node
+
+# Settings -> Icon Overlays -> Icon Set
+$overlayPath = "$Env:CommonProgramFiles\TortoiseOverlays\Icons\Win10"
+$key = 'Software\TortoiseOverlays'
+Assert-RegistryValue $hive $key 'AddedIcon'       "$overlayPath\AddedIcon.ico"
+Assert-RegistryValue $hive $key 'ConflictIcon'    "$overlayPath\ConflictIcon.ico"
+Assert-RegistryValue $hive $key 'DeletedIcon'     "$overlayPath\DeletedIcon.ico"
+Assert-RegistryValue $hive $key 'IgnoredIcon'     "$overlayPath\IgnoredIcon.ico"
+Assert-RegistryValue $hive $key 'LockedIcon'      "$overlayPath\LockedIcon.ico"
+Assert-RegistryValue $hive $key 'ModifiedIcon'    "$overlayPath\ModifiedIcon.ico"
+Assert-RegistryValue $hive $key 'NormalIcon'      "$overlayPath\NormalIcon.ico"
+Assert-RegistryValue $hive $key 'ReadOnlyIcon'    "$overlayPath\ReadOnlyIcon.ico"
+Assert-RegistryValue $hive $key 'UnversionedIcon' "$overlayPath\UnversionedIcon.ico"
+
+# Revision Graph
+$key = 'Software\TortoiseGit'
+Assert-RegistryValue $hive $key 'ShowRevGraphOverview'   1 DWord # Show an overview of the whole graph
