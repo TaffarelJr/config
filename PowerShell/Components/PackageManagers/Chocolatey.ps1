@@ -7,6 +7,7 @@ Initialize-Environment
 Start-Component 'Chocolatey'
 #-------------------------------------------------------------------------------
 
+# Core installation
 Write-host 'Downloading and running install script ...'
 $uri = 'https://community.chocolatey.org/install.ps1'
 Invoke-Expression ((New-Object WebClient).DownloadString($uri))
@@ -20,6 +21,7 @@ Assert-ChocolateyProfile
 Confirm-Installation -ScriptBlock { choco --version }
 Confirm-Installation -Label 'PowerShell module' -ScriptBlock { (Get-ChocolateyVersion).ToString() }
 
+# Make sure the default source is set
 Assert-ChocolateySource `
     -Name 'chocolatey' `
     -Uri 'https://community.chocolatey.org/api/v2/' `
