@@ -19,6 +19,7 @@ Start-Component '(Windows) PowerShell 5'
 # PowerShell 5 is built into (and updated with) Windows.
 # No need to install or update it here.
 
+# Core configuration
 Invoke-PowerShell5 -ModuleDir $moduleDir -ScriptBlock {
     Assert-PowerShellConfiguration
 }
@@ -27,8 +28,10 @@ Invoke-PowerShell5 -ModuleDir $moduleDir -ScriptBlock {
 Start-Component 'PowerShell (Core) 7'
 #-------------------------------------------------------------------------------
 
+# Core installation
 Assert-WinGetPackage -Name 'Microsoft.PowerShell'
 
+# Core configuration
 Write-Host
 Invoke-PowerShell7 -ModuleDir $moduleDir -ScriptBlock {
     Assert-PowerShellConfiguration

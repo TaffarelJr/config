@@ -62,6 +62,9 @@ function Assert-FileContentBlock {
         [string] $LineEnding = "`r`n"
     )
 
+    # Ensure proper line endings in new content
+    $Content = Assert-LineEndings -Text $Content -LineEnding $LineEnding
+
     # Load the contents of the file
     Assert-File -Path $Path
     $existingContent = Get-Content -Path $Path -Raw
@@ -98,23 +101,62 @@ function Assert-FileContentBlock {
 
         # Attempt to replace any existing content
         $contentReplaced = $false
-        $newContent = [Regex]::Replace( `
-                $existingContent, `
-                "^(?<pre>.*?)$Find(?<post>.*?)$", `
-                $matchEvaluator, `
-                [RegexOptions]::ExplicitCapture -bor [RegexOptions]::Singleline
+        $newContent = [Regex]::Replace(
+            $existingContent,
+            "^(?<pre>.*?)$Find(?<post>.*?)$",
+            $matchEvaluator,
+            [RegexOptions]::ExplicitCapture -bor [RegexOptions]::Singleline
         )
 
         if ($contentReplaced) {
-            # If the content was replaced, save the updated file contents
-            Write-Host "Replacing old content in '$Path'"
-            Set-Content -Path $Path -Value $newContent
+            if ($newContent -cne $existingContent) {
+                # If the content was actually updated, replace the file contents
+                Write-Host "Replacing old content in '$Path'"
+                Set-Content -Path $Path -Value $newContent
+            }
         }
         else {
-            # If the content wasn't found, append it to the end of the file
+            # If the content wasn't found, just append it to the end of the file
             Write-Host "Appending content to '$Path'"
-            $newContent = "$existingContent$($LineEnding * 2)$Content"
-            Set-Content -Path $Path -Value $newContent
+            Set-Content -Path $Path -Value "$existingContent$($LineEnding * 2)$Content"
+        }
+    }
+}
+
+#-------------------------------------------------------------------------------
+
+function Assert-LineEndings {
+    <#
+        .SYNOPSIS
+            Ensures the specified text has the specified line endings.
+
+        .PARAMETER Text
+            The text to be inspected.
+
+        .PARAMETER LineEnding
+            The line ending to use when appending content.
+            Optional. Defaults to CRLF.
+
+        .OUTPUTS
+            The given text with the specified line endings.
+    #>
+
+    param(
+        [Parameter(Position = 0, Mandatory)]
+        [string] $Text,
+
+        [Parameter(Position = 1)]
+        [string] $LineEnding = "`r`n"
+    )
+
+    # Ensure proper line endings in given text
+    switch ($LineEnding) {
+        "`r`n" {
+            return [Regex]::Replace($Text, '([^\r])\n', '$1\r\n', [RegexOptions]::Singleline)
+        }
+
+        "`n" {
+            return $Text.Replace("`r`n", "`n")
         }
     }
 }
@@ -145,4 +187,5 @@ function Remove-File {
 
 Export-ModuleMember -Function Assert-File
 Export-ModuleMember -Function Assert-FileContentBlock
+Export-ModuleMember -Function Assert-LineEndings
 Export-ModuleMember -Function Remove-File
