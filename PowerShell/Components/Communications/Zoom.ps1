@@ -2,8 +2,11 @@
 Initialize-Environment
 
 #-------------------------------------------------------------------------------
-Start-ComponentGroup 'Communication Tools'
+Start-Component 'Zoom'
 #-------------------------------------------------------------------------------
 
-. "$PSScriptRoot\Slack.ps1"
-. "$PSScriptRoot\Zoom.ps1"
+# Core installation
+Assert-WinGetPackage -Name 'Zoom.Zoom'
+
+# Remove desktop shortcut
+Remove-FromWindowsDesktop -Name 'Zoom*'
