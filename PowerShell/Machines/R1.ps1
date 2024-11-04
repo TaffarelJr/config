@@ -12,6 +12,7 @@ $componentDir = "$PSScriptRoot\..\Components"
 . "$componentDir\CloudStorage\_All.ps1"
 . "$componentDir\Communications\_All.ps1"
 . "$componentDir\Office\_All.ps1"
+. "$componentDir\Graphics\_All.ps1"
 
 # Developer tools
 . "$componentDir\SourceControl\_All.ps1"
