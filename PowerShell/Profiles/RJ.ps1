@@ -65,7 +65,7 @@ Start-Component 'Oh-My-Posh'
 #-------------------------------------------------------------------------------
 
 Assert-WinGetPackage -Name 'JanDeDobbeleer.OhMyPosh'
-oh-my-posh enable autoupgrade
+oh-my-posh enable upgrade
 
 #-------------------------------------------------------------------------------
 Start-Component '(Windows) PowerShell 5'
