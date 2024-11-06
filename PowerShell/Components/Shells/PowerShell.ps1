@@ -29,7 +29,7 @@ Start-Component 'PowerShell (Core) 7'
 #-------------------------------------------------------------------------------
 
 # Core installation
-Assert-WinGetPackage -Name 'Microsoft.PowerShell'
+Assert-WinGetPackage -Name 'Microsoft.PowerShell' -Confirm { (pwsh -v).Split(' ')[1] }
 
 # Core configuration
 Write-Host
