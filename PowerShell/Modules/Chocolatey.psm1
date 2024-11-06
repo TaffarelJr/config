@@ -76,8 +76,9 @@ function Assert-ChocolateyPackage {
             Optional. Defaults to returning the installed package version.
     #>
 
+    [CmdletBinding()]
     param (
-        [Parameter(Position = 0, Mandatory)]
+        [Parameter(Position = 0, Mandatory, ValueFromPipeline)]
         [string] $Name,
 
         [Parameter(Position = 1)]
@@ -87,12 +88,14 @@ function Assert-ChocolateyPackage {
         }
     )
 
-    Write-Host 'Installing Chocolatey package ''' -NoNewline
-    Write-Host $Name -ForegroundColor 'DarkCyan' -NoNewline
-    Write-Host ''' ...'
-    choco upgrade "$Name" --yes --limitoutput
+    process {
+        Write-Host 'Installing Chocolatey package ''' -NoNewline
+        Write-Host $Name -ForegroundColor 'DarkCyan' -NoNewline
+        Write-Host ''' ...'
+        choco upgrade "$Name" --yes --limitoutput
 
-    Confirm-Installation -ScriptBlock $Confirm
+        Confirm-Installation -ScriptBlock $Confirm
+    }
 }
 
 #-------------------------------------------------------------------------------

@@ -9,4 +9,4 @@ Start-Component 'Firefox (Developer Edition)'
 Assert-WinGetPackage -Name 'Mozilla.Firefox.DeveloperEdition'
 
 # Remove desktop shortcut
-Remove-FromWindowsDesktop -Name 'Firefox'
+Remove-FromWindowsDesktop -Name 'Firefox*'

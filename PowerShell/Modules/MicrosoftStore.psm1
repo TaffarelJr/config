@@ -12,8 +12,9 @@ function Assert-MicrosoftStoreApp {
             Optional. Defaults to returning the installed app version.
     #>
 
+    [CmdletBinding()]
     param (
-        [Parameter(Position = 0, Mandatory)]
+        [Parameter(Position = 0, Mandatory, ValueFromPipeline)]
         [string] $Name,
 
         [Parameter(Position = 1)]
@@ -23,15 +24,17 @@ function Assert-MicrosoftStoreApp {
         }
     )
 
-    # Microsoft Store apps are installed using WinGet now
-    Write-Host 'Installing Microsoft Store app ''' -NoNewline
-    Write-Host $Name -ForegroundColor 'DarkCyan' -NoNewline
-    Write-Host ''' ...'
-    winget install --exact "$Name" --source=msstore `
-        --accept-package-agreements `
-        --accept-source-agreements
+    process {
+        # Microsoft Store apps are installed using WinGet now
+        Write-Host 'Installing Microsoft Store app ''' -NoNewline
+        Write-Host $Name -ForegroundColor 'DarkCyan' -NoNewline
+        Write-Host ''' ...'
+        winget install --exact "$Name" --source=msstore `
+            --accept-package-agreements `
+            --accept-source-agreements
 
-    Confirm-Installation -ScriptBlock $Confirm
+        Confirm-Installation -ScriptBlock $Confirm
+    }
 }
 
 #-------------------------------------------------------------------------------

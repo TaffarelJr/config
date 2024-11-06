@@ -10,6 +10,9 @@ Start-Component 'TortoiseGit'
 # Core installation
 Assert-WinGetPackage -Name 'TortoiseGit.TortoiseGit'
 
+# Settings documentation
+# https://tortoisegit.org/docs/tortoisegit/tgit-dug-settings.html
+
 # Configuration settings -> General
 $hive = [RegistryHive]::CurrentUser
 $key = 'Software\TortoiseGit'

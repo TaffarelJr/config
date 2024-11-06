@@ -2,13 +2,15 @@
 Initialize-Environment
 
 #-------------------------------------------------------------------------------
-Start-Component '7Zip'
+Start-Component 'Webex'
 #-------------------------------------------------------------------------------
 
-# Prepare PATH environment variable
-Assert-PathEnvVar -Path 'C:\Program Files\7-Zip'
-
 # Core installation
-Assert-WinGetPackage -Name '7zip.7zip' -Confirm {
-    (7z | Select-Object -Skip 1 -First 1).Split(' ')[1]
-}
+Assert-WinGetPackage -Name 'Cisco.Webex'
+
+# Remove desktop shortcut
+Remove-FromWindowsDesktop -Name 'Webex'
+
+# Prevent auto-startup
+Remove-FromWindowsStartup -Name 'CiscoSpark'
+Remove-FromWindowsStartup -Name 'CiscoMeetingDaemon'
