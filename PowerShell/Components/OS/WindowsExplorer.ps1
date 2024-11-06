@@ -1,5 +1,9 @@
 using namespace Microsoft.Win32
 
+param(
+    [switch]$ShowSuperHidden
+)
+
 "$PSScriptRoot\..\..\Modules\*.psm1" | Get-ChildItem | Import-Module -Force
 Initialize-Environment
 
@@ -8,6 +12,7 @@ Start-Component 'Windows Explorer'
 #-------------------------------------------------------------------------------
 
 Write-Host 'Validating configuration ...'
+$showAll = if ($ShowSuperHidden) { 1 } else { 0 }
 
 # Windows Explorer -> Options -> View -> Advanced Settings
 $hive = [RegistryHive]::CurrentUser
@@ -23,7 +28,7 @@ Assert-RegistryValue $hive $key 'Hidden'                         1 DWord # Show 
 Assert-RegistryValue $hive $key 'HideDrivesWithNoMedia'          0 DWord # Hide empty drives
 Assert-RegistryValue $hive $key 'HideFileExt'                    0 DWord # Hide extensions for known file types
 Assert-RegistryValue $hive $key 'HideMergeConflicts'             0 DWord # Hide folder merge conflicts
-Assert-RegistryValue $hive $key 'ShowSuperHidden'                1 DWord # Hide protected operating system files (Recommended)
+Assert-RegistryValue $hive $key 'ShowSuperHidden'         $showAll DWord # Hide protected operating system files (Recommended)
 Assert-RegistryValue $hive $key 'SeparateProcess'                1 DWord # Launch folder windows in a separate process
 Assert-RegistryValue $hive $key 'PersistBrowsers'                1 DWord # Restore previous folder windows at logon
 Assert-RegistryValue $hive $key 'ShowDriveLettersFirst'          0 DWord # Show drive letters

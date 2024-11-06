@@ -5,7 +5,7 @@ $componentDir = "$PSScriptRoot\..\Components"
 
 # Standard components
 . "$componentDir\PackageManagers\_All.ps1" # Do this first
-. "$componentDir\OS\_All.ps1"
+. "$componentDir\OS\_All.ps1" -Developer
 . "$componentDir\Shells\_All.ps1"
 . "$componentDir\Utilities\_All.ps1"
 . "$componentDir\Browsers\_All.ps1" -Firefox
