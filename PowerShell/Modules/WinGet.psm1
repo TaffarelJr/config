@@ -88,8 +88,9 @@ function Assert-WinGetPackage {
             Optional. Defaults to returning the installed package version.
     #>
 
+    [CmdletBinding()]
     param (
-        [Parameter(Position = 0, Mandatory)]
+        [Parameter(Position = 0, Mandatory, ValueFromPipeline)]
         [string] $Name,
 
         [Parameter(Position = 1)]
@@ -99,14 +100,16 @@ function Assert-WinGetPackage {
         }
     )
 
-    Write-Host 'Installing WinGet package ''' -NoNewline
-    Write-Host $Name -ForegroundColor 'DarkCyan' -NoNewline
-    Write-Host ''' ...'
-    winget install --exact "$Name" --source=winget `
-        --accept-package-agreements `
-        --accept-source-agreements
+    process {
+        Write-Host 'Installing WinGet package ''' -NoNewline
+        Write-Host $Name -ForegroundColor 'DarkCyan' -NoNewline
+        Write-Host ''' ...'
+        winget install --exact "$Name" --source=winget `
+            --accept-package-agreements `
+            --accept-source-agreements
 
-    Confirm-Installation -ScriptBlock $Confirm
+        Confirm-Installation -ScriptBlock $Confirm
+    }
 }
 
 #-------------------------------------------------------------------------------
