@@ -20,6 +20,6 @@ end_of_line = lf
 [*.{yaml,yml}] # Required by file format
 indent_style = space
 
-[*.{config,js,json,jsx,md,svg,ts,tsx,xml,yaml,yml}] # Looks better
+[*.{config,js,json,jsx,md,svg,ts,tsx,winget,xml,yaml,yml}] # Looks better
 indent_size = 2
 tab_width = 2
